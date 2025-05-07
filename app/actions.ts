@@ -1,9 +1,9 @@
 "use server";
-
 import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import type { Product } from "@/lib/interface";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -132,3 +132,89 @@ export const signOutAction = async () => {
   await supabase.auth.signOut();
   return redirect("/sign-in");
 };
+
+export const signWithGoogle = async () => {
+  const supabase = await createClient();
+  const origin = (await headers()).get("origin");
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${origin}/auth/callback`,
+    },
+
+  }) 
+  if (data.url) {
+    redirect(data.url)
+  }
+}
+
+export const signWithDiscord = async () => {
+  const supabase = await createClient();
+  const origin = (await headers()).get("origin");
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'discord',
+      options: {
+        redirectTo: `${origin}/auth/callback`,
+      }
+    })
+    if (data.url) {
+      redirect(data.url)
+    }
+  }
+
+  export const getProducts = async (): Promise<Product[]> => {
+    const supabase = await createClient();
+    const { data, error } = await supabase.from('products').select('*');
+  
+    if (error) {
+      console.error('Error fetching products:', error.message);
+      throw new Error('Could not fetch products');
+    }
+  
+    return data as Product[];
+  };
+
+  export const getProductsByVersionAndLeague = async (
+    gameVersion: string,
+    league: string,
+    difficulty: string
+  ): Promise<Product[]> => {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('gameVersion', gameVersion)
+      .eq('league', league)
+      .eq('difficulty', difficulty);
+  
+    if (error) {
+      console.error('Error fetching filtered products:', error.message);
+      throw new Error('Could not fetch filtered products');
+    }
+  
+    return data as Product[];
+  };
+
+
+  export const newProduct = async (product: Product) => {
+    const supabase = await createClient();
+    const { error } = await supabase
+      .from('products')
+      .insert({
+        name: product.name,
+        category: product.category,
+        gameVersion: product.gameVersion,
+        league: product.league,
+        price: product.price,
+        imgUrl: product.imgUrl,
+        difficulty: product.difficulty
+      });
+  
+    if (error) {
+      throw new Error(error.message);
+    }
+  };
+
+

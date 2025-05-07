@@ -4,6 +4,22 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { MobileMenu } from "./mobile-menu";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -14,57 +30,111 @@ export default async function AuthButton() {
 
   if (!hasEnvVars) {
     return (
-      <>
-        <div className="flex gap-4 items-center">
-          <div>
-            <Badge
-              variant={"default"}
-              className="font-normal pointer-events-none"
-            >
-              Please update .env.local file with anon key and url
-            </Badge>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              asChild
-              size="sm"
-              variant={"outline"}
-              disabled
-              className="opacity-75 cursor-none pointer-events-none"
-            >
-              <Link href="/sign-in">Sign in</Link>
-            </Button>
-            <Button
-              asChild
-              size="sm"
-              variant={"default"}
-              disabled
-              className="opacity-75 cursor-none pointer-events-none"
-            >
-              <Link href="/sign-up">Sign up</Link>
-            </Button>
-          </div>
+      <div className="flex gap-4 items-center">
+        <Badge variant="default" className="font-normal pointer-events-none">
+          Please update .env.local file with anon key and url
+        </Badge>
+        <div className="flex gap-2">
+          <Button
+            asChild
+            size="sm"
+            variant="outline"
+            disabled
+            className="w-24 h-9 opacity-75 cursor-none pointer-events-none"
+          >
+            <Link href="/sign-in">Sign in</Link>
+          </Button>
+          <Button
+            asChild
+            size="sm"
+            variant="default"
+            disabled
+            className="w-24 h-9 opacity-75 cursor-none pointer-events-none"
+          >
+            <Link href="/sign-up">Sign up</Link>
+          </Button>
         </div>
-      </>
+      </div>
     );
   }
+
   return user ? (
     <div className="flex items-center gap-4">
-      Hey, {user.email}!
-      <form action={signOutAction}>
-        <Button type="submit" variant={"outline"}>
-          Sign out
-        </Button>
-      </form>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Avatar className="h-9 w-9 cursor-pointer hover:opacity-80 transition-opacity">
+            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              Profile
+              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              Settings
+              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>Team</DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem>Email</DropdownMenuItem>
+                  <DropdownMenuItem>Message</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>More...</DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Support</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <form action={signOutAction}>
+            <DropdownMenuItem className="text-red-500 focus:text-red-500 focus:bg-red-500/10">
+              <button type="submit" className="w-full text-left">
+                Log out
+              </button>
+              <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </form>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   ) : (
-    <div className="flex gap-2">
-      <Button asChild size="sm" variant={"outline"}>
-        <Link href="/sign-in">Sign in</Link>
-      </Button>
-      <Button asChild size="sm" variant={"default"}>
-        <Link href="/sign-up">Sign up</Link>
-      </Button>
+    <div className="flex items-center justify-between w-full">
+      <div className="flex-1 md:hidden" /> {/* Left spacer for mobile */}
+      <div className="flex-1 flex justify-end">
+        <div className="hidden md:flex gap-2">
+          <Button
+            asChild
+            className="text-white w-24 font-roboto text-sm font-bold bg-black 
+              hover:bg-slate-100 hover:text-black transition-all duration-300 
+              hover:scale-102 rounded-md border hover:border-black"
+          >
+            <Link href="/sign-in">Sign in</Link>
+          </Button>
+          <Button
+            asChild
+            className="text-white w-18 font-roboto text-sm font-bold bg-black 
+              hover:bg-slate-100 hover:text-black transition-all duration-300 
+              hover:scale-102 rounded-md border hover:border-black"
+          >
+            <Link href="/sign-up">Sign up</Link>
+          </Button>
+        </div>
+        <div className="md:hidden">
+          <MobileMenu />
+        </div>
+      </div>
     </div>
   );
 }
