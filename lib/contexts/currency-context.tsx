@@ -8,7 +8,9 @@ interface CurrencyContextType {
   currency: CurrencyType
   setCurrency: (currency: CurrencyType) => void
   formatPrice: (price: number) => string
+  formatPriceWithoutSymbol: (price: number) => string
   convertPrice: (price: number) => number
+  priceToCents: (price: number) => number
   isLoading: boolean
   refreshRates: () => Promise<void>
   apiSource: 'openexchangerates' | 'frankfurter' | 'fallback'
@@ -35,13 +37,25 @@ const OPEN_EXCHANGE_RATES_APP_ID = process.env.NEXT_PUBLIC_OPEN_EXCHANGE_RATES_A
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined)
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
+  // Initialize with default values for SSR
   const [currency, setCurrency] = useState<CurrencyType>('USD')
   const [exchangeRates, setExchangeRates] = useState(fallbackRates)
   const [isLoading, setIsLoading] = useState(false)
   const [apiSource, setApiSource] = useState<'openexchangerates' | 'frankfurter' | 'fallback'>('fallback')
+  const [isMounted, setIsMounted] = useState(false)
   
+  // Handle client-side initialization
+  useEffect(() => {
+    setIsMounted(true)
+    const savedCurrency = localStorage.getItem('selectedCurrency') as CurrencyType | null
+    if (savedCurrency && Object.keys(fallbackRates).includes(savedCurrency)) {
+      setCurrency(savedCurrency)
+    }
+  }, [])
+
   // Fetch exchange rates from API
   const fetchExchangeRates = async () => {
+    if (!isMounted) return // Don't fetch during SSR
 
     try {
       setIsLoading(true)
@@ -59,37 +73,26 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
           
           const data = await response.json()
           
-          // Validate that the response contains the expected rates
           if (!data.rates || !data.rates.EUR || !data.rates.GBP || !data.rates.BRL) {
             throw new Error('Invalid API response format from OpenExchangeRates')
           }
           
-          // The API returns rates relative to USD
           setExchangeRates({
-            USD: 1, // Base currency is always 1
+            USD: 1,
             EUR: data.rates.EUR,
             GBP: data.rates.GBP,
             BRL: data.rates.BRL
           })
           
           setApiSource('openexchangerates')
-          console.log('Using OpenExchangeRates API')
           return
         } catch (openExchangeError) {
           console.warn('OpenExchangeRates API failed, trying Frankfurter', openExchangeError)
-          // Continue to Frankfurter (don't return, fall through)
         }
-      } else {
-        console.log('No OpenExchangeRates API key found, using Frankfurter')
       }
       
-      // If OpenExchangeRates fails or no API key, try Frankfurter API as fallback
+      // Try Frankfurter API as fallback
       try {
-        // Using Frankfurter API which is free and doesn't require an API key
-        // Alternative free APIs:
-        // - ExchangeRate-API: https://www.exchangerate-api.com/ (free tier with API key)
-        // - APILayer Exchange Rates: https://exchangeratesapi.io/ (free tier with API key, 250 requests/month)
-        // - ECB (European Central Bank): https://fixer.io/ (free tier with API key)
         const response = await fetch(
           'https://api.frankfurter.app/latest?from=USD&to=EUR,GBP,BRL'
         )
@@ -100,85 +103,105 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
         
         const data = await response.json()
         
-        // Validate that the response contains the expected rates
         if (!data.rates || !data.rates.EUR || !data.rates.GBP || !data.rates.BRL) {
           throw new Error('Invalid API response format from Frankfurter')
         }
         
-        // The API returns rates relative to USD
         setExchangeRates({
-          USD: 1, // Base currency is always 1
+          USD: 1,
           EUR: data.rates.EUR,
           GBP: data.rates.GBP,
           BRL: data.rates.BRL
         })
         
         setApiSource('frankfurter')
-        console.log('Using Frankfurter API')
         return
       } catch (frankfurterError) {
-        // If Frankfurter fails too, throw to the outer catch block
         console.error('Frankfurter API failed', frankfurterError)
         throw new Error('All currency APIs failed')
       }
     } catch (error) {
       console.error('Error fetching exchange rates:', error)
-      // Fall back to default rates if all APIs fail
       setExchangeRates(fallbackRates)
       setApiSource('fallback')
-      console.warn('Using fallback currency rates')
     } finally {
       setIsLoading(false)
     }
   }
   
-  // Load currency preference from localStorage when the component mounts
-  // and fetch initial exchange rates
+  // Fetch rates on mount and set up periodic refresh
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('currencyPreference') as CurrencyType | null
-    if (savedCurrency && Object.keys(fallbackRates).includes(savedCurrency)) {
-      setCurrency(savedCurrency)
-    }
-    
+    if (!isMounted) return // Don't fetch during SSR
+
     fetchExchangeRates()
-    
-    // Set up periodic refresh of exchange rates (every 6 hours)
     const intervalId = setInterval(fetchExchangeRates, 6 * 60 * 60 * 1000)
-    
-    // Clean up interval on unmount
     return () => clearInterval(intervalId)
-  }, [])
+  }, [isMounted])
   
   // Save currency preference to localStorage when it changes
   useEffect(() => {
-    localStorage.setItem('currencyPreference', currency)
-  }, [currency])
+    if (!isMounted) return // Don't save during SSR
+    localStorage.setItem('selectedCurrency', currency)
+  }, [currency, isMounted])
   
-  // Convert price from USD to selected currency
   const convertPrice = (priceInUSD: number): number => {
+    if (currency === 'USD') return priceInUSD
+    
     const rate = exchangeRates[currency]
-    return priceInUSD * rate
+    if (!rate) {
+      console.error('No exchange rate found for currency:', currency)
+      return priceInUSD
+    }
+
+    return Number((priceInUSD * rate).toFixed(2))
   }
   
-  // Format price in selected currency with symbol
-  const formatPrice = (priceInUSD: number): string => {
-    const convertedPrice = convertPrice(priceInUSD)
-    
-    // Format with proper currency symbol and locale
-    return new Intl.NumberFormat('en-US', {
+  const formatPrice = (price: number): string => {
+    if (!isMounted) return `$${price.toFixed(2)}` // Default format during SSR
+
+    const locale = {
+      'USD': 'en-US',
+      'EUR': 'de-DE',
+      'GBP': 'en-GB',
+      'BRL': 'pt-BR'
+    }[currency] || 'en-US'
+
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency,
+      currency: currency,
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
-    }).format(convertedPrice)
+    }).format(price)
+  }
+
+  const formatPriceWithoutSymbol = (price: number): string => {
+    if (!isMounted) return price.toFixed(2) // Default format during SSR
+
+    const locale = {
+      'USD': 'en-US',
+      'EUR': 'de-DE',
+      'GBP': 'en-GB',
+      'BRL': 'pt-BR'
+    }[currency] || 'en-US'
+
+    return new Intl.NumberFormat(locale, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(price)
+  }
+  
+  const priceToCents = (price: number): number => {
+    return Math.round(price * 100)
   }
   
   return (
     <CurrencyContext.Provider value={{ 
       currency, 
       setCurrency, 
-      formatPrice, 
+      formatPrice,
+      formatPriceWithoutSymbol,
       convertPrice,
+      priceToCents,
       isLoading,
       refreshRates: fetchExchangeRates,
       apiSource

@@ -153,68 +153,68 @@ export const signWithDiscord = async () => {
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'discord',
-    options: {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'discord',
+      options: {
       redirectTo: `${origin}/auth/callback?redirect_to=/`,
+      }
+    })
+    if (data.url) {
+      redirect(data.url)
     }
-  })
-  if (data.url) {
-    redirect(data.url)
-  }
-}
-
-export const getProducts = async (): Promise<Product[]> => {
-  const supabase = await createClient();
-  const { data, error } = await supabase.from('products').select('*');
-
-  if (error) {
-    console.error('Error fetching products:', error.message);
-    throw new Error('Could not fetch products');
   }
 
-  return data as Product[];
-};
+  export const getProducts = async (): Promise<Product[]> => {
+    const supabase = await createClient();
+    const { data, error } = await supabase.from('products').select('*');
+  
+    if (error) {
+      console.error('Error fetching products:', error.message);
+      throw new Error('Could not fetch products');
+    }
+  
+    return data as Product[];
+  };
 
-export const getProductsByVersionAndLeague = async (
-  gameVersion: string,
-  league: string,
-  difficulty: string
-): Promise<Product[]> => {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .eq('gameVersion', gameVersion)
-    .eq('league', league)
-    .eq('difficulty', difficulty);
+  export const getProductsByVersionAndLeague = async (
+    gameVersion: string,
+    league: string,
+    difficulty: string
+  ): Promise<Product[]> => {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('gameVersion', gameVersion)
+      .eq('league', league)
+      .eq('difficulty', difficulty);
+  
+    if (error) {
+      console.error('Error fetching filtered products:', error.message);
+      throw new Error('Could not fetch filtered products');
+    }
+  
+    return data as Product[];
+  };
 
-  if (error) {
-    console.error('Error fetching filtered products:', error.message);
-    throw new Error('Could not fetch filtered products');
-  }
-
-  return data as Product[];
-};
-
-export const newProduct = async (product: Product) => {
-  const supabase = await createClient();
-  const { error } = await supabase
-    .from('products')
-    .insert({
-      name: product.name,
-      category: product.category,
-      gameVersion: product.gameVersion,
-      league: product.league,
-      price: product.price,
-      imgUrl: product.imgUrl,
-      difficulty: product.difficulty
-    });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-};
+  export const newProduct = async (product: Product) => {
+    const supabase = await createClient();
+    const { error } = await supabase
+      .from('products')
+      .insert({
+        name: product.name,
+        category: product.category,
+        gameVersion: product.gameVersion,
+        league: product.league,
+        price: product.price,
+        imgUrl: product.imgUrl,
+        difficulty: product.difficulty
+      });
+  
+    if (error) {
+      throw new Error(error.message);
+    }
+  };
 
 export const getLeagues = async (gameVersion: 'path-of-exile-1' | 'path-of-exile-2') => {
   const supabase = await createClient();
