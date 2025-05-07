@@ -5,32 +5,32 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-import { newProduct } from "../actions";
-import type { Product } from "@/lib/interface";
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { toast, Toaster } from "sonner";
 
-export default function Admin() {
+interface League {
+  name: string;
+  imageUrl: string;
+  gameVersion: 'path-of-exile-1' | 'path-of-exile-2';
+  description?: string;
+}
+
+export default function AddLeague() {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<Product>({
+  const [formData, setFormData] = useState<League>({
     name: "",
-    league: "",                                                                   
-    category: "",
-    price: 0,
+    imageUrl: "",
     gameVersion: "path-of-exile-1",
-    imgUrl: "",
-    difficulty: "",
     description: "",
   });
+
+  const supabase = createClientComponentClient();
 
   const clearForm = () => {
     setFormData({
       name: "",
-      league: "",                                                                   
-      category: "",
-      price: 0,
+      imageUrl: "",
       gameVersion: "path-of-exile-1",
-      imgUrl: "",
-      difficulty: "",
       description: "",
     });
   };
@@ -39,12 +39,35 @@ export default function Admin() {
     e.preventDefault();
     setLoading(true);
     try {
-      await newProduct(formData);
+      // Validate required fields
+      if (!formData.name || !formData.imageUrl || !formData.gameVersion) {
+        throw new Error('Please fill in all required fields');
+      }
+
+      // Validate game version
+      if (!['path-of-exile-1', 'path-of-exile-2'].includes(formData.gameVersion)) {
+        throw new Error('Invalid game version');
+      }
+
+      const { data, error } = await supabase
+        .from('leagues')
+        .insert([formData])
+        .select();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw new Error(error.message || 'Failed to add league');
+      }
+      
+      if (!data || data.length === 0) {
+        throw new Error('No data returned after insert');
+      }
+
       clearForm();
-      toast.success('Product added successfully!');
+      toast.success('League added successfully!');
     } catch (error) {
-      console.error("Error adding product: ", error);
-      toast.error('Failed to add product');
+      console.error("Error adding league: ", error);
+      toast.error(error instanceof Error ? error.message : 'Failed to add league');
     } finally {
       setLoading(false);
     }
@@ -66,61 +89,31 @@ export default function Admin() {
         }}
       />
       <div className="max-w-4xl mx-auto p-8 rounded-lg shadow-lg bg-black border border-gray-800">
-        <h1 className="text-3xl font-bold text-gray-slate-100 mb-8 text-center">Add New Product</h1>
+        <h1 className="text-3xl font-bold text-gray-slate-100 mb-8 text-center">Add New League</h1>
         
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Name Input */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-gray-300">Product Name</Label>
+              <Label htmlFor="name" className="text-gray-300">League Name</Label>
               <Input
                 id="name"
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="bg-black border-gray-700 text-white focus:border-gray-500"
-                placeholder="Enter product name"
-              />
-            </div>
-
-            {/* League Input */}
-            <div className="space-y-2">
-              <Label htmlFor="league" className="text-gray-300">League Name</Label>
-              <Input
-                id="league"
-                required
-                value={formData.league}
-                onChange={(e) => setFormData({ ...formData, league: e.target.value })}
-                className="bg-black border-gray-700 text-white focus:border-gray-500"
                 placeholder="Enter league name"
               />
             </div>
 
-            {/* Price Input */}
-            <div className="space-y-2">
-              <Label htmlFor="price" className="text-gray-300">Price</Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
-                <Input
-                  id="price"
-                  type="number"
-                  required
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                  className="bg-black border-gray-700 text-white focus:border-gray-500 pl-7"
-                  placeholder="0.00"
-                />
-              </div>
-            </div>
-
             {/* Image URL Input */}
             <div className="space-y-2">
-              <Label htmlFor="imgUrl" className="text-gray-300">Image URL</Label>
+              <Label htmlFor="imageUrl" className="text-gray-300">Image URL</Label>
               <Input
-                id="imgUrl"
+                id="imageUrl"
                 required
-                value={formData.imgUrl}
-                onChange={(e) => setFormData({ ...formData, imgUrl: e.target.value })}
+                value={formData.imageUrl}
+                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
                 className="bg-black border-gray-700 text-white focus:border-gray-500"
                 placeholder="Enter image URL"
               />
@@ -130,8 +123,9 @@ export default function Admin() {
             <div className="space-y-2">
               <Label className="text-gray-300">Game Version</Label>
               <Select
-                value={formData.gameVersion as "path-of-exile-1" | "path-of-exile-2"}
-                onValueChange={(value: "path-of-exile-1" | "path-of-exile-2") => setFormData({ ...formData, gameVersion: value })}
+                value={formData.gameVersion}
+                onValueChange={(value: 'path-of-exile-1' | 'path-of-exile-2') => 
+                  setFormData({ ...formData, gameVersion: value })}
               >
                 <SelectTrigger className="bg-black border-gray-700 text-white focus:border-gray-500">
                   <SelectValue placeholder="Select Game Version" />
@@ -143,50 +137,15 @@ export default function Admin() {
               </Select>
             </div>
 
-            {/* Category Select */}
-            <div className="space-y-2">
-              <Label className="text-gray-300">Category</Label>
-              <Select
-                value={formData.category}
-                onValueChange={(value) => setFormData({ ...formData, category: value })}
-              >
-                <SelectTrigger className="bg-black border-gray-700 text-white focus:border-gray-500">
-                  <SelectValue placeholder="Select Category" />
-                </SelectTrigger>
-                <SelectContent className="bg-black border-gray-700">
-                  <SelectItem value="currency">Currency</SelectItem>
-                  <SelectItem value="services">Services</SelectItem>
-                  <SelectItem value="items">Items</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Difficulty Select */}
-            <div className="space-y-2">
-              <Label className="text-gray-300">Difficulty</Label>
-              <Select
-                value={formData.difficulty}
-                onValueChange={(value) => setFormData({ ...formData, difficulty: value })}
-              >
-                <SelectTrigger className="bg-black border-gray-700 text-white focus:border-gray-500">
-                  <SelectValue placeholder="Select difficulty" />
-                </SelectTrigger>
-                <SelectContent className="bg-black border-gray-700">
-                  <SelectItem value="softcore">Softcore</SelectItem>
-                  <SelectItem value="hardcore">Hardcore</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
             {/* Description Textarea - Full Width */}
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="description" className="text-gray-300">Description</Label>
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="w-full bg-black border border-gray-700 text-white focus:border-gray-500 min-h-[100px] resize-y rounded-md p-2"
-                placeholder="Enter product description"
+                placeholder="Enter league description"
               />
             </div>
           </div>
@@ -207,7 +166,7 @@ export default function Admin() {
                   Saving...
                 </span>
               ) : (
-                "Save Product"
+                "Save League"
               )}
             </Button>
           </div>
@@ -215,4 +174,4 @@ export default function Admin() {
       </div>
     </main>
   );
-}
+} 

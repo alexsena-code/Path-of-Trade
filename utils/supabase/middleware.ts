@@ -1,6 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
+// List of admin user IDs
+const ADMIN_USER_IDS = [
+  // Add your admin user IDs here
+  '8db9eeb1-51bf-4daf-80b0-e204023232a9',
+];
+
 export const updateSession = async (request: NextRequest) => {
   // This `try/catch` block is only here for the interactive tutorial.
   // Feel free to remove once you have Supabase connected.
@@ -37,15 +43,27 @@ export const updateSession = async (request: NextRequest) => {
 
     // This will refresh session if expired - required for Server Components
     // https://supabase.com/docs/guides/auth/server-side/nextjs
-    const user = await supabase.auth.getUser();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-    // protected routes
-    if (request.nextUrl.pathname.startsWith("/protected") && user.error) {
-      return NextResponse.redirect(new URL("/sign-in", request.url));
+    // Check admin routes access
+    if (request.nextUrl.pathname.startsWith("/admin")) {
+      if (userError || !user) {
+        // Not logged in
+        return NextResponse.redirect(new URL("/sign-in", request.url));
+      }
+      
+      // Check if user is in admin list
+      if (!ADMIN_USER_IDS.includes(user.id)) {
+        // Not an admin
+        return NextResponse.redirect(new URL("/", request.url));
+      }
     }
 
-    if (request.nextUrl.pathname === "/" && !user.error) {
-      return NextResponse.redirect(new URL("/protected", request.url));
+    // Redirect authenticated users away from auth pages
+    if ((request.nextUrl.pathname === "/sign-in" || 
+         request.nextUrl.pathname === "/sign-up") && 
+        !userError) {
+      return NextResponse.redirect(new URL("/", request.url));
     }
 
     return response;
@@ -53,6 +71,7 @@ export const updateSession = async (request: NextRequest) => {
     // If you are here, a Supabase client could not be created!
     // This is likely because you have not set up environment variables.
     // Check out http://localhost:3000 for Next Steps.
+    console.error('Middleware error:', e);
     return NextResponse.next({
       request: {
         headers: request.headers,

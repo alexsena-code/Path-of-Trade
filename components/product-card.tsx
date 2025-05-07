@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { Input } from "./ui/input";
 import type { Product } from "@/lib/interface";
+import { useCurrency } from "@/lib/contexts/currency-context";
 
 interface ProductCardProps {
   product: Product;
@@ -13,6 +14,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const [count, setCount] = useState(1);
+  const { formatPrice } = useCurrency();
 
   const increment = () => {
     setCount((prev) => prev + 1);
@@ -30,7 +32,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const totalPrice = product.price * count;
 
   return (
-    <Card className="inline-block max-w-80  min-w-40 overflow-hidden shadow-md hover:shadow-lg transition-shadow m-3 outline-none ">
+    <Card className="inline-block max-w-80 bg-black/10 min-w-40 overflow-hidden shadow-md hover:shadow-lg transition-shadow m-3 outline-none ">
       <CardContent className="flex flex-col mt-4">
         <div className="relative h-18 w-18 md:h-28 md:w-28 mb-4 rounded-lg overflow-hidden mx-auto">
           <Image
@@ -75,10 +77,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           {/* Price and buttons */}
           <span className="text-xl font-bold text-primary inline-flex mb-3">
-            {new Intl.NumberFormat("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            }).format(totalPrice)}
+            {formatPrice(totalPrice)}
           </span>
           <div className="flex flex-nowrap">
             <Button

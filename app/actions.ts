@@ -53,7 +53,8 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
-  return redirect("/protected");
+  // Force redirect to home page
+  return redirect("/");
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
@@ -67,7 +68,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?redirect_to=/protected/reset-password`,
+    redirectTo: `${origin}/auth/callback?redirect_to=/reset-password`,
   });
 
   if (error) {
@@ -99,7 +100,7 @@ export const resetPasswordAction = async (formData: FormData) => {
   if (!password || !confirmPassword) {
     encodedRedirect(
       "error",
-      "/protected/reset-password",
+      "/reset-password",
       "Password and confirm password are required",
     );
   }
@@ -107,7 +108,7 @@ export const resetPasswordAction = async (formData: FormData) => {
   if (password !== confirmPassword) {
     encodedRedirect(
       "error",
-      "/protected/reset-password",
+      "/reset-password",
       "Passwords do not match",
     );
   }
@@ -119,12 +120,12 @@ export const resetPasswordAction = async (formData: FormData) => {
   if (error) {
     encodedRedirect(
       "error",
-      "/protected/reset-password",
+      "/reset-password",
       "Password update failed",
     );
   }
 
-  encodedRedirect("success", "/protected/reset-password", "Password updated");
+  encodedRedirect("success", "/reset-password", "Password updated");
 };
 
 export const signOutAction = async () => {
@@ -140,9 +141,8 @@ export const signWithGoogle = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${origin}/auth/callback`,
+      redirectTo: `${origin}/auth/callback?redirect_to=/`,
     },
-
   }) 
   if (data.url) {
     redirect(data.url)
@@ -153,68 +153,82 @@ export const signWithDiscord = async () => {
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'discord',
-      options: {
-        redirectTo: `${origin}/auth/callback`,
-      }
-    })
-    if (data.url) {
-      redirect(data.url)
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'discord',
+    options: {
+      redirectTo: `${origin}/auth/callback?redirect_to=/`,
     }
+  })
+  if (data.url) {
+    redirect(data.url)
+  }
+}
+
+export const getProducts = async (): Promise<Product[]> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('products').select('*');
+
+  if (error) {
+    console.error('Error fetching products:', error.message);
+    throw new Error('Could not fetch products');
   }
 
-  export const getProducts = async (): Promise<Product[]> => {
-    const supabase = await createClient();
-    const { data, error } = await supabase.from('products').select('*');
-  
-    if (error) {
-      console.error('Error fetching products:', error.message);
-      throw new Error('Could not fetch products');
-    }
-  
-    return data as Product[];
-  };
+  return data as Product[];
+};
 
-  export const getProductsByVersionAndLeague = async (
-    gameVersion: string,
-    league: string,
-    difficulty: string
-  ): Promise<Product[]> => {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .eq('gameVersion', gameVersion)
-      .eq('league', league)
-      .eq('difficulty', difficulty);
-  
-    if (error) {
-      console.error('Error fetching filtered products:', error.message);
-      throw new Error('Could not fetch filtered products');
-    }
-  
-    return data as Product[];
-  };
+export const getProductsByVersionAndLeague = async (
+  gameVersion: string,
+  league: string,
+  difficulty: string
+): Promise<Product[]> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('gameVersion', gameVersion)
+    .eq('league', league)
+    .eq('difficulty', difficulty);
 
+  if (error) {
+    console.error('Error fetching filtered products:', error.message);
+    throw new Error('Could not fetch filtered products');
+  }
 
-  export const newProduct = async (product: Product) => {
-    const supabase = await createClient();
-    const { error } = await supabase
-      .from('products')
-      .insert({
-        name: product.name,
-        category: product.category,
-        gameVersion: product.gameVersion,
-        league: product.league,
-        price: product.price,
-        imgUrl: product.imgUrl,
-        difficulty: product.difficulty
-      });
-  
-    if (error) {
-      throw new Error(error.message);
-    }
-  };
+  return data as Product[];
+};
+
+export const newProduct = async (product: Product) => {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('products')
+    .insert({
+      name: product.name,
+      category: product.category,
+      gameVersion: product.gameVersion,
+      league: product.league,
+      price: product.price,
+      imgUrl: product.imgUrl,
+      difficulty: product.difficulty
+    });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getLeagues = async (gameVersion: 'path-of-exile-1' | 'path-of-exile-2') => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('leagues')
+    .select('*')
+    .eq('gameVersion', gameVersion)
+
+  if (error) {
+    console.error('Error fetching leagues:', error.message);
+    throw new Error('Could not fetch leagues');
+  }
+
+  return data;
+};
 
 

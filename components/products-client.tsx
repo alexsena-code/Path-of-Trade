@@ -1,15 +1,21 @@
 "use client";
 import type { Product } from "@/lib/interface";
-
-import ProductPage from "./product-card";
+import ProductCard from "./product-card";
 import { useState } from "react";
 import { Button } from "./ui/button";
+import { ProductSkeleton } from "./ui/skeleton";
 
 export default function ProductsClient({ products }: { products: Product[] }) {
   const buttons = ["All Categories", "Currency", "Services", "Items"];
+  const [selectedFilter, setSelectedFilter] = useState<string>("All Categories");
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  const [selectedFilter, setSelectedFilter] =
-    useState<string>("All Categories");
+  // Simulate loading for better UX
+  useState(() => {
+    setTimeout(() => {
+      setIsLoaded(true);
+    }, 500);
+  });
 
   const filterTags = (products: Product[]): Product[] => {
     if (selectedFilter.toLowerCase() === "all categories") {
@@ -23,9 +29,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
   const filteredList = filterTags(products);
 
   return (
-    <div
-      className=" border rounded-r-lg py-4 md:min-h-[678px] bg-black/5"
-    >
+    <div className="border rounded-r-lg py-4 md:min-h-[678px] bg-black/5">
       <nav className="mb-2 flex flex-wrap gap-2 px-3" aria-label="Filters">
         {buttons.map((label) => (
           <Button
@@ -42,9 +46,28 @@ export default function ProductsClient({ products }: { products: Product[] }) {
         ))}
       </nav>
 
-      {filteredList.map((product) => (
-        <ProductPage key={product.id} product={product} />
-      ))}
+      <div className="flex flex-wrap justify-center">
+        {!isLoaded ? (
+          // Show skeletons while loading
+          Array(4).fill(0).map((_, index) => (
+            <div key={index} className="m-3">
+              <ProductSkeleton />
+            </div>
+          ))
+        ) : filteredList.length > 0 ? (
+          // Show products
+          filteredList.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))
+        ) : (
+          // Show empty state
+          <div className="w-full text-center py-12">
+            <p className="text-lg text-muted-foreground">
+              No products found in this category
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

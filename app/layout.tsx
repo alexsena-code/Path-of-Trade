@@ -4,6 +4,9 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { Geist, Roboto, Source_Sans_3 } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import Link from "next/link";
+import Image from "next/image";
+import { CurrencyProvider } from "@/lib/contexts/currency-context";
 
 import "./globals.css";
 import Footer from "@/components/footer";
@@ -44,23 +47,32 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-            <div className="w-full max-w-5xl flex items-center p-3 px-5 text-sm">
-              <div className="flex-1" /> {/* Left spacer */}
-              <div className="flex-1 flex justify-center">
-                <a href="/">
-                <img src="/images/logo.png" alt="Company Logo" width={90} />
-                </a>
+          <CurrencyProvider>
+            <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
+              <div className="w-full max-w-5xl flex items-center p-3 px-5 text-sm">
+                <div className="flex-1" /> {/* Left spacer */}
+                <div className="flex-1 flex justify-center mx-6">
+                  <Link href="/" className="py-3">
+                    <Image 
+                      src="/images/logo.png" 
+                      alt="Company Logo" 
+                      width={110} 
+                      height={55}
+                      className="h-auto"
+                      priority
+                    />
+                  </Link>
+                </div>
+                <div className="flex-1 flex justify-end">
+                  {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
+                </div>
               </div>
-              <div className="flex-1 flex justify-end">
-                {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
-              </div>
-            </div>
-          </nav>
-          
-          {children}
+            </nav>
+            
+            {children}
 
-          <Footer/>
+            <Footer/>
+          </CurrencyProvider>
         </ThemeProvider>
       </body>
     </html>

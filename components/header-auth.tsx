@@ -5,6 +5,8 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { DropdownSettingsItem } from "./dropdown-settings-item";
+import { CurrencyIndicator } from "./currency-indicator";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { MobileMenu } from "./mobile-menu";
+import { Settings } from "lucide-react";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -60,11 +63,12 @@ export default async function AuthButton() {
 
   return user ? (
     <div className="flex items-center gap-4">
+      <CurrencyIndicator variant="full" />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="h-9 w-9 cursor-pointer hover:opacity-80 transition-opacity">
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>{user.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
@@ -75,10 +79,7 @@ export default async function AuthButton() {
               Profile
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              Settings
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-            </DropdownMenuItem>
+            <DropdownSettingsItem />
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
@@ -96,8 +97,6 @@ export default async function AuthButton() {
             </DropdownMenuSub>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
           <form action={signOutAction}>
             <DropdownMenuItem className="text-red-500 focus:text-red-500 focus:bg-red-500/10">
               <button type="submit" className="w-full text-left">
@@ -112,8 +111,9 @@ export default async function AuthButton() {
   ) : (
     <div className="flex items-center justify-between w-full">
       <div className="flex-1 md:hidden" /> {/* Left spacer for mobile */}
-      <div className="flex-1 flex justify-end">
-        <div className="hidden md:flex gap-2">
+      <div className="flex-1 flex justify-end items-center">
+        <CurrencyIndicator />
+        <div className="hidden md:flex gap-2 ml-2">
           <Button
             asChild
             className="text-white w-24 font-roboto text-sm font-bold bg-black 
