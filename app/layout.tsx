@@ -4,7 +4,7 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import { Geist, Roboto, Source_Sans_3 } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import Link from "next/link";
+
 import "./globals.css";
 import Footer from "@/components/footer";
 
@@ -48,7 +48,9 @@ export default function RootLayout({
             <div className="w-full max-w-5xl flex items-center p-3 px-5 text-sm">
               <div className="flex-1" /> {/* Left spacer */}
               <div className="flex-1 flex justify-center">
+                <a href="/">
                 <img src="/images/logo.png" alt="Company Logo" width={90} />
+                </a>
               </div>
               <div className="flex-1 flex justify-end">
                 {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
