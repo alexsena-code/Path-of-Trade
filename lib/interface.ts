@@ -12,5 +12,5 @@ export interface Product {
 export interface ProductPage{
   gameVersion: string,
   league: string,
-  difficulty: 'softcore' | 'hardcore'
+  difficulty: string
 }
