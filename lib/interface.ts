@@ -5,12 +5,12 @@ export interface Product {
   description?: string,
   price: number,
   imgUrl: string,
-  gameVersion: string,
+  gameVersion: 'path-of-exile-1' | 'path-of-exile-2',
   league: string,
   difficulty: string
 }
-export interface ProductPage{
-  gameVersion: string,
-  league: string,
-  difficulty: string
-}
+export type PageProps = Promise< {
+  gameVersion: 'path-of-exile-1' | 'path-of-exile-2';
+  league: string;
+  difficulty: string;
+}>

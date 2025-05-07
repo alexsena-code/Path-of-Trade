@@ -4,7 +4,7 @@ import ProductsClient from "./products-client";
 export default async function Products({
   params,
 }: {
-  params: { gameVersion: string; league: string, difficulty: string };
+  params: { gameVersion: 'path-of-exile-1' | 'path-of-exile-2'; league: string, difficulty: string };
 }) {
   try {
     console.log(params.league)
