@@ -1,11 +1,26 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import Stripe from "stripe";
-import { createClient } from "@/utils/supabase/server";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-04-30.basil",
 });
+
+// Helper function to map Stripe status to our order status
+function mapStripeStatusToOrderStatus(stripeStatus: string): 'pending' | 'processing' | 'completed' | 'cancelled' | 'failed' {
+  switch (stripeStatus) {
+    case 'succeeded':
+      return 'completed';
+    case 'processing':
+      return 'processing';
+    case 'canceled':
+      return 'cancelled';
+    case 'failed':
+      return 'failed';
+    default:
+      return 'pending';
+  }
+}
 
 export async function POST(req: Request) {
   try {
@@ -28,8 +43,6 @@ export async function POST(req: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET
     );
-
-    const supabase = await createClient();
 
     // Handle the event
     switch (event.type) {
@@ -54,53 +67,54 @@ export async function POST(req: Request) {
           status: paymentIntent.status
         });
 
-        // Prepare payment intent data for storage
-        const paymentIntentData = {
-          id: paymentIntent.id,
-          status: paymentIntent.status,
-          amount: paymentIntent.amount,
-          currency: paymentIntent.currency,
-          customer: paymentIntent.customer,
-          payment_method: paymentIntent.payment_method,
-          created: paymentIntent.created,
-          metadata: paymentIntent.metadata,
-          receipt_email: paymentIntent.receipt_email,
-          description: paymentIntent.description,
-          last_payment_error: paymentIntent.last_payment_error,
-          next_action: paymentIntent.next_action,
-          shipping: paymentIntent.shipping,
-          amount_received: paymentIntent.amount_received,
-          amount_capturable: paymentIntent.amount_capturable,
-          amount_details: paymentIntent.amount_details,
-          application: paymentIntent.application,
-          application_fee_amount: paymentIntent.application_fee_amount,
-          automatic_payment_methods: paymentIntent.automatic_payment_methods,
-          canceled_at: paymentIntent.canceled_at,
-          cancellation_reason: paymentIntent.cancellation_reason,
-          capture_method: paymentIntent.capture_method,
-          client_secret: paymentIntent.client_secret,
-          confirmation_method: paymentIntent.confirmation_method,
-          payment_method_types: paymentIntent.payment_method_types,
-          processing: paymentIntent.processing,
-          setup_future_usage: paymentIntent.setup_future_usage,
-          transfer_data: paymentIntent.transfer_data,
-          transfer_group: paymentIntent.transfer_group,
-        };
-
-        // Update order directly in database
-        const { error: updateError } = await supabase
-          .from('orders')
-          .update({
-            payment_intent: paymentIntentData,
-            updated_at: new Date().toISOString()
+        // Call the orders update API
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/orders/update`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            orderId,
+            paymentIntent: {
+              id: paymentIntent.id,
+              status: paymentIntent.status,
+              amount: paymentIntent.amount,
+              currency: paymentIntent.currency,
+              customer: paymentIntent.customer,
+              payment_method: paymentIntent.payment_method,
+              created: paymentIntent.created,
+              metadata: paymentIntent.metadata,
+              receipt_email: paymentIntent.receipt_email,
+              description: paymentIntent.description,
+              last_payment_error: paymentIntent.last_payment_error,
+              next_action: paymentIntent.next_action,
+              shipping: paymentIntent.shipping,
+              amount_received: paymentIntent.amount_received,
+              amount_capturable: paymentIntent.amount_capturable,
+              amount_details: paymentIntent.amount_details,
+              application: paymentIntent.application,
+              application_fee_amount: paymentIntent.application_fee_amount,
+              automatic_payment_methods: paymentIntent.automatic_payment_methods,
+              canceled_at: paymentIntent.canceled_at,
+              cancellation_reason: paymentIntent.cancellation_reason,
+              capture_method: paymentIntent.capture_method,
+              client_secret: paymentIntent.client_secret,
+              confirmation_method: paymentIntent.confirmation_method,
+              payment_method_types: paymentIntent.payment_method_types,
+              processing: paymentIntent.processing,
+              setup_future_usage: paymentIntent.setup_future_usage,
+              transfer_data: paymentIntent.transfer_data,
+              transfer_group: paymentIntent.transfer_group,
+            }
           })
-          .eq('id', orderId);
+        });
 
-        if (updateError) {
-          console.error('Failed to update order:', updateError);
+        if (!response.ok) {
+          const error = await response.json();
+          console.error('Failed to update order:', error);
           return NextResponse.json(
             { error: 'Failed to update order' },
-            { status: 500 }
+            { status: response.status }
           );
         }
 
@@ -143,54 +157,55 @@ export async function POST(req: Request) {
           status: paymentIntent.status
         });
 
-        // Prepare payment intent data for storage
-        const paymentIntentData = {
-          id: paymentIntent.id,
-          status: paymentIntent.status,
-          amount: paymentIntent.amount,
-          currency: paymentIntent.currency,
-          customer: paymentIntent.customer,
-          payment_method: paymentIntent.payment_method,
-          created: paymentIntent.created,
-          metadata: paymentIntent.metadata,
-          receipt_email: paymentIntent.receipt_email,
-          description: paymentIntent.description,
-          last_payment_error: paymentIntent.last_payment_error,
-          next_action: paymentIntent.next_action,
-          shipping: paymentIntent.shipping,
-          amount_received: paymentIntent.amount_received,
-          amount_capturable: paymentIntent.amount_capturable,
-          amount_details: paymentIntent.amount_details,
-          application: paymentIntent.application,
-          application_fee_amount: paymentIntent.application_fee_amount,
-          automatic_payment_methods: paymentIntent.automatic_payment_methods,
-          canceled_at: paymentIntent.canceled_at,
-          cancellation_reason: paymentIntent.cancellation_reason,
-          capture_method: paymentIntent.capture_method,
-          client_secret: paymentIntent.client_secret,
-          confirmation_method: paymentIntent.confirmation_method,
-          payment_method_types: paymentIntent.payment_method_types,
-          processing: paymentIntent.processing,
-          setup_future_usage: paymentIntent.setup_future_usage,
-          transfer_data: paymentIntent.transfer_data,
-          transfer_group: paymentIntent.transfer_group,
-        };
-
-        // Update order directly in database
-        const { error: updateError } = await supabase
-          .from('orders')
-          .update({
-            payment_status: paymentIntent.status,
-            payment_intent: paymentIntentData,
-            updated_at: new Date().toISOString()
+        // Call the orders update API
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/orders/update`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            orderId,
+            status: mapStripeStatusToOrderStatus(paymentIntent.status),
+            paymentIntent: {
+              id: paymentIntent.id,
+              status: paymentIntent.status,
+              amount: paymentIntent.amount,
+              currency: paymentIntent.currency,
+              customer: paymentIntent.customer,
+              payment_method: paymentIntent.payment_method,
+              created: paymentIntent.created,
+              metadata: paymentIntent.metadata,
+              receipt_email: paymentIntent.receipt_email,
+              description: paymentIntent.description,
+              last_payment_error: paymentIntent.last_payment_error,
+              next_action: paymentIntent.next_action,
+              shipping: paymentIntent.shipping,
+              amount_received: paymentIntent.amount_received,
+              amount_capturable: paymentIntent.amount_capturable,
+              amount_details: paymentIntent.amount_details,
+              application: paymentIntent.application,
+              application_fee_amount: paymentIntent.application_fee_amount,
+              automatic_payment_methods: paymentIntent.automatic_payment_methods,
+              canceled_at: paymentIntent.canceled_at,
+              cancellation_reason: paymentIntent.cancellation_reason,
+              capture_method: paymentIntent.capture_method,
+              client_secret: paymentIntent.client_secret,
+              confirmation_method: paymentIntent.confirmation_method,
+              payment_method_types: paymentIntent.payment_method_types,
+              processing: paymentIntent.processing,
+              setup_future_usage: paymentIntent.setup_future_usage,
+              transfer_data: paymentIntent.transfer_data,
+              transfer_group: paymentIntent.transfer_group,
+            }
           })
-          .eq('id', orderId);
+        });
 
-        if (updateError) {
-          console.error('Failed to update order:', updateError);
+        if (!response.ok) {
+          const error = await response.json();
+          console.error('Failed to update order:', error);
           return NextResponse.json(
             { error: 'Failed to update order' },
-            { status: 500 }
+            { status: response.status }
           );
         }
 
