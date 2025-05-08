@@ -118,10 +118,28 @@ async function handlePaymentIntent(event: Stripe.Event) {
     throw new Error(`No order ID in payment intent metadata: ${paymentIntent.id}`);
   }
 
-  console.log(`Processing payment intent: ${paymentIntent.id} for order: ${orderId}, event: ${event.type}`);
+  console.log(`Processing payment intent: ${paymentIntent.id} for order: ${orderId}, event: ${event.type}, status: ${paymentIntent.status}`);
   
-  // Get order status from the event type
-  const orderStatus = getOrderStatusFromEvent(event.type);
+  // Determine appropriate order status based on the event type AND payment intent status
+  let orderStatus;
+  
+  if (event.type === 'payment_intent.payment_failed') {
+    // For failed payments, set order status to failed regardless of payment intent status
+    orderStatus = 'failed';
+    console.log(`Payment failed for order ${orderId}. Payment status: ${paymentIntent.status}`);
+    
+    // Log additional error details if available
+    if (paymentIntent.last_payment_error) {
+      console.log('Payment error details:', {
+        code: paymentIntent.last_payment_error.code,
+        message: paymentIntent.last_payment_error.message,
+        decline_code: paymentIntent.last_payment_error.decline_code
+      });
+    }
+  } else {
+    // For other events, get status from event type
+    orderStatus = getOrderStatusFromEvent(event.type);
+  }
   
   // Update with both status and payment status
   return await updateOrder(orderId, {
@@ -195,10 +213,12 @@ export async function POST(req: Request) {
     const signature = headersList.get('stripe-signature');
 
     if (!signature) {
+      console.error('No Stripe signature found in webhook request');
       return NextResponse.json({ error: 'No signature' }, { status: 400 });
     }
 
     if (!process.env.STRIPE_WEBHOOK_SECRET || !process.env.STRIPE_SECRET_KEY) {
+      console.error('Missing environment variables: STRIPE_WEBHOOK_SECRET or STRIPE_SECRET_KEY');
       return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }
 
@@ -227,13 +247,15 @@ export async function POST(req: Request) {
         
       case 'payment_intent.payment_failed':
         console.log('Payment failed event received');
-        // Log additional details about the failure
+        // Log the full event for debugging purposes
         const failedPaymentIntent = event.data.object as Stripe.PaymentIntent;
-        console.log('Payment failure details:', {
+        console.log('Full payment intent data:', JSON.stringify({
           id: failedPaymentIntent.id,
+          status: failedPaymentIntent.status,
           error: failedPaymentIntent.last_payment_error,
-          status: failedPaymentIntent.status
-        });
+          metadata: failedPaymentIntent.metadata
+        }));
+        
         result = await handlePaymentIntent(event);
         break;
         
@@ -254,7 +276,8 @@ export async function POST(req: Request) {
     console.log('Webhook processed successfully');
     return NextResponse.json({ received: true, processed: !!result });
   } catch (error) {
-    console.error('Webhook error:', error instanceof Error ? error.message : 'Unknown error');
+    console.error('Webhook error:', error instanceof Error ? error.message : 'Unknown error', 
+      error instanceof Error && error.stack ? error.stack : '');
     
     return NextResponse.json(
       { 
