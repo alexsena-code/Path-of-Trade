@@ -1,24 +1,21 @@
 "use client";
 import type { Product } from "@/lib/interface";
 import ProductCard from "./product-card";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { ProductSkeleton } from "./ui/skeleton";
-import { ErrorBoundaryWrapper } from "./error-boundary-wrapper";
 
-function ProductsClientContent({ products }: { products: Product[] }) {
+export default function ProductsClient({ products }: { products: Product[] }) {
   const buttons = ["All Categories", "Currency", "Services", "Items"];
   const [selectedFilter, setSelectedFilter] = useState<string>("All Categories");
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Simulate loading for better UX
-  useEffect(() => {
-    const timer = setTimeout(() => {
+  useState(() => {
+    setTimeout(() => {
       setIsLoaded(true);
     }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
+  });
 
   const filterTags = (products: Product[]): Product[] => {
     if (selectedFilter.toLowerCase() === "all categories") {
@@ -72,13 +69,5 @@ function ProductsClientContent({ products }: { products: Product[] }) {
         )}
       </div>
     </div>
-  );
-}
-
-export default function ProductsClient({ products }: { products: Product[] }) {
-  return (
-    <ErrorBoundaryWrapper type="product">
-      <ProductsClientContent products={products} />
-    </ErrorBoundaryWrapper>
   );
 }
