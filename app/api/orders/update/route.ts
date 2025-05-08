@@ -16,8 +16,15 @@ export async function PATCH(req: Request) {
   try {
     const { orderId, status, paymentIntent } = await req.json();
 
+    console.log('Received order update request:', {
+      orderId,
+      status,
+      hasPaymentIntent: !!paymentIntent
+    });
+
     // Validate required fields
     if (!orderId) {
+      console.error('Missing orderId in request');
       return NextResponse.json(
         { error: 'Order ID is required' },
         { status: 400 }
@@ -25,6 +32,7 @@ export async function PATCH(req: Request) {
     }
 
     if (!status) {
+      console.error('Missing status in request');
       return NextResponse.json(
         { error: 'Status is required' },
         { status: 400 }
@@ -33,6 +41,7 @@ export async function PATCH(req: Request) {
 
     // Validate status
     if (!validStatuses.includes(status as OrderStatus)) {
+      console.error('Invalid status:', status);
       return NextResponse.json(
         { error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` },
         { status: 400 }
@@ -49,11 +58,14 @@ export async function PATCH(req: Request) {
       .single();
 
     if (fetchError || !existingOrder) {
+      console.error('Order not found:', { orderId, error: fetchError });
       return NextResponse.json(
         { error: 'Order not found' },
         { status: 404 }
       );
     }
+
+    console.log('Found existing order:', existingOrder);
 
     // Update the order status and payment intent
     const { data: updatedOrder, error: updateError } = await supabase
@@ -76,6 +88,7 @@ export async function PATCH(req: Request) {
       );
     }
 
+    console.log('Successfully updated order:', updatedOrder);
     return NextResponse.json(updatedOrder);
   } catch (error) {
     console.error('Error in orders PATCH:', error);
