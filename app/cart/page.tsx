@@ -74,7 +74,9 @@ export default function CartPage() {
           name: item.product.name,
           description: item.product.description,
           imgUrl: item.product.imgUrl,
-          price: item.priceInCurrency, // Use the already converted price
+          price: item.priceInCurrency,
+          league: item.product.league,
+          difficulty: item.product.difficulty,
         },
         quantity: item.quantity,
       }));

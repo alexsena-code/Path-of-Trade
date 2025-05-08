@@ -195,7 +195,7 @@ function SuccessContent() {
         </div>
       )}
 
-      <div className="flex gap-4 justify-center md:justify-start animate-in fade-in duration-500 delay-600">
+      <div className="flex gap-4 justify-center animate-in fade-in duration-500 delay-600">
         <Button asChild variant="outline" className="gap-2">
           <Link href="/">
             <ShoppingBag className="h-4 w-4" />

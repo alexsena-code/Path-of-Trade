@@ -14,7 +14,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 export async function POST(req: Request) {
   try {
-    const { items, currency, characterName } = await req.json();
+    const { items, currency, characterName, } = await req.json();
 
     console.log('Received checkout request:', {
       items,
