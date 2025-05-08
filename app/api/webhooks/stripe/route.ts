@@ -191,6 +191,9 @@ async function handleCheckoutSession(event: Stripe.Event) {
 export async function POST(req: Request) {
   console.log('STRIPE WEBHOOK: Request received');
   
+  // Store the request body so we don't read it multiple times
+  let rawBody: string = '';
+  
   try {
     // Log the request method
     console.log(`STRIPE WEBHOOK: Request method: ${req.method}`);
@@ -201,11 +204,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
     }
 
-    // Validate request body
-    const body = await req.text();
-    console.log(`STRIPE WEBHOOK: Request body length: ${body.length}`);
+    // Read the body once
+    rawBody = await req.text();
+    console.log(`STRIPE WEBHOOK: Request body length: ${rawBody.length}`);
     
-    if (!body) {
+    if (!rawBody) {
       console.log('STRIPE WEBHOOK: Empty request body');
       return NextResponse.json({ error: 'Empty request body' }, { status: 400 });
     }
@@ -239,7 +242,7 @@ export async function POST(req: Request) {
     try {
       console.log('STRIPE WEBHOOK: Constructing event from webhook data');
       event = stripe.webhooks.constructEvent(
-        body,
+        rawBody,
         signature,
         process.env.STRIPE_WEBHOOK_SECRET
       );
@@ -284,8 +287,38 @@ export async function POST(req: Request) {
           metadata: failedPaymentIntent.metadata
         }));
         
-        handlerName = 'handlePaymentIntent';
-        result = await handlePaymentIntent(event);
+        // Double-check that the order ID exists in metadata
+        if (!failedPaymentIntent.metadata?.orderId) {
+          console.error('STRIPE WEBHOOK: No order ID in payment intent metadata:', failedPaymentIntent.id);
+          
+          // Try to find the order by payment intent ID in the database
+          try {
+            const supabase = await createClient();
+            const { data: orderData } = await supabase
+              .from('orders')
+              .select('id')
+              .eq('payment_intent->id', failedPaymentIntent.id)
+              .single();
+              
+            if (orderData) {
+              console.log(`STRIPE WEBHOOK: Found order ${orderData.id} by payment intent ID`);
+              // Update the order directly
+              await updateOrder(orderData.id, {
+                status: 'failed',
+                payment_status: failedPaymentIntent.status,
+                paymentIntent: failedPaymentIntent
+              });
+              result = { manually_processed: true, order_id: orderData.id };
+            } else {
+              console.error('STRIPE WEBHOOK: Could not find order for failed payment intent:', failedPaymentIntent.id);
+            }
+          } catch (err) {
+            console.error('STRIPE WEBHOOK: Error looking up order:', err);
+          }
+        } else {
+          handlerName = 'handlePaymentIntent';
+          result = await handlePaymentIntent(event);
+        }
         break;
         
       case 'payment_intent.canceled':
@@ -322,15 +355,54 @@ export async function POST(req: Request) {
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error('Webhook error:', error instanceof Error ? error.message : 'Unknown error', 
+    console.error('STRIPE WEBHOOK ERROR:', error instanceof Error ? error.message : 'Unknown error', 
       error instanceof Error && error.stack ? error.stack : '');
+    
+    try {
+      // Try to extract the event from the already-read request body
+      if (rawBody && rawBody.length > 0) {
+        const headersList = await headers();
+        const signature = headersList.get('stripe-signature');
+        
+        if (signature && process.env.STRIPE_WEBHOOK_SECRET) {
+          try {
+            const event = stripe.webhooks.constructEvent(
+              rawBody,
+              signature,
+              process.env.STRIPE_WEBHOOK_SECRET
+            );
+            
+            console.log('STRIPE WEBHOOK ERROR: Extracted event type', event.type);
+            
+            // We had an error but at least log the event type and ID
+            if (event.data && event.data.object) {
+              const obj = event.data.object as any;
+              console.log('STRIPE WEBHOOK ERROR: Event data', {
+                type: event.type,
+                id: event.id,
+                object_id: obj.id,
+                object_type: obj.object,
+                metadata: obj.metadata
+              });
+            }
+          } catch (parseError) {
+            console.error('STRIPE WEBHOOK ERROR: Could not parse event:', parseError);
+          }
+        }
+      } else {
+        console.log('STRIPE WEBHOOK ERROR: No body available for error analysis');
+      }
+    } catch (extractError) {
+      console.error('STRIPE WEBHOOK ERROR: Could not extract event details:', extractError);
+    }
     
     return NextResponse.json(
       { 
         error: 'Webhook handler failed',
         details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
       },
-      { status: 400 }
+      { status: 500 }
     );
   }
 }
