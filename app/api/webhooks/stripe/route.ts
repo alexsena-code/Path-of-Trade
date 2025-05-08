@@ -21,7 +21,7 @@ function getOrderStatusFromEvent(eventType: string): string {
 }
 
 // Helper function to update an order with payment data
-async function updateOrder(baseUrl: string, orderId: string, options: {
+async function updateOrder(orderId: string, options: {
   status?: string;
   payment_status?: string;
   paymentIntent?: Stripe.PaymentIntent;
@@ -29,8 +29,12 @@ async function updateOrder(baseUrl: string, orderId: string, options: {
 }) {
   console.log(`Updating order ${orderId} via API`);
   
-  // Construct the API endpoint URL
-  const updateEndpoint = `${baseUrl}/api/orders/update`;
+  if (!process.env.NEXT_PUBLIC_SITE_URL) {
+    throw new Error('NEXT_PUBLIC_SITE_URL is not defined in environment variables');
+  }
+  
+  // Construct the API endpoint URL using the site URL from environment variables
+  const updateEndpoint = `${process.env.NEXT_PUBLIC_SITE_URL}/api/orders/update`;
   
   // Build request body with only the properties that are provided
   const requestBody: any = { orderId };
@@ -106,7 +110,7 @@ async function updateOrder(baseUrl: string, orderId: string, options: {
 }
 
 // Process payment intent events
-async function handlePaymentIntent(event: Stripe.Event, baseUrl: string) {
+async function handlePaymentIntent(event: Stripe.Event) {
   const paymentIntent = event.data.object as Stripe.PaymentIntent;
   const orderId = paymentIntent.metadata?.orderId;
 
@@ -120,7 +124,7 @@ async function handlePaymentIntent(event: Stripe.Event, baseUrl: string) {
   const orderStatus = getOrderStatusFromEvent(event.type);
   
   // Update with both status and payment status
-  return await updateOrder(baseUrl, orderId, {
+  return await updateOrder(orderId, {
     status: orderStatus,
     payment_status: paymentIntent.status,
     paymentIntent: paymentIntent
@@ -128,17 +132,17 @@ async function handlePaymentIntent(event: Stripe.Event, baseUrl: string) {
 }
 
 // For status-only updates (no payment data needed)
-async function updateOrderStatus(baseUrl: string, orderId: string, status: string) {
-  return await updateOrder(baseUrl, orderId, { status });
+async function updateOrderStatus(orderId: string, status: string) {
+  return await updateOrder(orderId, { status });
 }
 
 // For payment-status updates (no order status change)
-async function updatePaymentStatus(baseUrl: string, orderId: string, paymentStatus: string) {
-  return await updateOrder(baseUrl, orderId, { payment_status: paymentStatus });
+async function updatePaymentStatus(orderId: string, paymentStatus: string) {
+  return await updateOrder(orderId, { payment_status: paymentStatus });
 }
 
 // Process checkout session events
-async function handleCheckoutSession(event: Stripe.Event, baseUrl: string) {
+async function handleCheckoutSession(event: Stripe.Event) {
   const session = event.data.object as Stripe.Checkout.Session;
   const orderId = session.metadata?.orderId;
   
@@ -164,7 +168,6 @@ async function handleCheckoutSession(event: Stripe.Event, baseUrl: string) {
   }
   
   return await updateOrder(
-    baseUrl, 
     orderId, 
     {
       status: statusOverride || getOrderStatusFromEvent(paymentIntent.status),
@@ -213,16 +216,13 @@ export async function POST(req: Request) {
     }
 
     console.log(`Webhook event received: ${event.type} (${event.id})`);
-    
-    // Get the base URL from the request for API calls
-    const baseUrl = new URL(req.url).origin;
 
     // Handle different event types
     let result;
     switch (event.type) {
       case 'payment_intent.succeeded':
         console.log('Payment succeeded event received');
-        result = await handlePaymentIntent(event, baseUrl);
+        result = await handlePaymentIntent(event);
         break;
         
       case 'payment_intent.payment_failed':
@@ -234,17 +234,17 @@ export async function POST(req: Request) {
           error: failedPaymentIntent.last_payment_error,
           status: failedPaymentIntent.status
         });
-        result = await handlePaymentIntent(event, baseUrl);
+        result = await handlePaymentIntent(event);
         break;
         
       case 'payment_intent.canceled':
         console.log('Payment canceled event received');
-        result = await handlePaymentIntent(event, baseUrl);
+        result = await handlePaymentIntent(event);
         break;
 
       case 'checkout.session.completed':
         console.log('Checkout session completed event received');
-        result = await handleCheckoutSession(event, baseUrl);
+        result = await handleCheckoutSession(event);
         break;
         
       default:
