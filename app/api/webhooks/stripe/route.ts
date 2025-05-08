@@ -24,25 +24,83 @@ function mapStripeStatusToOrderStatus(stripeStatus: string): 'pending' | 'proces
 
 export async function POST(req: Request) {
   try {
+    console.log('Webhook endpoint hit');
+    
+    // Validate request method
+    if (req.method !== 'POST') {
+      console.error('Invalid method:', req.method);
+      return NextResponse.json(
+        { error: 'Method not allowed' },
+        { status: 405 }
+      );
+    }
+
+    // Validate request body
     const body = await req.text();
+    if (!body) {
+      console.error('Empty request body');
+      return NextResponse.json(
+        { error: 'Empty request body' },
+        { status: 400 }
+      );
+    }
+
     const headersList = await headers();
     const signature = headersList.get('stripe-signature');
 
+    console.log('Webhook request details:', {
+      method: req.method,
+      url: req.url,
+      hasBody: !!body,
+      hasSignature: !!signature,
+      headers: Object.fromEntries(headersList.entries())
+    });
+
     if (!signature) {
       console.error('Missing Stripe signature');
-      return NextResponse.json({ error: 'No signature' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'No signature' },
+        { status: 400 }
+      );
     }
 
     if (!process.env.STRIPE_WEBHOOK_SECRET) {
-      throw new Error('Missing STRIPE_WEBHOOK_SECRET');
+      console.error('Missing STRIPE_WEBHOOK_SECRET');
+      return NextResponse.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
+
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('Missing STRIPE_SECRET_KEY');
+      return NextResponse.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      );
     }
 
     // Verify webhook signature
-    const event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
+    let event;
+    try {
+      event = stripe.webhooks.constructEvent(
+        body,
+        signature,
+        process.env.STRIPE_WEBHOOK_SECRET
+      );
+    } catch (err) {
+      console.error('Webhook signature verification failed:', err);
+      return NextResponse.json(
+        { error: 'Invalid signature' },
+        { status: 400 }
+      );
+    }
+
+    console.log('Webhook event details:', {
+      type: event.type,
+      id: event.id,
+      created: event.created
+    });
 
     // Handle the event
     switch (event.type) {
@@ -219,9 +277,20 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('Webhook error:', error);
+    console.error('Webhook error details:', {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      error: error
+    });
+
+    // Return more detailed error response
     return NextResponse.json(
-      { error: 'Webhook handler failed' },
+      { 
+        error: 'Webhook handler failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      },
       { status: 400 }
     );
   }
