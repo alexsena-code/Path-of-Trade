@@ -51,7 +51,7 @@ export default function RootLayout({
         >
           <CurrencyProvider>
             <CartProvider>
-              <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
+              <nav className="w-full flex justify-center border-b border-b-foreground/10 h-18">
                 <div className="w-full max-w-5xl flex items-center p-3 px-5 text-sm">
                   <div className="flex-1" /> {/* Left spacer */}
                     <div className="flex-1 flex justify-center mx-6">
