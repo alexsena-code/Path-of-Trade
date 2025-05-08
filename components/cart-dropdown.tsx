@@ -14,9 +14,11 @@ import Link from "next/link";
 
 export default function CartDropdown() {
   const { items, removeFromCart, updateQuantity, totalPrice, totalItems } = useCart();
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currency, convertPrice } = useCurrency();
+
 
   return (
+    
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
@@ -53,7 +55,7 @@ export default function CartDropdown() {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium text-sm truncate">{item.product.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {formatPrice(item.product.price)} × {item.quantity}
+                      {convertPrice(item.product.price)} × {item.quantity}
                     </p>
                   </div>
 
@@ -94,11 +96,9 @@ export default function CartDropdown() {
                 <span className="font-bold">{formatPrice(totalPrice)}</span>
               </div>
               <div className="flex gap-2">
-                <Button asChild className="flex-1">
-                  <Link href="/cart">View Cart</Link>
-                </Button>
-                <Button variant="outline" className="flex-1">
-                  Checkout
+
+                <Button className="flex-1 bg-black border text-white hover:bg-white hover:text-black  font-bold transition-colors duration-200 " >
+                <Link href="/cart">Checkout</Link>
                 </Button>
               </div>
             </div>

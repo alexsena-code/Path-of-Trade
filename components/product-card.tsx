@@ -84,7 +84,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const totalPrice = displayPrice * count;
 
   return (
-    <Card className="inline-block max-w-80 bg-black/10 min-w-40 overflow-hidden shadow-md hover:shadow-lg transition-shadow m-3 outline-none ">
+    <Card className="inline-block max-w-70 bg-black/10 min-w-40 overflow-hidden shadow-md hover:shadow-lg transition-shadow m-3 outline-none ">
       <CardContent className="flex flex-col mt-4">
         <div className="relative h-18 w-18 md:h-28 md:w-28 mb-4 rounded-lg overflow-hidden mx-auto">
           <Image

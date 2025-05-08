@@ -79,7 +79,7 @@ const LeagueCard = ({ league, gameVersion }: LeagueCardProps) => {
               fill
               sizes="(max-width: 380px) 100vw, 380px"
               quality={90}
-              className="object-cover object-center h-[300px] w-full rounded-t-lg"
+              className="object-cover object-center h-[300px] w-full rounded-t-lg p-4"
               priority
             />
           </div>

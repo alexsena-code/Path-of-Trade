@@ -1,73 +1,203 @@
-import Stripe from "stripe";
-import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { supabase } from '@/lib/db';
+import { headers } from "next/headers";
+import Stripe from "stripe";
+import { createClient } from "@/utils/supabase/server";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not defined in environment variables');
-}
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-04-30.basil",
 });
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-const orderStatuses = {
-  PENDING: "pending",
-  PAYMENT_APPROVED: "payment_approved",
-  PAYMENT_FAILED: "payment_failed",
-  COMPLETED: "completed",
-  CANCELLED: "cancelled",
-} as const;
-
 export async function POST(req: Request) {
-  const body = await req.text();
-  const signature = (await headers()).get('stripe-signature')!;
-
   try {
+    const body = await req.text();
+    const headersList = await headers();
+    const signature = headersList.get('stripe-signature');
+
+    if (!signature) {
+      console.error('Missing Stripe signature');
+      return NextResponse.json({ error: 'No signature' }, { status: 400 });
+    }
+
+    if (!process.env.STRIPE_WEBHOOK_SECRET) {
+      throw new Error('Missing STRIPE_WEBHOOK_SECRET');
+    }
+
+    // Verify webhook signature
     const event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_WEBHOOK_SECRET
     );
 
-    switch (event.type) {
-      case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session;
-        
-        // Update order status
-        await supabase
-          .from('orders')
-          .update({ 
-            status: orderStatuses.PAYMENT_APPROVED,
-            email: session.customer_email,
-            stripe_session_id: session.id
-          })
-          .eq('id', session.metadata?.orderId);
+    const supabase = await createClient();
 
-        // Send email notification
-        await fetch('/api/send-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            to: session.customer_email,
-            subject: 'Order Payment Confirmed',
-            template: 'order-confirmation',
-            data: {
-              orderId: session.metadata?.orderId,
-              amount: session.amount_total,
-            }
+    // Handle the event
+    switch (event.type) {
+      case 'payment_intent.succeeded':
+      case 'payment_intent.payment_failed':
+      case 'payment_intent.canceled': {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        const orderId = paymentIntent.metadata?.orderId;
+
+        if (!orderId) {
+          console.error('No order ID in payment intent metadata:', paymentIntent.id);
+          return NextResponse.json(
+            { error: 'No order ID found' },
+            { status: 400 }
+          );
+        }
+
+        console.log('Processing payment intent:', {
+          type: event.type,
+          paymentIntentId: paymentIntent.id,
+          orderId,
+          status: paymentIntent.status
+        });
+
+        // Prepare payment intent data for storage
+        const paymentIntentData = {
+          id: paymentIntent.id,
+          status: paymentIntent.status,
+          amount: paymentIntent.amount,
+          currency: paymentIntent.currency,
+          customer: paymentIntent.customer,
+          payment_method: paymentIntent.payment_method,
+          created: paymentIntent.created,
+          metadata: paymentIntent.metadata,
+          receipt_email: paymentIntent.receipt_email,
+          description: paymentIntent.description,
+          last_payment_error: paymentIntent.last_payment_error,
+          next_action: paymentIntent.next_action,
+          shipping: paymentIntent.shipping,
+          amount_received: paymentIntent.amount_received,
+          amount_capturable: paymentIntent.amount_capturable,
+          amount_details: paymentIntent.amount_details,
+          application: paymentIntent.application,
+          application_fee_amount: paymentIntent.application_fee_amount,
+          automatic_payment_methods: paymentIntent.automatic_payment_methods,
+          canceled_at: paymentIntent.canceled_at,
+          cancellation_reason: paymentIntent.cancellation_reason,
+          capture_method: paymentIntent.capture_method,
+          client_secret: paymentIntent.client_secret,
+          confirmation_method: paymentIntent.confirmation_method,
+          payment_method_types: paymentIntent.payment_method_types,
+          processing: paymentIntent.processing,
+          setup_future_usage: paymentIntent.setup_future_usage,
+          transfer_data: paymentIntent.transfer_data,
+          transfer_group: paymentIntent.transfer_group,
+        };
+
+        // Update order directly in database
+        const { error: updateError } = await supabase
+          .from('orders')
+          .update({
+            payment_intent: paymentIntentData,
+            updated_at: new Date().toISOString()
           })
+          .eq('id', orderId);
+
+        if (updateError) {
+          console.error('Failed to update order:', updateError);
+          return NextResponse.json(
+            { error: 'Failed to update order' },
+            { status: 500 }
+          );
+        }
+
+        console.log('Successfully updated order:', {
+          orderId,
+          status: paymentIntent.status
         });
         break;
       }
-      case 'checkout.session.expired': {
+
+      case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        await supabase
+        const orderId = session.metadata?.orderId;
+        
+        if (!orderId) {
+          console.error('No order ID in session metadata:', session.id);
+          return NextResponse.json(
+            { error: 'No order ID found' },
+            { status: 400 }
+          );
+        }
+
+        if (!session.payment_intent) {
+          console.error('No payment intent in session:', session.id);
+          return NextResponse.json(
+            { error: 'No payment intent found' },
+            { status: 400 }
+          );
+        }
+
+        // Get payment intent status
+        const paymentIntent = typeof session.payment_intent === 'string'
+          ? await stripe.paymentIntents.retrieve(session.payment_intent)
+          : session.payment_intent;
+
+        console.log('Processing checkout session:', {
+          sessionId: session.id,
+          orderId,
+          paymentIntentId: paymentIntent.id,
+          status: paymentIntent.status
+        });
+
+        // Prepare payment intent data for storage
+        const paymentIntentData = {
+          id: paymentIntent.id,
+          status: paymentIntent.status,
+          amount: paymentIntent.amount,
+          currency: paymentIntent.currency,
+          customer: paymentIntent.customer,
+          payment_method: paymentIntent.payment_method,
+          created: paymentIntent.created,
+          metadata: paymentIntent.metadata,
+          receipt_email: paymentIntent.receipt_email,
+          description: paymentIntent.description,
+          last_payment_error: paymentIntent.last_payment_error,
+          next_action: paymentIntent.next_action,
+          shipping: paymentIntent.shipping,
+          amount_received: paymentIntent.amount_received,
+          amount_capturable: paymentIntent.amount_capturable,
+          amount_details: paymentIntent.amount_details,
+          application: paymentIntent.application,
+          application_fee_amount: paymentIntent.application_fee_amount,
+          automatic_payment_methods: paymentIntent.automatic_payment_methods,
+          canceled_at: paymentIntent.canceled_at,
+          cancellation_reason: paymentIntent.cancellation_reason,
+          capture_method: paymentIntent.capture_method,
+          client_secret: paymentIntent.client_secret,
+          confirmation_method: paymentIntent.confirmation_method,
+          payment_method_types: paymentIntent.payment_method_types,
+          processing: paymentIntent.processing,
+          setup_future_usage: paymentIntent.setup_future_usage,
+          transfer_data: paymentIntent.transfer_data,
+          transfer_group: paymentIntent.transfer_group,
+        };
+
+        // Update order directly in database
+        const { error: updateError } = await supabase
           .from('orders')
-          .update({ status: orderStatuses.CANCELLED })
-          .eq('id', session.metadata?.orderId);
+          .update({
+            payment_status: paymentIntent.status,
+            payment_intent: paymentIntentData,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', orderId);
+
+        if (updateError) {
+          console.error('Failed to update order:', updateError);
+          return NextResponse.json(
+            { error: 'Failed to update order' },
+            { status: 500 }
+          );
+        }
+
+        console.log('Successfully updated order:', {
+          orderId,
+          status: paymentIntent.status
+        });
         break;
       }
     }
@@ -80,4 +210,4 @@ export async function POST(req: Request) {
       { status: 400 }
     );
   }
-} 
+}

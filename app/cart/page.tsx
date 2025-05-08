@@ -84,27 +84,6 @@ export default function CartPage() {
       
       const session = await response.json();
       console.log('Checkout session created:', session);
-
-      // Create order in database with session ID
-      const orderResponse = await fetch('/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          characterName,
-          items: checkoutItems,
-          totalAmount: totalPrice,
-          currency: currency.toLowerCase(),
-          sessionId: session.id,
-        }),
-      });
-
-      if (!orderResponse.ok) {
-        const errorData = await orderResponse.json();
-        console.error('Order creation failed:', errorData);
-        throw new Error(errorData.error || 'Failed to create order');
-      }
       
       console.log('Redirecting to Stripe checkout...');
       // Redirect to Stripe checkout

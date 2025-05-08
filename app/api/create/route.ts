@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
-import { cookies } from 'next/headers';
+import { createClient } from "@/utils/supabase/server";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('STRIPE_SECRET_KEY is not defined in environment variables');
@@ -29,7 +29,46 @@ export async function POST(req: Request) {
       );
     }
 
-    // Create Stripe checkout session with pre-converted prices
+    // Get authenticated user
+    const supabaseServer = await createClient();
+    const { data: { user }, error: userError } = await supabaseServer.auth.getUser();
+
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // Calculate total amount
+    const totalAmount = items.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+
+    // Create order in database first
+    const { data: order, error: orderError } = await supabaseServer
+      .from('orders')
+      .insert({
+        character_name: characterName,
+        email: user.email,
+        items: items,
+        total_amount: totalAmount,
+        currency: currency.toLowerCase(),
+        status: 'pending',
+        user_id: user.id,
+        payment_status: 'pending',
+    
+      })
+      .select()
+      .single();
+
+    if (orderError) {
+      console.error('Error creating order:', orderError);
+      return NextResponse.json(
+        { error: 'Failed to create order' },
+        { status: 500 }
+      );
+    }
+
+    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: items.map((item) => ({
@@ -47,7 +86,18 @@ export async function POST(req: Request) {
       success_url: `${req.headers.get('origin')}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get('origin')}/cart`,
       metadata: {
+        orderId: order.id,
         characterName,
+        userId: user.id,
+      },
+      payment_intent_data: {
+        metadata: {
+          orderId: order.id,
+          characterName,
+          userId: user.id,
+        },
+        receipt_email: user.email,
+        description: `Order for ${characterName}`,
       },
     });
 
@@ -57,6 +107,17 @@ export async function POST(req: Request) {
       currency: currency.toLowerCase(),
       amount: items.reduce((total, item) => total + (item.product.price * item.quantity), 0)
     });
+
+    // Update order with session ID
+    const { error: updateError } = await supabaseServer
+      .from('orders')
+      .update({ stripe_session_id: session.id })
+      .eq('id', order.id);
+
+    if (updateError) {
+      console.error('Error updating order with session ID:', updateError);
+      // Continue anyway since the order is created and session is valid
+    }
 
     return NextResponse.json({ id: session.id });
   } catch (error) {

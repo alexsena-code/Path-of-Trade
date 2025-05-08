@@ -1,55 +1,91 @@
-import { supabase } from '@/lib/db';
-import { NextResponse } from 'next/server';
-
-const orderStatuses = {
-  PENDING: "pending",
-  PAYMENT_APPROVED: "payment_approved",
-  PAYMENT_FAILED: "payment_failed",
-  COMPLETED: "completed",
-  CANCELLED: "cancelled",
-} as const;
+import { NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   try {
     const { characterName, items, totalAmount, currency, sessionId } = await req.json();
 
-    console.log('Creating order with data:', {
-      characterName,
-      items,
-      totalAmount,
-      sessionId
-    });
+    // Get authenticated user
+    const cookieStore = cookies();
+    const supabase = await createClient();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-    // Create order in Supabase
-    const { data: order, error } = await supabase
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // Create order in database
+    const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert({
         character_name: characterName,
+        email: user.email,
         items: items,
-        total_amount: totalAmount,
-        currency: currency.toLowerCase(), // Store currency in lowercase
-        status: orderStatuses.PENDING,
+        currency: currency.toLowerCase(),
+        status: 'pending',
+        user_id: user.id,
         stripe_session_id: sessionId,
-        email: '', // Will be updated when payment is confirmed
+        payment_status: 'pending',
       })
       .select()
       .single();
 
-    if (error) {
-      console.error('Supabase error:', error);
-      throw new Error(`Database error: ${error.message}`);
+    if (orderError) {
+      console.error('Error creating order:', orderError);
+      return NextResponse.json(
+        { error: 'Failed to create order' },
+        { status: 500 }
+      );
     }
 
-    if (!order) {
-      throw new Error('No order returned from database');
-    }
-
-    return NextResponse.json({ orderId: order.id });
+    return NextResponse.json(order);
   } catch (error) {
-    console.error('Error creating order:', error);
+    console.error('Error in orders POST:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to create order' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
-} 
+}
+
+export async function GET(req: Request) {
+  try {
+    // Get authenticated user
+    const supabase = await createClient();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // Get user's orders
+    const { data: orders, error: ordersError } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (ordersError) {
+      console.error('Error fetching orders:', ordersError);
+      return NextResponse.json(
+        { error: 'Failed to fetch orders' },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(orders);
+  } catch (error) {
+    console.error('Error in orders GET:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

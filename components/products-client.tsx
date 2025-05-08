@@ -29,7 +29,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
   const filteredList = filterTags(products);
 
   return (
-    <div className="border rounded-r-lg py-4 md:min-h-[678px] bg-black/5">
+    <div className="border rounded-r-lg py-4 md:min-h-[678px] bg-black/5 ">
       <nav className="mb-2 flex flex-wrap gap-2 px-3" aria-label="Filters">
         {buttons.map((label) => (
           <Button
@@ -46,7 +46,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
         ))}
       </nav>
 
-      <div className="flex flex-wrap justify-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {!isLoaded ? (
           // Show skeletons while loading
           Array(4).fill(0).map((_, index) => (
