@@ -1,8 +1,7 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
-    domains: ['github.com', 'avatars.githubusercontent.com'],
+    domains: ['avatars.githubusercontent.com'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -21,7 +20,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  headers: async () => {
+  async headers() {
     return [
       {
         source: '/:path*',
@@ -48,4 +47,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig; 
