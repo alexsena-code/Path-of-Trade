@@ -6,54 +6,39 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-04-30.basil",
 });
 
-// Helper function to get appropriate order status from payment event type
-function getOrderStatusFromEvent(eventType: string): string {
-  switch (eventType) {
-    case 'payment_intent.succeeded':
+// Helper function to get order status from payment intent status
+function getOrderStatusFromPaymentStatus(paymentStatus: string): string {
+  switch (paymentStatus) {
+    case 'succeeded':
       return 'waiting_delivery';
-    case 'payment_intent.payment_failed':
-      return 'failed';
-    case 'payment_intent.canceled':
-      return 'canceled';
-    default:
+    case 'requires_payment_method':
+    case 'requires_confirmation':
+    case 'requires_action':
       return 'processing';
+    case 'canceled':
+      return 'canceled';
+    case 'failed':
+    default:
+      return 'failed';
   }
 }
 
-// Helper function to update an order with payment data
+// Unified order update function
 async function updateOrder(baseUrl: string, orderId: string, options: {
   status?: string;
   payment_status?: string;
   paymentIntent?: Stripe.PaymentIntent;
   stripe_session_id?: string;
 }) {
-  console.log(`Updating order ${orderId} via API`);
-  
-  // Construct the API endpoint URL
   const updateEndpoint = `${baseUrl}/api/orders/update`;
-  
-  // Build request body with only the properties that are provided
   const requestBody: any = { orderId };
-  
-  // Add overall order status if provided
-  if (options.status) {
-    requestBody.status = options.status;
-    console.log(`Setting order status to: ${options.status}`);
-  }
-  
-  // Add payment status if provided
-  if (options.payment_status) {
-    requestBody.payment_status = options.payment_status;
-    console.log(`Setting payment status to: ${options.payment_status}`);
-  }
-  
-  // Add stripe session ID if provided
-  if (options.stripe_session_id) {
-    requestBody.stripe_session_id = options.stripe_session_id;
-    console.log(`Setting stripe session ID: ${options.stripe_session_id}`);
-  }
-  
-  // Add payment intent if provided
+
+  console.log(`Updating order ${orderId} with:`, options);
+
+  if (options.status) requestBody.status = options.status;
+  if (options.payment_status) requestBody.payment_status = options.payment_status;
+  if (options.stripe_session_id) requestBody.stripe_session_id = options.stripe_session_id;
+
   if (options.paymentIntent) {
     requestBody.paymentIntent = {
       id: options.paymentIntent.id,
@@ -66,201 +51,121 @@ async function updateOrder(baseUrl: string, orderId: string, options: {
       metadata: options.paymentIntent.metadata,
       receipt_email: options.paymentIntent.receipt_email,
     };
-    console.log(`Including payment intent: ${options.paymentIntent.id}`);
-    
-    // If payment_status is not explicitly set but we have a paymentIntent,
-    // use the payment intent status as payment_status
-    if (!options.payment_status) {
-      requestBody.payment_status = options.paymentIntent.status;
-      console.log(`Setting payment status from intent: ${options.paymentIntent.status}`);
-    }
   }
-  
-  console.log("Request payload:", JSON.stringify(requestBody));
-  
-  const response = await fetch(updateEndpoint, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(requestBody)
-  });
 
-  let responseData;
   try {
-    responseData = await response.json();
-    console.log(`API response status: ${response.status}, data:`, responseData);
-  } catch (e) {
-    const text = await response.text();
-    console.log(`API response status: ${response.status}, text:`, text);
-    responseData = { text };
-  }
-  
-  if (!response.ok) {
-    console.error('Failed to update order:', responseData);
-    throw new Error(`Failed to update order: API returned ${response.status}`);
-  }
+    const response = await fetch(updateEndpoint, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody),
+    });
 
-  console.log(`Order ${orderId} successfully updated`);
-  return responseData;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`API Error ${response.status}: ${errorText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Order update failed:', error);
+    throw error;
+  }
 }
 
-// Process payment intent events
-async function handlePaymentIntent(event: Stripe.Event, baseUrl: string) {
+// Checkout session handler
+async function handleCheckoutSession(event: Stripe.Event, baseUrl: string) {
+  const session = event.data.object as Stripe.Checkout.Session;
+  const orderId = session.metadata?.orderId;
+
+  if (!orderId) {
+    throw new Error(`Missing order ID in session: ${session.id}`);
+  }
+
+  // Retrieve latest payment intent status
+  const paymentIntent = await stripe.paymentIntents.retrieve(
+    session.payment_intent as string
+  );
+
+  console.log(`Checkout session ${session.id} processed`, {
+    paymentStatus: paymentIntent.status,
+    orderId
+  });
+
+  return updateOrder(baseUrl, orderId, {
+    status: getOrderStatusFromPaymentStatus(paymentIntent.status),
+    payment_status: paymentIntent.status,
+    paymentIntent: paymentIntent,
+    stripe_session_id: session.id
+  });
+}
+
+// Payment failure handler
+async function handlePaymentFailure(event: Stripe.Event, baseUrl: string) {
   const paymentIntent = event.data.object as Stripe.PaymentIntent;
   const orderId = paymentIntent.metadata?.orderId;
 
   if (!orderId) {
-    throw new Error(`No order ID in payment intent metadata: ${paymentIntent.id}`);
+    throw new Error(`Missing order ID in payment intent: ${paymentIntent.id}`);
   }
 
-  console.log(`Processing payment intent: ${paymentIntent.id} for order: ${orderId}, event: ${event.type}`);
-  
-  // Get order status from the event type
-  const orderStatus = getOrderStatusFromEvent(event.type);
-  
-  // Update with both status and payment status
-  return await updateOrder(baseUrl, orderId, {
-    status: orderStatus,
-    payment_status: paymentIntent.status,
+  console.error(`Payment failed for order ${orderId}`, {
+    error: paymentIntent.last_payment_error,
+    status: paymentIntent.status
+  });
+
+  return updateOrder(baseUrl, orderId, {
+    status: 'failed',
+    payment_status: 'failed',
     paymentIntent: paymentIntent
   });
 }
 
-// For status-only updates (no payment data needed)
-async function updateOrderStatus(baseUrl: string, orderId: string, status: string) {
-  return await updateOrder(baseUrl, orderId, { status });
-}
-
-// For payment-status updates (no order status change)
-async function updatePaymentStatus(baseUrl: string, orderId: string, paymentStatus: string) {
-  return await updateOrder(baseUrl, orderId, { payment_status: paymentStatus });
-}
-
-// Process checkout session events
-async function handleCheckoutSession(event: Stripe.Event, baseUrl: string) {
-  const session = event.data.object as Stripe.Checkout.Session;
-  const orderId = session.metadata?.orderId;
-  
-  if (!orderId) {
-    throw new Error(`No order ID in session metadata: ${session.id}`);
-  }
-
-  if (!session.payment_intent) {
-    throw new Error(`No payment intent in session: ${session.id}`);
-  }
-
-  // Get payment intent details
-  const paymentIntent = typeof session.payment_intent === 'string'
-    ? await stripe.paymentIntents.retrieve(session.payment_intent)
-    : session.payment_intent;
-
-  console.log(`Processing checkout session: ${session.id} for order: ${orderId}, payment: ${paymentIntent.id}`);
-  
-  // For checkout sessions completed, we typically want to set to 'waiting_delivery' if the payment succeeded
-  let statusOverride = null;
-  if (event.type === 'checkout.session.completed' && paymentIntent.status === 'succeeded') {
-    statusOverride = 'waiting_delivery';
-  }
-  
-  return await updateOrder(
-    baseUrl, 
-    orderId, 
-    {
-      status: statusOverride || getOrderStatusFromEvent(paymentIntent.status),
-      payment_status: paymentIntent.status,
-      paymentIntent: paymentIntent,
-      stripe_session_id: session.id
-    }
-  );
-}
-
+// Main webhook handler
 export async function POST(req: Request) {
   try {
-    // Validate request method
-    if (req.method !== 'POST') {
-      return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
-    }
-
-    // Validate request body
     const body = await req.text();
-    if (!body) {
-      return NextResponse.json({ error: 'Empty request body' }, { status: 400 });
-    }
-
     const headersList = await headers();
     const signature = headersList.get('stripe-signature');
 
     if (!signature) {
-      return NextResponse.json({ error: 'No signature' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
     }
 
-    if (!process.env.STRIPE_WEBHOOK_SECRET || !process.env.STRIPE_SECRET_KEY) {
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-    }
+    const event = stripe.webhooks.constructEvent(
+      body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET!
+    );
 
-    // Verify webhook signature
-    let event;
-    try {
-      event = stripe.webhooks.constructEvent(
-        body,
-        signature,
-        process.env.STRIPE_WEBHOOK_SECRET
-      );
-    } catch (err) {
-      console.error('Webhook signature verification failed:', err);
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
-    }
-
-    console.log(`Webhook event received: ${event.type} (${event.id})`);
-    
-    // Get the base URL from the request for API calls
     const baseUrl = new URL(req.url).origin;
 
-    // Handle different event types
-    let result;
     switch (event.type) {
-      case 'payment_intent.succeeded':
-        console.log('Payment succeeded event received');
-        result = await handlePaymentIntent(event, baseUrl);
-        break;
-        
-      case 'payment_intent.payment_failed':
-        console.log('Payment failed event received');
-        // Log additional details about the failure
-        const failedPaymentIntent = event.data.object as Stripe.PaymentIntent;
-        console.log('Payment failure details:', {
-          id: failedPaymentIntent.id,
-          error: failedPaymentIntent.last_payment_error,
-          status: failedPaymentIntent.status
-        });
-        result = await handlePaymentIntent(event, baseUrl);
-        break;
-        
-      case 'payment_intent.canceled':
-        console.log('Payment canceled event received');
-        result = await handlePaymentIntent(event, baseUrl);
+      case 'checkout.session.completed':
+        await handleCheckoutSession(event, baseUrl);
         break;
 
-      case 'checkout.session.completed':
-        console.log('Checkout session completed event received');
-        result = await handleCheckoutSession(event, baseUrl);
+      case 'payment_intent.payment_failed':
+        await handlePaymentFailure(event, baseUrl);
         break;
-        
+
+      case 'payment_intent.succeeded':
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        await updateOrder(baseUrl, paymentIntent.metadata.orderId, {
+          status: 'waiting_delivery',
+          payment_status: 'succeeded',
+          paymentIntent: paymentIntent
+        });
+        break;
+
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        console.warn(`Unhandled event type: ${event.type}`);
     }
 
-    console.log('Webhook processed successfully');
-    return NextResponse.json({ received: true, processed: !!result });
+    return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('Webhook error:', error instanceof Error ? error.message : 'Unknown error');
-    
+    console.error('Webhook processing failed:', error);
     return NextResponse.json(
-      { 
-        error: 'Webhook handler failed',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      },
+      { error: 'Webhook handler failed', details: (error as Error).message },
       { status: 400 }
     );
   }
