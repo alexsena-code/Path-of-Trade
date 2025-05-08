@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/db";
+import { createClient } from "@/utils/supabase/client";
 import { Card } from "@/components/ui/card";
-import { Loader2, Package, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Loader2, Package, Clock, CheckCircle, XCircle, ChevronRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import type { Order } from "@/types";
 
 const formatPrice = (price: number, currency: string = 'USD') => {
   return price.toLocaleString('en-US', { 
@@ -12,8 +16,8 @@ const formatPrice = (price: number, currency: string = 'USD') => {
   });
 };
 
-const getStatusIcon = (status: string) => {
-  switch (status) {
+const getStatusIcon = (status: string | null) => {
+  switch (status?.toLowerCase()) {
     case 'completed':
       return <CheckCircle className="h-4 w-4 text-green-500" />;
     case 'pending':
@@ -23,6 +27,24 @@ const getStatusIcon = (status: string) => {
     default:
       return <Package className="h-4 w-4 text-gray-500" />;
   }
+};
+
+const getPaymentStatusIcon = (status: string | null) => {
+  switch (status?.toLowerCase()) {
+    case 'succeeded':
+      return <CheckCircle className="h-4 w-4 text-green-500" />;
+    case 'pending':
+      return <Clock className="h-4 w-4 text-yellow-500" />;
+    case 'failed':
+      return <XCircle className="h-4 w-4 text-red-500" />;
+    default:
+      return <Package className="h-4 w-4 text-gray-500" />;
+  }
+};
+
+const formatStatus = (status: string | null) => {
+  if (!status) return 'Unknown';
+  return status.charAt(0).toUpperCase() + status.slice(1);
 };
 
 const getStatusColor = (status: string) => {
@@ -38,37 +60,32 @@ const getStatusColor = (status: string) => {
   }
 };
 
-type Order = {
-  id: number;
-  character_name: string;
-  status: string;
-  total_amount: number;
-  currency: string;
-  items: Array<{
-    product: {
-      name: string;
-      description: string;
-      price: number;
-    };
-    quantity: number;
-  }>;
-  created_at: string;
-};
-
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const supabase = createClient();
 
   useEffect(() => {
     async function fetchOrders() {
       try {
+        // Get current session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) throw sessionError;
+        if (!session?.user) {
+          router.push('/login');
+          return;
+        }
+
+        // Fetch orders for current user
         const { data, error } = await supabase
           .from('orders')
           .select('*')
+          .eq('user_id', session.user.id)
           .order('created_at', { ascending: false });
 
         if (error) throw error;
-        console.log('Orders data:', data);
         setOrders(data || []);
       } catch (error) {
         console.error('Error fetching orders:', error);
@@ -78,7 +95,7 @@ export default function OrdersPage() {
     }
 
     fetchOrders();
-  }, []);
+  }, [router, supabase]);
 
   useEffect(() => {
     if (orders.length > 0) {
@@ -97,7 +114,7 @@ export default function OrdersPage() {
   if (orders.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Order History</h1>
+        <h1 className="text-2xl font-bold mb-8">My Orders</h1>
         <Card className="p-8 text-center">
           <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
           <h2 className="text-xl font-semibold mb-2">No Orders Yet</h2>
@@ -108,52 +125,77 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Order History</h1>
+    <div className="container mx-auto px-4 py-8 min-h-[70vh]">
+      <h1 className="text-2xl font-bold mb-8">My Orders</h1>
       
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-6 max-w-4xl mx-auto">
         {orders.map((order) => (
-          <Card key={order.id} className="p-6 hover:shadow-lg transition-shadow">
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="text-xl font-semibold">Order #{order.id}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {new Date(order.created_at).toLocaleDateString()} at {new Date(order.created_at).toLocaleTimeString()}
-                </p>
-                <p className="mt-2 flex items-center gap-2">
-                  <span className="font-medium">Character:</span>
-                  {order.character_name}
-                </p>
+          <Card 
+            key={order.id} 
+            className="group relative overflow-hidden hover:shadow-lg transition-all duration-300"
+          >
+            <div className="p-8">
+              <div className="flex justify-between items-start mb-8">
+                <div>
+                  <h2 className="text-2xl font-medium">Order #{order.id}</h2>
+                  <p className="text-base text-muted-foreground mt-2">
+                    {new Date(order.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <Badge variant="outline" className="text-sm px-4 py-1">
+                    {order.character_name}
+                  </Badge>
+                  <p className="text-xl font-medium">{formatPrice(order.total_amount, order.currency)}</p>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="text-lg font-medium">{formatPrice(order.total_amount, order.currency)}</p>
-                <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs border ${getStatusColor(order.status)}`}>
-                  {getStatusIcon(order.status)}
-                  {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                </span>
+
+              <div className="space-y-6">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2 text-base">
+                    {getStatusIcon(order.status)}
+                    <span>Order: {formatStatus(order.status)}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-base">
+                    {getPaymentStatusIcon(order.payment_status)}
+                    <span>Payment: {formatStatus(order.payment_status)}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-muted-foreground">•</span>
+                  <div className="text-base text-muted-foreground">
+                    {order.items.length} items • {order.items.reduce((total, item) => total + item.quantity, 0)} total
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
+                  {order.items.slice(0, 2).map((item, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <span className="font-medium">{item.product?.name || 'Unknown Item'}</span>
+                      <span>× {item.quantity}</span>
+                    </div>
+                  ))}
+                  {order.items.length > 2 && (
+                    <div className="text-muted-foreground">
+                      +{order.items.length - 2} more items
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-            
-            <div className="mt-6 border-t pt-4">
-              <h3 className="font-medium mb-3">Items:</h3>
-              <ul className="space-y-3">
-                {order.items.map((item, index) => {
-                  const price = typeof item.product?.price === 'number' ? item.product.price : 0;
-                  const quantity = typeof item.quantity === 'number' ? item.quantity : 0;
-                  return (
-                    <li key={index} className="flex justify-between items-center bg-muted/50 p-3 rounded-lg">
-                      <div>
-                        <span className="font-medium">{item.product?.name || 'Unknown Item'}</span>
-                        <p className="text-sm text-muted-foreground">{item.product?.description || ''}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">{formatPrice(price * quantity, order.currency)}</p>
-                        <p className="text-sm text-muted-foreground">Qty: {quantity}</p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
+
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-0 left-0 right-0 p-8">
+                  <Button 
+                    variant="ghost" 
+                    className="w-full justify-between group-hover:bg-background/80 text-base py-7"
+                    onClick={() => router.push(`/orders/${order.id}`)}
+                  >
+                    View Full Order Details
+                    <ChevronRight className="h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </Card>
         ))}

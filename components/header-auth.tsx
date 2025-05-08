@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { MobileMenu } from "./mobile-menu";
-import { Settings } from "lucide-react";
+import { Settings, Package } from "lucide-react";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -34,9 +34,7 @@ export default async function AuthButton() {
   if (!hasEnvVars) {
     return (
       <div className="flex gap-4 items-center">
-        <Badge variant="default" className="font-normal pointer-events-none">
-          Please update .env.local file with anon key and url
-        </Badge>
+
         <div className="flex gap-2">
           <Button
             asChild
@@ -72,29 +70,19 @@ export default async function AuthButton() {
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel className="font-roboto text-sm font-bold">My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
+
+
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              Profile
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            <DropdownMenuItem asChild>
+              <Link href="/orders" className="flex items-center justify-between w-full">
+                <span className="font-roboto text-sm font-medium">My Orders</span>
+                <Package className="h-4 w-4 text-muted-foreground" />
+              </Link>
             </DropdownMenuItem>
-            <DropdownSettingsItem />
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem>Email</DropdownMenuItem>
-                  <DropdownMenuItem>Message</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>More...</DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
+  
+      
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <form action={signOutAction}>
@@ -102,7 +90,6 @@ export default async function AuthButton() {
               <button type="submit" className="w-full text-left">
                 Log out
               </button>
-              <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
             </DropdownMenuItem>
           </form>
         </DropdownMenuContent>
@@ -113,7 +100,7 @@ export default async function AuthButton() {
       <div className="flex-1 md:hidden" /> {/* Left spacer for mobile */}
       <div className="flex-1 flex justify-end items-center">
         <CurrencyIndicator />
-        <div className="hidden md:flex gap-2 ml-2">
+        <div className="hidden md:flex gap-2 mx-auto">
           <Button
             asChild
             className="text-white w-24 font-roboto text-sm font-bold bg-black 

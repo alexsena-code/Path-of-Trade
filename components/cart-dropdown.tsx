@@ -11,14 +11,27 @@ import {
 } from "./ui/dropdown-menu";
 import { Badge } from "./ui/badge";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function CartDropdown() {
   const { items, removeFromCart, updateQuantity, totalPrice, totalItems } = useCart();
   const { formatPrice, currency, convertPrice } = useCurrency();
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Return a simple button during server-side rendering and initial client render
+  if (!mounted) {
+    return (
+      <Button variant="ghost" size="icon" className="relative">
+        <ShoppingCart className="h-5 w-5" />
+      </Button>
+    );
+  }
 
   return (
-    
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
@@ -96,9 +109,8 @@ export default function CartDropdown() {
                 <span className="font-bold">{formatPrice(totalPrice)}</span>
               </div>
               <div className="flex gap-2">
-
-                <Button className="flex-1 bg-black border text-white hover:bg-white hover:text-black  font-bold transition-colors duration-200 " >
-                <Link href="/cart">Checkout</Link>
+                <Button className="flex-1 bg-black border text-white hover:bg-white hover:text-black font-bold transition-colors duration-200">
+                  <Link href="/cart">Checkout</Link>
                 </Button>
               </div>
             </div>

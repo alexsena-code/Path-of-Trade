@@ -13,6 +13,7 @@ import Image from "next/image";
 import { loadStripe } from "@stripe/stripe-js";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { createClient } from "@/utils/supabase/client";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -24,6 +25,7 @@ export default function CartPage() {
   const [isClient, setIsClient] = useState(false);
   const [characterName, setCharacterName] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const supabase = createClient();
 
   // Handle hydration mismatch
   useEffect(() => {
@@ -40,6 +42,15 @@ export default function CartPage() {
     setError(null);
 
     try {
+      // Check if user is authenticated
+      const { data: { session: authSession }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !authSession) {
+        toast.error("Please sign in to continue checkout");
+        router.push('/sign-in');
+        return;
+      }
+
       const stripe = await stripePromise;
       
       if (!stripe) {
@@ -82,13 +93,13 @@ export default function CartPage() {
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
       
-      const session = await response.json();
-      console.log('Checkout session created:', session);
+      const { id: sessionId } = await response.json();
+      console.log('Checkout session created:', sessionId);
       
       console.log('Redirecting to Stripe checkout...');
       // Redirect to Stripe checkout
       const result = await stripe.redirectToCheckout({
-        sessionId: session.id,
+        sessionId,
       });
       
       if (result.error) {

@@ -43,8 +43,7 @@ export function DropdownSettingsItem() {
           setOpen(true)
         }}
       >
-        Settings
-        <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+        <span className="font-roboto text-sm font-medium">Settings</span>  
       </DropdownMenuItem>
       
       <Dialog open={open} onOpenChange={setOpen}>
