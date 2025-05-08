@@ -28,8 +28,14 @@ async function updateOrder(baseUrl: string, orderId: string, options: {
 }) {
   console.log(`Updating order ${orderId} via API`);
   
+  // Validate baseUrl
+  if (!baseUrl) {
+    throw new Error('NEXT_PUBLIC_SITE_URL is not defined in environment variables');
+  }
+  
   // Construct the API endpoint URL
   const updateEndpoint = `${baseUrl}/api/orders/update`;
+  console.log(`Using update endpoint: ${updateEndpoint}`);
   
   // Build request body with only the properties that are provided
   const requestBody: any = { orderId };
@@ -71,31 +77,37 @@ async function updateOrder(baseUrl: string, orderId: string, options: {
   
   console.log("Request payload:", JSON.stringify(requestBody));
   
-  const response = await fetch(updateEndpoint, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(requestBody)
-  });
-
-  let responseData;
   try {
-    responseData = await response.json();
-    console.log(`API response status: ${response.status}, data:`, responseData);
-  } catch (e) {
-    const text = await response.text();
-    console.log(`API response status: ${response.status}, text:`, text);
-    responseData = { text };
-  }
+    const response = await fetch(updateEndpoint, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody)
+    });
   
-  if (!response.ok) {
-    console.error('Failed to update order:', responseData);
-    throw new Error(`Failed to update order: API returned ${response.status}`);
+    let responseData;
+    try {
+      responseData = await response.json();
+      console.log(`API response status: ${response.status}, data:`, responseData);
+    } catch (e) {
+      const text = await response.text();
+      console.log(`API response status: ${response.status}, text:`, text);
+      responseData = { text };
+    }
+    
+    if (!response.ok) {
+      console.error('Failed to update order:', responseData);
+      throw new Error(`Failed to update order: API returned ${response.status}`);
+    }
+  
+    console.log(`Order ${orderId} successfully updated`);
+    return responseData;
+  } catch (error) {
+    console.error(`Error updating order via API: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.error(`Make sure your server is running and NEXT_PUBLIC_SITE_URL (${baseUrl}) is accessible`);
+    throw error;
   }
-
-  console.log(`Order ${orderId} successfully updated`);
-  return responseData;
 }
 
 // Process payment intent events
@@ -167,10 +179,10 @@ async function handleCheckoutSession(event: Stripe.Event, baseUrl: string) {
   );
 }
 
-export async function POST(req: Request) {
+export async function PATCH(req: Request) {
   try {
     // Validate request method
-    if (req.method !== 'POST') {
+    if (req.method !== 'PATCH') {
       return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
     }
 
@@ -227,9 +239,28 @@ export async function POST(req: Request) {
         console.log('Payment failure details:', {
           id: failedPaymentIntent.id,
           error: failedPaymentIntent.last_payment_error,
-          status: failedPaymentIntent.status
+          status: failedPaymentIntent.status,
+          metadata: failedPaymentIntent.metadata
         });
-        result = await handlePaymentIntent(event, baseUrl);
+        
+        // For failed payments, always set the order status to failed
+        if (failedPaymentIntent.metadata?.orderId) {
+          try {
+            result = await handlePaymentIntent(event, baseUrl);
+          } catch (error) {
+            console.error(`Failed to handle payment intent: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            console.log(`Payment failed for order ${failedPaymentIntent.metadata.orderId}, but update failed`);
+            // Even if the API call fails, we'll return success to Stripe to prevent retries
+            result = { 
+              failed_but_acknowledged: true, 
+              order_id: failedPaymentIntent.metadata.orderId 
+            };
+          }
+        } else {
+          console.error(`No order ID in payment intent metadata: ${failedPaymentIntent.id}`);
+          // Return success to Stripe even if we couldn't process it
+          result = { no_order_id: true };
+        }
         break;
         
       case 'payment_intent.canceled':
