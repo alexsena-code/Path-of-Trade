@@ -10,10 +10,11 @@ import { Skeleton } from "./ui/skeleton";
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ErrorBoundaryWrapper } from "./error-boundary-wrapper";
 
 const ITEMS_PER_PAGE = 5;
 
-export default function OrderHistory() {
+function OrderHistoryContent() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -212,5 +213,13 @@ export default function OrderHistory() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function OrderHistory() {
+  return (
+    <ErrorBoundaryWrapper type="order">
+      <OrderHistoryContent />
+    </ErrorBoundaryWrapper>
   );
 }

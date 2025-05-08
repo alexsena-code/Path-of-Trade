@@ -12,8 +12,9 @@ import {
 import { Badge } from "./ui/badge";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ErrorBoundaryWrapper } from "./error-boundary-wrapper";
 
-export default function CartDropdown() {
+function CartDropdownContent() {
   const { items, removeFromCart, updateQuantity, totalPrice, totalItems } = useCart();
   const { formatPrice, currency, convertPrice } = useCurrency();
   const [mounted, setMounted] = useState(false);
@@ -118,5 +119,13 @@ export default function CartDropdown() {
         )}
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+export default function CartDropdown() {
+  return (
+    <ErrorBoundaryWrapper type="cart">
+      <CartDropdownContent />
+    </ErrorBoundaryWrapper>
   );
 } 
