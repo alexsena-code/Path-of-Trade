@@ -121,7 +121,7 @@ async function handlePaymentFailure(event: Stripe.Event, baseUrl: string) {
 }
 
 // Main webhook handler
-export async function POST(req: Request) {
+export async function PATCH(req: Request) {
   try {
     const body = await req.text();
     const headersList = await headers();
@@ -144,7 +144,7 @@ export async function POST(req: Request) {
         await handleCheckoutSession(event, baseUrl);
         break;
 
-      case 'payment_intent.payment_failed':
+      case 'payment_intent.payment_failed': 
         await handlePaymentFailure(event, baseUrl);
         break;
 
