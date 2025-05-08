@@ -25,17 +25,12 @@ async function updateOrder(baseUrl: string, orderId: string, options: {
   status?: string;
   payment_status?: string;
   paymentIntent?: Stripe.PaymentIntent;
+  stripe_session_id?: string;
 }) {
   console.log(`Updating order ${orderId} via API`);
   
-  // Validate baseUrl
-  if (!baseUrl) {
-    throw new Error('NEXT_PUBLIC_SITE_URL is not defined in environment variables');
-  }
-  
   // Construct the API endpoint URL
   const updateEndpoint = `${baseUrl}/api/orders/update`;
-  console.log(`Using update endpoint: ${updateEndpoint}`);
   
   // Build request body with only the properties that are provided
   const requestBody: any = { orderId };
@@ -50,6 +45,12 @@ async function updateOrder(baseUrl: string, orderId: string, options: {
   if (options.payment_status) {
     requestBody.payment_status = options.payment_status;
     console.log(`Setting payment status to: ${options.payment_status}`);
+  }
+  
+  // Add stripe session ID if provided
+  if (options.stripe_session_id) {
+    requestBody.stripe_session_id = options.stripe_session_id;
+    console.log(`Setting stripe session ID: ${options.stripe_session_id}`);
   }
   
   // Add payment intent if provided
@@ -77,37 +78,31 @@ async function updateOrder(baseUrl: string, orderId: string, options: {
   
   console.log("Request payload:", JSON.stringify(requestBody));
   
+  const response = await fetch(updateEndpoint, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestBody)
+  });
+
+  let responseData;
   try {
-    const response = await fetch(updateEndpoint, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody)
-    });
-  
-    let responseData;
-    try {
-      responseData = await response.json();
-      console.log(`API response status: ${response.status}, data:`, responseData);
-    } catch (e) {
-      const text = await response.text();
-      console.log(`API response status: ${response.status}, text:`, text);
-      responseData = { text };
-    }
-    
-    if (!response.ok) {
-      console.error('Failed to update order:', responseData);
-      throw new Error(`Failed to update order: API returned ${response.status}`);
-    }
-  
-    console.log(`Order ${orderId} successfully updated`);
-    return responseData;
-  } catch (error) {
-    console.error(`Error updating order via API: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    console.error(`Make sure your server is running and NEXT_PUBLIC_SITE_URL (${baseUrl}) is accessible`);
-    throw error;
+    responseData = await response.json();
+    console.log(`API response status: ${response.status}, data:`, responseData);
+  } catch (e) {
+    const text = await response.text();
+    console.log(`API response status: ${response.status}, text:`, text);
+    responseData = { text };
   }
+  
+  if (!response.ok) {
+    console.error('Failed to update order:', responseData);
+    throw new Error(`Failed to update order: API returned ${response.status}`);
+  }
+
+  console.log(`Order ${orderId} successfully updated`);
+  return responseData;
 }
 
 // Process payment intent events
@@ -174,15 +169,16 @@ async function handleCheckoutSession(event: Stripe.Event, baseUrl: string) {
     {
       status: statusOverride || getOrderStatusFromEvent(paymentIntent.status),
       payment_status: paymentIntent.status,
-      paymentIntent: paymentIntent
+      paymentIntent: paymentIntent,
+      stripe_session_id: session.id
     }
   );
 }
 
-export async function PATCH(req: Request) {
+export async function POST(req: Request) {
   try {
     // Validate request method
-    if (req.method !== 'PATCH') {
+    if (req.method !== 'POST') {
       return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
     }
 
@@ -219,10 +215,7 @@ export async function PATCH(req: Request) {
     console.log(`Webhook event received: ${event.type} (${event.id})`);
     
     // Get the base URL from the request for API calls
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || '';
-    if (!baseUrl) {
-      console.error('NEXT_PUBLIC_SITE_URL is not defined in environment variables');
-    }
+    const baseUrl = new URL(req.url).origin;
 
     // Handle different event types
     let result;
@@ -239,33 +232,14 @@ export async function PATCH(req: Request) {
         console.log('Payment failure details:', {
           id: failedPaymentIntent.id,
           error: failedPaymentIntent.last_payment_error,
-          status: failedPaymentIntent.status,
-          metadata: failedPaymentIntent.metadata
+          status: failedPaymentIntent.status
         });
-        
-        // For failed payments, always set the order status to failed
-        if (failedPaymentIntent.metadata?.orderId) {
-          try {
-            result = await handlePaymentIntent(event, baseUrl);
-          } catch (error) {
-            console.error(`Failed to handle payment intent: ${error instanceof Error ? error.message : 'Unknown error'}`);
-            console.log(`Payment failed for order ${failedPaymentIntent.metadata.orderId}, but update failed`);
-            // Even if the API call fails, we'll return success to Stripe to prevent retries
-            result = { 
-              failed_but_acknowledged: true, 
-              order_id: failedPaymentIntent.metadata.orderId 
-            };
-          }
-        } else {
-          console.error(`No order ID in payment intent metadata: ${failedPaymentIntent.id}`);
-          // Return success to Stripe even if we couldn't process it
-          result = { no_order_id: true };
-        }
+        result = await handlePaymentIntent(event, baseUrl);
         break;
         
       case 'payment_intent.canceled':
         console.log('Payment canceled event received');
-        result = await handleCheckoutSession(event, baseUrl);
+        result = await handlePaymentIntent(event, baseUrl);
         break;
 
       case 'checkout.session.completed':
