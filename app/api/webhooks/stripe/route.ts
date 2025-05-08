@@ -30,7 +30,7 @@ async function updateOrder(baseUrl: string, orderId: string, options: {
   console.log(`Updating order ${orderId} via API`);
   
   // Construct the API endpoint URL
-  const updateEndpoint = `${baseUrl}/api/orders/update`;
+  const updateEndpoint = `/api/orders/update`;
   
   // Build request body with only the properties that are provided
   const requestBody: any = { orderId };

@@ -82,8 +82,8 @@ export async function POST(req: Request) {
         quantity: item.quantity,
       })),
       mode: "payment",
-      success_url: `${req.headers.get('origin')}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get('origin')}/cart`,
+      success_url: `/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `/cart`,
       metadata: {
         orderId: order.id,
         characterName,
