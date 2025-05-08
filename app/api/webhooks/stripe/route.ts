@@ -168,7 +168,7 @@ export async function POST(req: Request) {
             status: mapStripeStatusToOrderStatus(paymentIntent.status),
             paymentIntent: {
               id: paymentIntent.id,
-              status: paymentIntent.status,
+              payment_status: paymentIntent.status,
               amount: paymentIntent.amount,
               currency: paymentIntent.currency,
               customer: paymentIntent.customer,
