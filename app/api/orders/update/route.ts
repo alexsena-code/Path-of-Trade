@@ -71,7 +71,6 @@ export async function PATCH(req: Request) {
     const { data: updatedOrder, error: updateError } = await supabase
       .from('orders')
       .update({
-        status,
         payment_status: paymentIntent?.status || 'pending',
         updated_at: new Date().toISOString(),
         payment_intent: paymentIntent,
