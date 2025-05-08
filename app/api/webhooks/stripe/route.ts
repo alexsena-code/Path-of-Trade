@@ -125,8 +125,11 @@ export async function POST(req: Request) {
           status: paymentIntent.status
         });
 
-        // Call the orders update API
-        const response = await fetch('/api/orders/update', {
+        // Get the base URL from the request
+        const baseUrl = new URL(req.url).origin;
+        
+        // Call the orders update API with absolute URL
+        const response = await fetch(`${baseUrl}/api/orders/update`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -216,14 +219,18 @@ export async function POST(req: Request) {
           status: paymentIntent.status
         });
 
-        // Call the orders update API
-        const response = await fetch('/api/orders/update', {
+        // Get the base URL from the request
+        const baseUrl = new URL(req.url).origin;
+
+        // Call the orders update API with absolute URL
+        const response = await fetch(`${baseUrl}/api/orders/update`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             orderId,
+            status: mapStripeStatusToOrderStatus(paymentIntent.status),
             paymentIntent: {
               id: paymentIntent.id,
               status: paymentIntent.status,
