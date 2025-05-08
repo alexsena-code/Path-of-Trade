@@ -54,6 +54,7 @@ export async function POST(req: Request) {
         total_amount: totalAmount,
         currency: currency.toLowerCase(),
         user_id: user.id,
+
       })
       .select()
       .single();
@@ -106,6 +107,21 @@ export async function POST(req: Request) {
       amount: items.reduce((total, item) => total + (item.product.price * item.quantity), 0)
     });
 
+    // Update order with the stripe session ID
+    const { error: updateError } = await supabaseServer
+      .from('orders')
+      .update({
+        stripe_session_id: session.id,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', order.id);
+
+    if (updateError) {
+      console.error('Error updating order with session ID:', updateError);
+      // Continue anyway as this is not critical
+    } else {
+      console.log(`Order ${order.id} updated with Stripe session ID: ${session.id}`);
+    }
 
     return NextResponse.json({ id: session.id });
   } catch (error) {

@@ -25,6 +25,7 @@ async function updateOrder(baseUrl: string, orderId: string, options: {
   status?: string;
   payment_status?: string;
   paymentIntent?: Stripe.PaymentIntent;
+  stripe_session_id?: string;
 }) {
   console.log(`Updating order ${orderId} via API`);
   
@@ -44,6 +45,12 @@ async function updateOrder(baseUrl: string, orderId: string, options: {
   if (options.payment_status) {
     requestBody.payment_status = options.payment_status;
     console.log(`Setting payment status to: ${options.payment_status}`);
+  }
+  
+  // Add stripe session ID if provided
+  if (options.stripe_session_id) {
+    requestBody.stripe_session_id = options.stripe_session_id;
+    console.log(`Setting stripe session ID: ${options.stripe_session_id}`);
   }
   
   // Add payment intent if provided
@@ -162,7 +169,8 @@ async function handleCheckoutSession(event: Stripe.Event, baseUrl: string) {
     {
       status: statusOverride || getOrderStatusFromEvent(paymentIntent.status),
       payment_status: paymentIntent.status,
-      paymentIntent: paymentIntent
+      paymentIntent: paymentIntent,
+      stripe_session_id: session.id
     }
   );
 }

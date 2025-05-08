@@ -3,13 +3,14 @@ import { createClient } from "@/utils/supabase/server";
 
 export async function PATCH(req: Request) {
   try {
-    const { orderId, status, payment_status, paymentIntent } = await req.json();
+    const { orderId, status, payment_status, paymentIntent, stripe_session_id } = await req.json();
 
     console.log('Received order update request:', {
       orderId,
       status,
       payment_status,
-      hasPaymentIntent: !!paymentIntent
+      hasPaymentIntent: !!paymentIntent,
+      stripe_session_id
     });
 
     // Validate required fields
@@ -21,11 +22,11 @@ export async function PATCH(req: Request) {
       );
     }
 
-    // At least one of status or payment_status is required
-    if (!status && !payment_status && !paymentIntent) {
+    // At least one of status, payment_status, paymentIntent or stripe_session_id is required
+    if (!status && !payment_status && !paymentIntent && !stripe_session_id) {
       console.error('No update fields provided');
       return NextResponse.json(
-        { error: 'At least one of status, payment_status, or paymentIntent is required' },
+        { error: 'At least one of status, payment_status, paymentIntent, or stripe_session_id is required' },
         { status: 400 }
       );
     }
@@ -65,6 +66,10 @@ export async function PATCH(req: Request) {
     
     if (paymentIntent) {
       updateData.payment_intent = paymentIntent;
+    }
+
+    if (stripe_session_id) {
+      updateData.stripe_session_id = stripe_session_id;
     }
 
     console.log('Updating order with:', updateData);
