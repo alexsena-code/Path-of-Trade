@@ -74,7 +74,7 @@ export async function PATCH(req: Request) {
         status,
         payment_status: paymentIntent?.status || 'pending',
         updated_at: new Date().toISOString(),
-        payment_intentId: paymentIntent?.id || null,
+        payment_intent: paymentIntent,
       })
       .eq('id', orderId)
       .select()

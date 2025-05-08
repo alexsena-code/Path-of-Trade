@@ -28,19 +28,12 @@ export async function POST(req: Request) {
     const headersList = await headers();
     const signature = headersList.get('stripe-signature');
 
-    console.log('Received webhook request:', {
-      hasSignature: !!signature,
-      hasWebhookSecret: !!process.env.STRIPE_WEBHOOK_SECRET,
-      siteUrl: process.env.NEXT_PUBLIC_SITE_URL
-    });
-
     if (!signature) {
       console.error('Missing Stripe signature');
       return NextResponse.json({ error: 'No signature' }, { status: 400 });
     }
 
     if (!process.env.STRIPE_WEBHOOK_SECRET) {
-      console.error('Missing STRIPE_WEBHOOK_SECRET');
       throw new Error('Missing STRIPE_WEBHOOK_SECRET');
     }
 
@@ -50,11 +43,6 @@ export async function POST(req: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET
     );
-
-    console.log('Webhook event received:', {
-      type: event.type,
-      id: event.id
-    });
 
     // Handle the event
     switch (event.type) {
@@ -79,7 +67,7 @@ export async function POST(req: Request) {
           status: paymentIntent.status
         });
 
-        // Call the orders update API using relative URL
+        // Call the orders update API
         const response = await fetch('/api/orders/update', {
           method: 'PATCH',
           headers: {
@@ -87,6 +75,7 @@ export async function POST(req: Request) {
           },
           body: JSON.stringify({
             orderId,
+            status: mapStripeStatusToOrderStatus(paymentIntent.status),
             paymentIntent: {
               id: paymentIntent.id,
               status: paymentIntent.status,
@@ -169,7 +158,7 @@ export async function POST(req: Request) {
           status: paymentIntent.status
         });
 
-        // Call the orders update API using relative URL
+        // Call the orders update API
         const response = await fetch('/api/orders/update', {
           method: 'PATCH',
           headers: {
@@ -177,10 +166,9 @@ export async function POST(req: Request) {
           },
           body: JSON.stringify({
             orderId,
-            status: mapStripeStatusToOrderStatus(paymentIntent.status),
             paymentIntent: {
               id: paymentIntent.id,
-              payment_status: paymentIntent.status,
+              status: paymentIntent.status,
               amount: paymentIntent.amount,
               currency: paymentIntent.currency,
               customer: paymentIntent.customer,
