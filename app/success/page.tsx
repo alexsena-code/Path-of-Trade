@@ -10,7 +10,6 @@ interface SessionData {
   status: string;
   customer_email: string;
   amount_total: number;
-  payment_status: string;
   metadata: {
     orderId?: string;
   };

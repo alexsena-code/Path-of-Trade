@@ -1,24 +1,14 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
-// Define valid order statuses
-const validStatuses = [
-  'pending',
-  'processing',
-  'completed',
-  'cancelled',
-  'failed'
-] as const;
-
-type OrderStatus = typeof validStatuses[number];
-
 export async function PATCH(req: Request) {
   try {
-    const { orderId, status, paymentIntent } = await req.json();
+    const { orderId, status, payment_status, paymentIntent } = await req.json();
 
     console.log('Received order update request:', {
       orderId,
       status,
+      payment_status,
       hasPaymentIntent: !!paymentIntent
     });
 
@@ -31,19 +21,11 @@ export async function PATCH(req: Request) {
       );
     }
 
-    if (!status) {
-      console.error('Missing status in request');
+    // At least one of status or payment_status is required
+    if (!status && !payment_status && !paymentIntent) {
+      console.error('No update fields provided');
       return NextResponse.json(
-        { error: 'Status is required' },
-        { status: 400 }
-      );
-    }
-
-    // Validate status
-    if (!validStatuses.includes(status as OrderStatus)) {
-      console.error('Invalid status:', status);
-      return NextResponse.json(
-        { error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` },
+        { error: 'At least one of status, payment_status, or paymentIntent is required' },
         { status: 400 }
       );
     }
@@ -67,14 +49,30 @@ export async function PATCH(req: Request) {
 
     console.log('Found existing order:', existingOrder);
 
-    // Update the order status and payment intent
+    // Build the update object based on what was provided
+    const updateData: any = {
+      updated_at: new Date().toISOString(),
+    };
+
+    // Only add fields that were provided
+    if (status) {
+      updateData.status = status;
+    }
+    
+    if (payment_status) {
+      updateData.payment_status = payment_status;
+    }
+    
+    if (paymentIntent) {
+      updateData.payment_intent = paymentIntent;
+    }
+
+    console.log('Updating order with:', updateData);
+
+    // Update the order
     const { data: updatedOrder, error: updateError } = await supabase
       .from('orders')
-      .update({
-        payment_status: paymentIntent?.status || 'pending',
-        updated_at: new Date().toISOString(),
-        payment_intent: paymentIntent,
-      })
+      .update(updateData)
       .eq('id', orderId)
       .select()
       .single();

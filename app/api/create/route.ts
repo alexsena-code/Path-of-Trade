@@ -48,14 +48,12 @@ export async function POST(req: Request) {
       .from('orders')
       .insert({
         character_name: characterName,
+        status: 'processing',
         email: user.email,
         items: items,
         total_amount: totalAmount,
         currency: currency.toLowerCase(),
-        status: 'pending',
         user_id: user.id,
-        payment_status: 'pending',
-    
       })
       .select()
       .single();
@@ -108,16 +106,6 @@ export async function POST(req: Request) {
       amount: items.reduce((total, item) => total + (item.product.price * item.quantity), 0)
     });
 
-    // Update order with session ID
-    const { error: updateError } = await supabaseServer
-      .from('orders')
-      .update({ stripe_session_id: session.id })
-      .eq('id', order.id);
-
-    if (updateError) {
-      console.error('Error updating order with session ID:', updateError);
-      // Continue anyway since the order is created and session is valid
-    }
 
     return NextResponse.json({ id: session.id });
   } catch (error) {

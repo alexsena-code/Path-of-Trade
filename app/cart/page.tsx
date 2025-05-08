@@ -107,7 +107,7 @@ export default function CartPage() {
           // Add a small delay before redirecting
           setTimeout(() => {
             router.push('/sign-in');
-          }, 1000);
+          }, 10000);
           return;
         }
         throw new Error(data.details || data.error || `HTTP error! status: ${response.status}`);

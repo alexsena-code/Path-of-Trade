@@ -36,7 +36,6 @@ export async function GET(request: Request) {
       status: session.status,
       customer_email: session.customer_email,
       amount_total: session.amount_total,
-      payment_status: session.payment_status,
       metadata: session.metadata,
     });
   } catch (error) {

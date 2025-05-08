@@ -157,8 +157,8 @@ export default function OrdersPage() {
                     <span>Order: {formatStatus(order.status)}</span>
                   </div>
                   <div className="flex items-center gap-2 text-base">
-                    {getPaymentStatusIcon(order.payment_status)}
-                    <span>Payment: {formatStatus(order.payment_status)}</span>
+                    
+                    <span>Payment:</span>
                   </div>
                 </div>
 

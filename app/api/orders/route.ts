@@ -29,7 +29,6 @@ export async function POST(req: Request) {
         status: 'pending',
         user_id: user.id,
         stripe_session_id: sessionId,
-        payment_status: 'pending',
       })
       .select()
       .single();
