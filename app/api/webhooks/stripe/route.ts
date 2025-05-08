@@ -229,7 +229,6 @@ export async function POST(req: Request) {
           },
           body: JSON.stringify({
             orderId,
-            status: mapStripeStatusToOrderStatus(paymentIntent.status),
             paymentIntent: {
               id: paymentIntent.id,
               status: paymentIntent.status,

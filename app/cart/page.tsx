@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { useCurrency } from "@/lib/contexts/currency-context";
 import { useRouter } from "next/navigation";
 import { Loader2, ShoppingBag, Trash2, User } from "lucide-react";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import Image from "next/image";
 import { loadStripe } from "@stripe/stripe-js";
 import { Label } from "@/components/ui/label";
@@ -46,15 +46,26 @@ export default function CartPage() {
       const { data: { session: authSession }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !authSession) {
-        toast.error("Please sign in to continue checkout");
-        router.push('/sign-in');
+        toast.error("Please sign in to continue checkout", {
+          description: <span className="text-white">You need to be signed in to complete your purchase</span>,
+          action: {
+            label: "Sign In",
+            onClick: () => router.push('/sign-in')
+          },
+          duration: 5000
+        });
+        // Add a small delay before redirecting
         return;
       }
 
       const stripe = await stripePromise;
       
       if (!stripe) {
-        throw new Error('Stripe failed to initialize. Please check your API keys.');
+        toast.error("Payment system is currently unavailable", {
+          description: "Please try again later or contact support if the problem persists",
+          duration: 5000
+        });
+        return;
       }
 
       // Send prices already converted to the selected currency
@@ -67,12 +78,6 @@ export default function CartPage() {
         },
         quantity: item.quantity,
       }));
-
-      console.log('Creating checkout session with:', {
-        items: checkoutItems,
-        currency,
-        characterName
-      });
 
       // Create Stripe checkout session
       const response = await fetch('/api/create', {
@@ -87,30 +92,42 @@ export default function CartPage() {
         }),
       });
       
+      const data = await response.json();
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Checkout session creation failed:', errorData);
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        if (response.status === 401) {
+          toast.error("Authentication required", {
+            description: "Your session has expired. Please sign in again to continue.",
+            action: {
+              label: "Sign In",
+              onClick: () => router.push('/sign-in')
+            },
+            duration: 5000
+          });
+          // Add a small delay before redirecting
+          setTimeout(() => {
+            router.push('/sign-in');
+          }, 1000);
+          return;
+        }
+        throw new Error(data.details || data.error || `HTTP error! status: ${response.status}`);
       }
       
-      const { id: sessionId } = await response.json();
-      console.log('Checkout session created:', sessionId);
-      
-      console.log('Redirecting to Stripe checkout...');
       // Redirect to Stripe checkout
       const result = await stripe.redirectToCheckout({
-        sessionId,
+        sessionId: data.id,
       });
       
       if (result.error) {
-        console.error('Stripe redirect error:', result.error);
         throw new Error(result.error.message);
       }
     } catch (error) {
-      console.error('Error during checkout:', error);
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
       setError(errorMessage);
-      toast.error(errorMessage);
+      toast.error(errorMessage, {
+        description: "Please try again or contact support if the problem persists",
+        duration: 5000
+      });
     } finally {
       setIsLoading(false);
     }
@@ -150,6 +167,18 @@ export default function CartPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <Toaster 
+        position="top-center"
+        toastOptions={{
+          style: {
+            background: '#000',
+            color: '#fff',
+            border: '1px solid #333',
+          },
+          className: 'bg-black text-white border border-gray-800',
+          duration: 3000,
+        }}
+      />
       <div className="flex-1 container mx-auto px-4 pt-10">
         <h1 className="text-3xl font-bold mb-8">Checkout</h1>
         
