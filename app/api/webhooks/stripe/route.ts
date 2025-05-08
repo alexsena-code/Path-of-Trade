@@ -229,7 +229,7 @@ export async function POST(req: Request) {
           error: failedPaymentIntent.last_payment_error,
           status: failedPaymentIntent.status
         });
-        result = await handleCheckoutSession(event, baseUrl);
+        result = await handlePaymentIntent(event, baseUrl);
         break;
         
       case 'payment_intent.canceled':
