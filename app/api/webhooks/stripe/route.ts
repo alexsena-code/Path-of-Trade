@@ -229,12 +229,12 @@ export async function POST(req: Request) {
           error: failedPaymentIntent.last_payment_error,
           status: failedPaymentIntent.status
         });
-        result = await handlePaymentIntent(event, baseUrl);
+        result = await handleCheckoutSession(event, baseUrl);
         break;
         
       case 'payment_intent.canceled':
         console.log('Payment canceled event received');
-        result = await handlePaymentIntent(event, baseUrl);
+        result = await handleCheckoutSession(event, baseUrl);
         break;
 
       case 'checkout.session.completed':
