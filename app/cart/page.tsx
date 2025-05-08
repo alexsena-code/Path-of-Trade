@@ -82,7 +82,7 @@ export default function CartPage() {
       }));
 
       // Create Stripe checkout session
-      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/create`, {
+      const response = await fetch('/api/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

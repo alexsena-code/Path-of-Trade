@@ -14,7 +14,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 export async function POST(req: Request) {
   try {
-    const { items, currency, characterName, } = await req.json();
+    const { items, currency, characterName } = await req.json();
 
     console.log('Received checkout request:', {
       items,
@@ -54,7 +54,6 @@ export async function POST(req: Request) {
         total_amount: totalAmount,
         currency: currency.toLowerCase(),
         user_id: user.id,
-
       })
       .select()
       .single();
@@ -82,8 +81,8 @@ export async function POST(req: Request) {
         quantity: item.quantity,
       })),
       mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cart`,
+      success_url: `${req.headers.get('origin')}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.headers.get('origin')}/cart`,
       metadata: {
         orderId: order.id,
         characterName,
@@ -107,21 +106,6 @@ export async function POST(req: Request) {
       amount: items.reduce((total, item) => total + (item.product.price * item.quantity), 0)
     });
 
-    // Update order with the stripe session ID
-    const { error: updateError } = await supabaseServer
-      .from('orders')
-      .update({
-        stripe_session_id: session.id,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', order.id);
-
-    if (updateError) {
-      console.error('Error updating order with session ID:', updateError);
-      // Continue anyway as this is not critical
-    } else {
-      console.log(`Order ${order.id} updated with Stripe session ID: ${session.id}`);
-    }
 
     return NextResponse.json({ id: session.id });
   } catch (error) {
