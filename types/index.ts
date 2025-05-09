@@ -5,7 +5,7 @@ export interface Order {
   items: OrderItem[];
   total_amount: number;
   currency: string;
-  status: string;
+  status: 'pending' | 'completed' | 'failed';
   payment_intent: {
     id: string;
     status: string;

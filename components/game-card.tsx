@@ -49,11 +49,12 @@ export function GameCard({ imageSrc, title, subtitle, gameVersion }: GameCardPro
             src={imageSrc}
             alt={`${title} cover art`}
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover object-center"
+            quality={75}
             priority
-            width={600}
-            height={900}
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII="
           />
           
           {/* Gradient Overlay */}

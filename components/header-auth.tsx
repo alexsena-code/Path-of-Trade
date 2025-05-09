@@ -59,7 +59,7 @@ export default async function AuthButton() {
   }
 
   return user ? (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-4 pr-2">
       <div className="hidden sm:block">
         <CurrencyIndicator variant="full" />
       </div>
@@ -97,14 +97,14 @@ export default async function AuthButton() {
       </DropdownMenu>
     </div>
   ) : (
-    <div className="flex items-center gap-2 justify-end">
+    <div className="flex items-center gap-3 justify-end pr-2">
       <div className="sm:hidden">
         <CurrencyIndicator variant="icon" />
       </div>
       <div className="hidden sm:block">
         <CurrencyIndicator variant="full" />
       </div>
-      <div className="hidden md:flex gap-2">
+      <div className="hidden md:flex gap-3">
         <Button
           asChild
           className="text-white w-24 font-roboto text-sm font-bold bg-black 

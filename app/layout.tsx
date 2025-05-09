@@ -55,7 +55,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://accounts.google.com" />
         <link rel="preconnect" href="https://discord.com" />
       </head>
-      <body className="bg-background text-foreground">
+      <body className="bg-background text-foreground" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -65,24 +65,26 @@ export default function RootLayout({
           <CurrencyProvider>
             <CartProvider>
               <nav className="w-full flex justify-center border-b border-b-foreground/10 h-18">
-                <div className="w-full max-w-5xl flex items-center p-3 px-5 text-sm">
+                <div className="w-full max-w-6xl flex items-center  text-sm">
                   <div className="flex-1">
                     {/* Left empty space */}
                   </div>
                   <div className="flex-1 flex justify-center">
-                    <Link href="/" className="py-3">
+                    <Link href="/" className="py-3 flex items-center">
                       <Image 
-                        src="/images/logo.png" 
-                        alt="Company Logo" 
+                        src="/images/logo.webp" 
+                        alt="Path of Trade Logo" 
                         width={110} 
                         height={55}
-                        className="h-auto"
+                        className="h-auto w-auto"
                         priority
                         fetchPriority="high"
+                        quality={90}
+                        sizes="(max-width: 768px) 110px, 110px"
                       />
                     </Link>
                   </div>
-                  <div className="flex-1 flex justify-end items-center gap-3">
+                  <div className="flex-[1.2] flex justify-end items-center gap-3">
                     <CartDropdown />
                     <div className="md:flex hidden items-center gap-3">
                       {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
