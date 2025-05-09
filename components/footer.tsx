@@ -24,7 +24,7 @@ export default function Footer() {
             />
             <div className="flex space-x-4">
               <Link 
-                href="https://facebook.com" 
+                href="#" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="transition-opacity hover:opacity-80"
@@ -33,7 +33,7 @@ export default function Footer() {
                 <FacebookIcon className="h-5 w-5 text-white" />
               </Link>
               <Link 
-                href="https://twitter.com" 
+                href="#" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="transition-opacity hover:opacity-80"
@@ -42,7 +42,7 @@ export default function Footer() {
                 <TwitterIcon className="h-5 w-5 text-white" />
               </Link>
               <Link 
-                href="https://instagram.com" 
+                href="#" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="transition-opacity hover:opacity-80"
@@ -51,7 +51,7 @@ export default function Footer() {
                 <InstagramIcon className="h-5 w-5 text-white" />
               </Link>
               <Link 
-                href="https://discord.com" 
+                href="#" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="transition-opacity hover:opacity-80"
@@ -65,13 +65,13 @@ export default function Footer() {
           {/* Main Links */}
           <div className="flex flex-col space-y-3">
             <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Main</h3>
-            <Link href="/" className="text-gray-300 hover:text-white text-sm transition-colors">
+            <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
               Home
             </Link>
-            <Link href="/about" className="text-gray-300 hover:text-white text-sm transition-colors">
+            <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
               About us
             </Link>
-            <Link href="/products" className="text-gray-300 hover:text-white text-sm transition-colors">
+            <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
               Products
             </Link>
             <div className="pt-2">
@@ -82,13 +82,13 @@ export default function Footer() {
           {/* Support Links */}
           <div className="flex flex-col space-y-3">
             <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Support</h3>
-            <Link href="/contact" className="text-gray-300 hover:text-white text-sm transition-colors">
+            <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
               Contact us
             </Link>
-            <Link href="/faq" className="text-gray-300 hover:text-white text-sm transition-colors">
+            <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
               FAQ
             </Link>
-            <Link href="/shipping" className="text-gray-300 hover:text-white text-sm transition-colors">
+            <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
               Shipping Info
             </Link>
           </div>
@@ -96,13 +96,13 @@ export default function Footer() {
           {/* Legal Links */}
           <div className="flex flex-col space-y-3">
             <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Legal</h3>
-            <Link href="/privacy" className="text-gray-300 hover:text-white text-sm transition-colors">
+            <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="text-gray-300 hover:text-white text-sm transition-colors">
+            <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
               Terms of Service
             </Link>
-            <Link href="/refund" className="text-gray-300 hover:text-white text-sm transition-colors">
+            <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
               Refund Policy
             </Link>
           </div>
