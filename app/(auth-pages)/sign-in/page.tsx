@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
+import { OAuthProviders } from "@/components/oauth-providers";
 
 export const metadata: Metadata = {
   title: "Sign In | Path of Trade",
@@ -36,6 +37,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
                 placeholder="you@example.com" 
                 required 
                 className="bg-white/5 border-white/10 focus:border-indigo-500"
+                autoFocus
               />
             </div>
 
@@ -92,38 +94,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Button 
-            variant="outline" 
-            className="w-full bg-white/5 border-white/10 hover:bg-white/10" 
-            onClick={signWithGoogle}
-          >
-            <Image
-              alt="Google logo"
-              width={20}
-              height={20}
-              src="/images/google-logo.svg"
-              className="mr-2"
-              priority
-            />
-            <span>Google</span>
-          </Button>
-          <Button 
-            variant="outline" 
-            className="w-full bg-white/5 border-white/10 hover:bg-white/10" 
-            onClick={signWithDiscord}
-          >
-            <Image
-              alt="Discord logo"
-              width={20}
-              height={20}
-              src="/images/Discord-Symbol-White.svg"
-              className="mr-2"
-              priority
-            />
-            <span>Discord</span>
-          </Button>
-        </div>
+        <OAuthProviders />
       </div>
     </main>
   );
