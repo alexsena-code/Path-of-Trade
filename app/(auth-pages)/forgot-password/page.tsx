@@ -1,37 +1,72 @@
 import { forgotPasswordAction } from "@/app/actions";
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { SmtpMessage } from "../smtp-message";
+import { ArrowLeft } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Reset Password | Path of Trade",
+  description: "Reset your Path of Trade account password",
+};
 
 export default async function ForgotPassword(props: {
   searchParams: Promise<Message>;
 }) {
   const searchParams = await props.searchParams;
   return (
-    <>
-      <form className="flex-1 flex flex-col w-full gap-2 text-foreground [&>input]:mb-6 min-w-64 max-w-64 mx-auto">
-        <div>
-          <h1 className="text-2xl font-medium">Reset Password</h1>
-          <p className="text-sm text-secondary-foreground">
-            Already have an account?{" "}
-            <Link className="text-primary underline" href="/sign-in">
-              Sign in
-            </Link>
+    <main className="container max-w-md mx-auto pt-10 px-4">
+      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-8 shadow-lg">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-[#DEDCFF] to-[#6f58ff] bg-clip-text text-transparent">
+            Reset Password
+          </h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            Enter your email and we'll send you instructions to reset your password
           </p>
         </div>
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          <Label htmlFor="email">Email</Label>
-          <Input name="email" placeholder="you@example.com" required />
-          <SubmitButton formAction={forgotPasswordAction}>
-            Reset Password
+
+        <form className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+            <Input 
+              name="email" 
+              placeholder="you@example.com" 
+              required 
+              className="bg-white/5 border-white/10 focus:border-indigo-500"
+              autoFocus
+              type="email"
+            />
+          </div>
+
+          <SubmitButton 
+            pendingText="Sending Reset Link..." 
+            formAction={forgotPasswordAction}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5"
+          >
+            Send Reset Link
           </SubmitButton>
+          
           <FormMessage message={searchParams} />
-        </div>
-      </form>
+          
+          <div className="mt-4 text-center">
+            <Link 
+              href="/sign-in" 
+              className="inline-flex items-center text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
+              prefetch={true}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Sign In
+            </Link>
+          </div>
+        </form>
+      </div>
+      
       <SmtpMessage />
-    </>
+    </main>
   );
 }

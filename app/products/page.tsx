@@ -1,3 +1,4 @@
+'use cache'
 import ProductsClient from "@/components/products-client";
 import { ProductSearch } from "@/components/product-search";
 import { getProducts } from "@/app/actions";
