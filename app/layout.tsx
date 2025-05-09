@@ -1,8 +1,7 @@
 import { EnvVarWarning } from "@/components/env-var-warning";
 import HeaderAuth from "@/components/header-auth";
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
-import { Geist, Roboto, Source_Sans_3 } from "next/font/google";
+import { Roboto, Source_Sans_3 } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import Image from "next/image";
@@ -13,30 +12,34 @@ import { MobileMenu } from "@/components/mobile-menu";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-
 import "./globals.css";
 import Footer from "@/components/footer";
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
+const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL
+  ? `https://${process.env.NEXT_PUBLIC_SITE_URL}`
   : "http://localhost:3000";
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: "Path of Trade | Buy Path of Exile 1 & 2 Currency | Safe & Fast Delivery | Best Prices",
+  description: "Dominate your Path of Exile 1 & 2 journey with instant access to premium POE currency! Purchase safe, cheap, and fast Chaos Orbs, Exalted Orbs, Divine Orbs, and more. Enjoy 24/7 support, guaranteed secure transactions, and lightning-fast delivery. Trusted by thousands of players worldwide – upgrade your gameplay today",
 };
 
+// Preload fonts with display:swap for better performance
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-roboto",
+  display: "swap",
+  preload: true,
 });
 
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
   variable: "--font-source-sans",
+  display: "swap",
+  preload: true,
 });
 
 export default function RootLayout({
@@ -46,6 +49,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${roboto.variable} ${sourceSans.variable}`} suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"
@@ -69,6 +76,7 @@ export default function RootLayout({
                         height={55}
                         className="h-auto"
                         priority
+                        fetchPriority="high"
                       />
                     </Link>
                   </div>
@@ -85,11 +93,12 @@ export default function RootLayout({
               </nav>
               
               {children}
+              
+              <Footer/>
+              
+              {/* Load analytics after main content */}
               <Analytics/>
               <SpeedInsights/>
-
-
-              <Footer/>
             </CartProvider>
           </CurrencyProvider>
         </ThemeProvider>

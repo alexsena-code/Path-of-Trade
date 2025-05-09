@@ -6,22 +6,28 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import Image from "next/image";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sign In | Path of Trade",
+  description: "Sign in to your Path of Trade account",
+};
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams;
   return (
     <main className="container max-w-md mx-auto pt-10 px-4">
       <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-8 shadow-lg">
-        <form className="flex flex-col gap-6">
-          <div className="text-center mb-4">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#DEDCFF] to-[#6f58ff] bg-clip-text text-transparent">
-              Welcome Back
-            </h1>
-            <p className="text-xs text-muted-foreground mt-1">
-              Sign in to your account to continue
-            </p>
-          </div>
+        <div className="text-center mb-4">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#DEDCFF] to-[#6f58ff] bg-clip-text text-transparent">
+            Welcome Back
+          </h1>
+          <p className="text-xs text-muted-foreground mt-1">
+            Sign in to your account to continue
+          </p>
+        </div>
 
+        <form className="flex flex-col gap-6">
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium">Email</Label>
@@ -39,6 +45,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
                 <Link
                   className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
                   href="/forgot-password"
+                  prefetch={true}
                 >
                   Forgot Password?
                 </Link>
@@ -67,6 +74,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
             <Link
               className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
               href="/sign-up"
+              prefetch={true}
             >
               Sign up
             </Link>
@@ -96,6 +104,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
               height={20}
               src="/images/google-logo.svg"
               className="mr-2"
+              priority
             />
             <span>Google</span>
           </Button>
@@ -110,6 +119,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
               height={20}
               src="/images/Discord-Symbol-White.svg"
               className="mr-2"
+              priority
             />
             <span>Discord</span>
           </Button>
