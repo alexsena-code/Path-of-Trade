@@ -66,9 +66,10 @@ export default function CartDropdown() {
                       src={item.product.imgUrl}
                       alt={item.product.name}
                       fill
-                      className="object-cover rounded-md"
-                      width={64}
-                      height={64}
+                      className="object-cover object-center rounded-md"
+                      sizes="64px"
+                      quality={95}
+                      priority
                     />
                   </div>
                   
@@ -119,9 +120,11 @@ export default function CartDropdown() {
                 <span className="font-bold">{formatPrice(totalPrice)}</span>
               </div>
               <div className="flex gap-2">
-                <Button className="flex-1 bg-black border text-white hover:bg-white hover:text-black font-bold transition-colors duration-200">
-                  <Link href="/cart">Checkout</Link>
-                </Button>
+                <Link href="/cart" className="flex-1">
+                  <Button className="w-full bg-black border text-white hover:bg-white hover:text-black font-bold transition-colors duration-200">
+                    Checkout
+                  </Button>
+                </Link>
               </div>
             </div>
           </>

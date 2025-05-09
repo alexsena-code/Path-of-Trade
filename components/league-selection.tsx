@@ -18,11 +18,12 @@ interface League {
 interface LeagueCardProps {
   league: League;
   gameVersion: 'path-of-exile-1' | 'path-of-exile-2';
+  isExpanded: boolean;
+  onExpand: (id: string) => void;
 }
 
-const LeagueCard = ({ league, gameVersion }: LeagueCardProps) => {
+const LeagueCard = ({ league, gameVersion, isExpanded, onExpand }: LeagueCardProps) => {
   const router = useRouter();
-  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleLeagueSelection = (difficulty: 'hardcore' | 'softcore') => {
     router.push(
@@ -33,7 +34,7 @@ const LeagueCard = ({ league, gameVersion }: LeagueCardProps) => {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      setIsExpanded(!isExpanded);
+      onExpand(league.id);
     }
   };
 
@@ -51,7 +52,7 @@ const LeagueCard = ({ league, gameVersion }: LeagueCardProps) => {
         ${isExpanded ? 'scale-105' : 'hover:scale-102'}
         ${isExpanded ? 'cursor-default' : 'cursor-pointer'}
       `}
-      onClick={() => setIsExpanded(!isExpanded)}
+      onClick={() => onExpand(league.id)}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
@@ -122,6 +123,11 @@ export function LeagueSelectionPage({ gameVersion }: LeagueSelectionProps) {
   const [leagues, setLeagues] = useState<League[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedLeagueId, setExpandedLeagueId] = useState<string | null>(null);
+
+  const handleExpand = (leagueId: string) => {
+    setExpandedLeagueId(expandedLeagueId === leagueId ? null : leagueId);
+  };
 
   useEffect(() => {
     const fetchLeagues = async () => {
@@ -182,6 +188,8 @@ export function LeagueSelectionPage({ gameVersion }: LeagueSelectionProps) {
               key={league.id}
               league={league}
               gameVersion={gameVersion}
+              isExpanded={expandedLeagueId === league.id}
+              onExpand={handleExpand}
             />
           ))}
         </div>
