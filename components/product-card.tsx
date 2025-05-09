@@ -86,14 +86,15 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Card className="inline-block max-w-70 bg-black/10 min-w-40 overflow-hidden shadow-md hover:shadow-lg transition-shadow m-3 outline-none ">
       <CardContent className="flex flex-col mt-4">
-        <div className="relative h-18 w-18 md:h-28 md:w-28 mb-4 rounded-lg overflow-hidden mx-auto">
+        <div className="relative h-24 w-24 sm:h-28 sm:w-28 md:h-28 md:w-28 mb-4 rounded-lg overflow-hidden mx-auto">
           <Image
             src={product.imgUrl}
             alt={product.name}
             fill
             className="object-cover hover:scale-105 transition-transform duration-300"
-            quality={80}
-            sizes="(max-width: 100px) 10vw, 10vw"
+            quality={100}
+            sizes="(max-width: 480px) 10vw, (max-width: 620px) 10vw, 15vw"
+            priority
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.src = '/placeholder.png'; // Fallback image

@@ -9,6 +9,10 @@ import Image from "next/image";
 import { CurrencyProvider } from "@/lib/contexts/currency-context";
 import { CartProvider } from "@/lib/contexts/cart-context";
 import CartDropdown from "@/components/cart-dropdown";
+import { MobileMenu } from "@/components/mobile-menu";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+
 
 import "./globals.css";
 import Footer from "@/components/footer";
@@ -45,7 +49,7 @@ export default function RootLayout({
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
@@ -53,27 +57,37 @@ export default function RootLayout({
             <CartProvider>
               <nav className="w-full flex justify-center border-b border-b-foreground/10 h-18">
                 <div className="w-full max-w-5xl flex items-center p-3 px-5 text-sm">
-                  <div className="flex-1" /> {/* Left spacer */}
-                    <div className="flex-1 flex justify-center mx-6">
-                      <Link href="/" className="py-3">
-                        <Image 
-                          src="/images/logo.png" 
-                          alt="Company Logo" 
-                          width={110} 
-                          height={55}
-                          className="h-auto"
-                          priority
-                        />
-                      </Link>
+                  <div className="flex-1">
+                    {/* Left empty space */}
                   </div>
-                  <div className="flex-1 flex justify-end items-center gap-4">
+                  <div className="flex-1 flex justify-center">
+                    <Link href="/" className="py-3">
+                      <Image 
+                        src="/images/logo.png" 
+                        alt="Company Logo" 
+                        width={110} 
+                        height={55}
+                        className="h-auto"
+                        priority
+                      />
+                    </Link>
+                  </div>
+                  <div className="flex-1 flex justify-end items-center gap-3">
                     <CartDropdown />
-                    {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
+                    <div className="md:flex hidden items-center gap-3">
+                      {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
+                    </div>
+                    <div className="md:hidden">
+                      <MobileMenu isAuthenticated={!!hasEnvVars} />
+                    </div>
                   </div>
                 </div>
               </nav>
               
               {children}
+              <Analytics/>
+              <SpeedInsights/>
+
 
               <Footer/>
             </CartProvider>

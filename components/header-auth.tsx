@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { MobileMenu } from "./mobile-menu";
-import { Settings, Package } from "lucide-react";
+import { Settings, Package, User } from "lucide-react";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -34,7 +34,6 @@ export default async function AuthButton() {
   if (!hasEnvVars) {
     return (
       <div className="flex gap-4 items-center">
-
         <div className="flex gap-2">
           <Button
             asChild
@@ -60,8 +59,13 @@ export default async function AuthButton() {
   }
 
   return user ? (
-    <div className="flex items-center gap-4">
-      <CurrencyIndicator variant="full" />
+    <div className="flex items-center gap-2">
+      <div className="hidden sm:block">
+        <CurrencyIndicator variant="full" />
+      </div>
+      <div className="sm:hidden">
+        <CurrencyIndicator variant="icon" />
+      </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="h-9 w-9 cursor-pointer hover:opacity-80 transition-opacity">
@@ -72,17 +76,14 @@ export default async function AuthButton() {
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel className="font-roboto text-sm font-bold">My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-
-
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
+
               <Link href="/orders" className="flex items-center justify-between w-full">
                 <span className="font-roboto text-sm font-medium">My Orders</span>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </Link>
             </DropdownMenuItem>
-  
-      
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <form action={signOutAction}>
@@ -96,31 +97,33 @@ export default async function AuthButton() {
       </DropdownMenu>
     </div>
   ) : (
-    <div className="flex items-center justify-between w-full">
-      <div className="flex-1 md:hidden" /> {/* Left spacer for mobile */}
-      <div className="flex-1 flex justify-end items-center">
-        <CurrencyIndicator />
-        <div className="hidden md:flex gap-2 mx-auto">
-          <Button
-            asChild
-            className="text-white w-24 font-roboto text-sm font-bold bg-black 
-              hover:bg-slate-100 hover:text-black transition-all duration-300 
-              hover:scale-102 rounded-md border hover:border-black"
-          >
-            <Link href="/sign-in">Sign in</Link>
-          </Button>
-          <Button
-            asChild
-            className="text-white w-18 font-roboto text-sm font-bold bg-black 
-              hover:bg-slate-100 hover:text-black transition-all duration-300 
-              hover:scale-102 rounded-md border hover:border-black"
-          >
-            <Link href="/sign-up">Sign up</Link>
-          </Button>
-        </div>
-        <div className="md:hidden">
-          <MobileMenu />
-        </div>
+    <div className="flex items-center gap-2 justify-end">
+      <div className="sm:hidden">
+        <CurrencyIndicator variant="icon" />
+      </div>
+      <div className="hidden sm:block">
+        <CurrencyIndicator variant="full" />
+      </div>
+      <div className="hidden md:flex gap-2">
+        <Button
+          asChild
+          className="text-white w-24 font-roboto text-sm font-bold bg-black 
+            hover:bg-slate-100 hover:text-black transition-all duration-300 
+            hover:scale-102 rounded-md border hover:border-black"
+        >
+          <Link href="/sign-in">Sign in</Link>
+        </Button>
+        <Button
+          asChild
+          className="text-white font-roboto text-sm font-bold bg-black 
+            hover:bg-slate-100 hover:text-black transition-all duration-300 
+            hover:scale-102 rounded-md border hover:border-black"
+        >
+          <Link href="/sign-up">Sign up</Link>
+        </Button>
+      </div>
+      <div className="md:hidden">
+        <MobileMenu />
       </div>
     </div>
   );

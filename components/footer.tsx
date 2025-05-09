@@ -10,92 +10,84 @@ import { ThemeSwitcher } from "./theme-switcher";
 
 export default function Footer() {
   return (
-    <footer className="grid grid-cols-4 items-start w-screen  mt-12 py-4 bg-black/40 text-white px-10 gap-x-8">
-      <div className="flex flex-col items-center space-y-4 ">
-        <Image
-          src="/images/logo.png"
-          height="60"
-          width="96"
-          alt="Company Logo"
-          style={{ aspectRatio: "200/100", objectFit: "cover" }}
-        />
-        <div className="flex space-x-4">
-          <Link href="#" prefetch={false}>
-            <FacebookIcon className="h-6 w-6 text-white" />
-          </Link>
-          <Link href="#" prefetch={false}>
-            <TwitterIcon className="h-6 w-6 text-white" />
-          </Link>
-          <Link href="#" prefetch={false}>
-            <InstagramIcon className="h-6 w-6 text-white" />
-          </Link>
-          <Link href="#" prefetch={false}>
-            <DiscordIcon />
-          </Link>
-          
-        </div>
-      </div>
-      <div className="flex flex-col space-y-2">
-        <h3 className="font-bold">MAIN</h3>
-        <Link
-          href="#"
-          className="text-gray-300 hover:text-white"
-          prefetch={false}
-        >
-          Home
-        </Link>
-        <Link
-          href="#"
-          className="text-gray-300 hover:text-white"
-          prefetch={false}
-        >
-          About us
-        </Link>
+    <footer className="w-full bg-black/40 text-white py-8 px-4 md:px-10">
+      <div className="container mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          {/* Logo and Social Links */}
+          <div className="flex flex-col items-center md:items-start space-y-4">
+            <Image
+              src="/images/logo.png"
+              height="60"
+              width="96"
+              alt="Path of Trade"
+              className="object-contain"
+            />
+            <div className="flex space-x-4">
+              <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="transition-opacity hover:opacity-80">
+                <FacebookIcon className="h-5 w-5 text-white" />
+              </Link>
+              <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="transition-opacity hover:opacity-80">
+                <TwitterIcon className="h-5 w-5 text-white" />
+              </Link>
+              <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="transition-opacity hover:opacity-80">
+                <InstagramIcon className="h-5 w-5 text-white" />
+              </Link>
+              <Link href="https://discord.com" target="_blank" rel="noopener noreferrer" className="transition-opacity hover:opacity-80">
+                <DiscordIcon className="h-5 w-5 text-white" />
+              </Link>
+            </div>
+          </div>
 
-        <Link
-          href="#"
-          className="text-gray-300 hover:text-white"
-          prefetch={false}
-        >
-                        <ThemeSwitcher />
-        </Link>
-      </div>
-      <div className="flex flex-col space-y-2">
-        <h3 className="font-bold">SUPPORT</h3>
-        <Link
-          href="#"
-          className="text-gray-300 hover:text-white"
-          prefetch={false}
-        >
-          Contact us
-        </Link>
-      </div>
-      <div className="flex flex-col space-y-2">
-        <h3 className="font-bold">LEGAL</h3>
-        <Link
-          href="#"
-          className="text-gray-300 hover:text-white"
-          prefetch={false}
-        >
-          Privacy Policy
-        </Link>
-        <Link
-          href="#"
-          className="text-gray-300 hover:text-white"
-          prefetch={false}
-        >
-          Term of service
-        </Link>
-        <Link
-          href="#"
-          className="text-gray-300 hover:text-white"
-          prefetch={false}
-        >
-          Refund Policy
-        </Link>
-      </div>
-      <div className="col-span-4 text-center mt-6">
-        <p className="text-sm">{`\u00A9 2025 Path of Trade. All rights reserved.`}</p>
+          {/* Main Links */}
+          <div className="flex flex-col space-y-3">
+            <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Main</h3>
+            <Link href="/" className="text-gray-300 hover:text-white text-sm transition-colors">
+              Home
+            </Link>
+            <Link href="/about" className="text-gray-300 hover:text-white text-sm transition-colors">
+              About us
+            </Link>
+            <Link href="/products" className="text-gray-300 hover:text-white text-sm transition-colors">
+              Products
+            </Link>
+            <div className="pt-2">
+              <ThemeSwitcher />
+            </div>
+          </div>
+
+          {/* Support Links */}
+          <div className="flex flex-col space-y-3">
+            <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Support</h3>
+            <Link href="/contact" className="text-gray-300 hover:text-white text-sm transition-colors">
+              Contact us
+            </Link>
+            <Link href="/faq" className="text-gray-300 hover:text-white text-sm transition-colors">
+              FAQ
+            </Link>
+            <Link href="/shipping" className="text-gray-300 hover:text-white text-sm transition-colors">
+              Shipping Info
+            </Link>
+          </div>
+
+          {/* Legal Links */}
+          <div className="flex flex-col space-y-3">
+            <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Legal</h3>
+            <Link href="/privacy" className="text-gray-300 hover:text-white text-sm transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="text-gray-300 hover:text-white text-sm transition-colors">
+              Terms of Service
+            </Link>
+            <Link href="/refund" className="text-gray-300 hover:text-white text-sm transition-colors">
+              Refund Policy
+            </Link>
+          </div>
+        </div>
+
+        {/* Copyright */}
+        <div className="mt-8 pt-6 border-t border-gray-700/50">
+          <p className="text-sm text-center text-gray-400">© {new Date().getFullYear()} Path of Trade. All rights reserved.</p>
+        </div>
       </div>
     </footer>
   );
@@ -145,14 +137,14 @@ function InstagramIcon(
   );
 }
 
-function DiscordIcon() {
+function DiscordIcon(props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>) {
   return (
     <svg
+      {...props}
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
       fill="currentColor"
-      className="bi bi-discord"
       viewBox="0 0 16 16"
     >
       <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612" />
