@@ -34,7 +34,12 @@ export default function CartDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="relative"
+          aria-label="Shopping Cart"
+        >
           <ShoppingCart className="h-5 w-5" />
           {totalItems > 0 && (
             <Badge 
@@ -62,6 +67,8 @@ export default function CartDropdown() {
                       alt={item.product.name}
                       fill
                       className="object-cover rounded-md"
+                      width={64}
+                      height={64}
                     />
                   </div>
                   
@@ -78,6 +85,7 @@ export default function CartDropdown() {
                       size="icon"
                       className="h-6 w-6"
                       onClick={() => updateQuantity(item.product.id!, item.quantity - 1)}
+                      aria-label={`Decrease quantity of ${item.product.name}`}
                     >
                       <Minus className="h-3 w-3" />
                     </Button>
@@ -87,6 +95,7 @@ export default function CartDropdown() {
                       size="icon"
                       className="h-6 w-6"
                       onClick={() => updateQuantity(item.product.id!, item.quantity + 1)}
+                      aria-label={`Increase quantity of ${item.product.name}`}
                     >
                       <Plus className="h-3 w-3" />
                     </Button>
@@ -95,6 +104,7 @@ export default function CartDropdown() {
                       size="icon"
                       className="h-6 w-6 text-red-500 hover:text-red-600"
                       onClick={() => removeFromCart(item.product.id!)}
+                      aria-label={`Remove ${item.product.name} from cart`}
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>

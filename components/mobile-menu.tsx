@@ -21,7 +21,12 @@ export function MobileMenu({ isAuthenticated = false }) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="md:hidden"
+          aria-label="Open mobile menu"
+        >
           <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>

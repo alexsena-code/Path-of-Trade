@@ -52,6 +52,8 @@ export function GameCard({ imageSrc, title, subtitle, gameVersion }: GameCardPro
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover object-center"
             priority
+            width={600}
+            height={900}
           />
           
           {/* Gradient Overlay */}
