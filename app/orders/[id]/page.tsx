@@ -131,7 +131,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
         
         if (sessionError) throw sessionError;
         if (!session?.user) {
-          router.push('/login');
+          router.push('/sign-in');
           return;
         }
 
