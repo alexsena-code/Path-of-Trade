@@ -20,6 +20,7 @@ export default function Admin() {
     imgUrl: "",
     difficulty: "",
     description: "",
+    alt: "",
   });
 
   const clearForm = () => {
@@ -31,7 +32,7 @@ export default function Admin() {
       gameVersion: "path-of-exile-1",
       imgUrl: "",
       difficulty: "",
-      description: "",
+      alt: "",
     });
   };
 
@@ -51,7 +52,7 @@ export default function Admin() {
   };
 
   return (
-    <main className="container h-min-screen pt-20">
+    <main className="container h-min-screen py-12">
       <Toaster 
         position="bottom-right" 
         theme="dark"
@@ -179,20 +180,21 @@ export default function Admin() {
             </div>
 
             {/* Description Textarea - Full Width */}
+            
             <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="description" className="text-gray-300">Description</Label>
+              <Label htmlFor="alt" className="text-gray-300">Alt Image</Label>
               <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, description: e.target.value })}
+                id="alt"
+                value={formData.alt}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, alt: e.target.value })}
                 className="w-full bg-black border border-gray-700 text-white focus:border-gray-500 min-h-[100px] resize-y rounded-md p-2"
-                placeholder="Enter product description"
+                placeholder="Enter product Alt Image"
               />
             </div>
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-center mt-8">
+          <div className="flex justify-center">
             <Button
               type="submit"
               disabled={loading}

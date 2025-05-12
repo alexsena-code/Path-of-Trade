@@ -89,7 +89,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="relative h-24 w-24 sm:h-28 sm:w-28 md:h-20 md:w-20 mb-4 rounded-lg overflow-hidden mx-auto">
           <Image
             src={product.imgUrl}
-            alt={product.name}
+            alt={product.alt || product.name}
             fill
             className="object-cover hover:scale-105 transition-transform duration-300"
             quality={100}

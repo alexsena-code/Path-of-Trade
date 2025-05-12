@@ -146,14 +146,14 @@ export default function OrderHistory() {
               </div>
               <Badge
                 variant={
-                  order.payment_status === 'succeeded'
+                  order.status === 'completed'
                     ? 'default'
-                    : order.payment_status === 'failed'
+                    : order.status === 'failed'
                     ? 'destructive'
                     : 'secondary'
                 }
               >
-                {order.payment_status}
+                {order.status}
               </Badge>
             </div>
           </CardHeader>

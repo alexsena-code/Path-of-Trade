@@ -3,6 +3,7 @@ export interface Product {
   name: string,
   category: string,
   description?: string,
+  alt?: string,
   price: number,
   imgUrl: string,
   gameVersion: 'path-of-exile-1' | 'path-of-exile-2',
