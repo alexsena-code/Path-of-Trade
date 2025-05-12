@@ -238,14 +238,17 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
                           {item.product?.name || 'Unknown Item'}
                         </div>
                         <div className="text-sm text-muted-foreground mt-1 space-y-1">
-                          {(item.product as any)?.item_level && (
-                            <div>Item Level: {(item.product as any).item_level}</div>
-                          )}
-                          {(item.product as any)?.quality && (
-                            <div>Quality: {(item.product as any).quality}%</div>
-                          )}
-                          {(item.product as any)?.links && (
-                            <div>Links: {(item.product as any).links}</div>
+                          {(item.product as any)?.difficulty && (
+                            <div className="flex items-center gap-2 mt-2">
+                              <span className="font-medium">Difficulty:</span>
+                              <Badge variant="outline" className={
+                                (item.product as any).difficulty.toLowerCase() === 'softcore' ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-950/50 dark:text-green-400 dark:border-green-900' :
+                                (item.product as any).difficulty.toLowerCase() === 'hardcore' ? 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-950/50 dark:text-yellow-400 dark:border-yellow-900' :
+                                'bg-red-100 text-red-800 border-red-200 dark:bg-red-950/50 dark:text-red-400 dark:border-red-900'
+                              }>
+                                {(item.product as any).difficulty}
+                              </Badge>
+                            </div>
                           )}
                           {(item.product as any)?.description && (
                             <div className="mt-2 italic">{(item.product as any).description}</div>
@@ -381,6 +384,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
                 </div>
               )}
               
+
               {(order as any).estimated_delivery && (
                 <div className="flex flex-col">
                   <span className="text-sm text-muted-foreground mb-1">Estimated Delivery</span>

@@ -1,6 +1,6 @@
 import { EnvVarWarning } from "@/components/env-var-warning";
 import HeaderAuth from "@/components/header-auth";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
+import { GoogleTagManager } from '@next/third-parties/google'
 import { Roboto, Source_Sans_3 } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
@@ -21,8 +21,8 @@ const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Path of Trade | Buy Path of Exile 1 & 2 Currency | Safe & Fast Delivery | Best Prices",
-  description: "Dominate your Path of Exile 1 & 2 journey with instant access to premium POE currency! Purchase safe, cheap, and fast Chaos Orbs, Exalted Orbs, Divine Orbs, and more. Enjoy 24/7 support, guaranteed secure transactions, and lightning-fast delivery. Trusted by thousands of players worldwide – upgrade your gameplay today",
+  title: "Buy POE 1 & 2 Currency | POE Trade Currency, Cheap POE Orbs - Path of Trade",
+  description:  ","
 };
 
 // Preload fonts with display:swap for better performance
@@ -48,7 +48,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    
     <html lang="en" className={`${roboto.variable} ${sourceSans.variable}`} suppressHydrationWarning>
+        <GoogleTagManager gtmId="GTM-W89HJG73-XYZ" />
+    
       <body className="bg-background text-foreground" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
@@ -58,7 +61,7 @@ export default function RootLayout({
         >
           <CurrencyProvider>
             <CartProvider>
-              <nav className="w-full flex justify-center border-b border-b-foreground/10 h-18">
+              <nav className="w-full flex justify-center border-b border-b-foreground/10 h-18 mb-8">
                 <div className="w-full max-w-6xl flex items-center  text-sm">
                   <div className="flex-1">
                     {/* Left empty space */}
@@ -94,7 +97,6 @@ export default function RootLayout({
               
               <Footer/>
               
-              {/* Load analytics after main content */}
               <Analytics/>
               <SpeedInsights/>
             </CartProvider>

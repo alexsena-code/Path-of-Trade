@@ -242,6 +242,23 @@ export default function OrdersPage() {
                     </div>
                   )}
                   
+                  {/* Difficulty */}
+                  {order.items && order.items.length > 0 && (order.items[0].product as any)?.difficulty && (
+                    <div className="flex flex-col">
+                      <span className="text-sm text-muted-foreground mb-1">Difficulty</span>
+                      <div className="flex items-center gap-2">
+                        <Shield className="h-4 w-4 text-primary" />
+                        <Badge variant="outline" className={
+                          (order.items[0].product as any).difficulty.toLowerCase() === 'softcore' ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-950/50 dark:text-green-400 dark:border-green-900' :
+                          (order.items[0].product as any).difficulty.toLowerCase() === 'hardcore' ? 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-950/50 dark:text-yellow-400 dark:border-yellow-900' :
+                          'bg-red-100 text-red-800 border-red-200 dark:bg-red-950/50 dark:text-red-400 dark:border-red-900'
+                        }>
+                          {(order.items[0].product as any).difficulty}
+                        </Badge>
+                      </div>
+                    </div>
+                  )}
+                  
                   <div className="flex flex-col">
                     <span className="text-sm text-muted-foreground mb-1">Total Amount</span>
                     <span className="text-lg font-semibold">{formatPrice(order.total_amount, order.currency)}</span>
