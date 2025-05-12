@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu, Package } from "lucide-react";
+import { Menu, Package, LogOut, User } from "lucide-react";
 import { 
   Sheet, 
   SheetContent, 
@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { CurrencyIndicator } from "./currency-indicator";
 import { useCart } from "@/lib/contexts/cart-context";
+import { signOutAction } from "@/app/actions";
 
 export function MobileMenu({ isAuthenticated = false }) {
   const [open, setOpen] = useState(false);
@@ -36,16 +37,29 @@ export function MobileMenu({ isAuthenticated = false }) {
         </SheetHeader>
         <div className="flex flex-col mt-4">
           {isAuthenticated ? (
-            <Link 
-              href="/orders"
-              onClick={() => setOpen(false)}
-              className="w-full text-center py-2.5 text-white/80 font-roboto text-sm
-                hover:text-white transition-colors duration-200 border-b border-white/5
-                hover:border-white/20 flex items-center justify-center gap-2"
-            >
-              <Package className="h-4 w-4" />
-              My Orders
-            </Link>
+            <>
+              <Link 
+                href="/orders"
+                onClick={() => setOpen(false)}
+                className="w-full text-center py-2.5 text-white/80 font-roboto text-sm
+                  hover:text-white transition-colors duration-200 border-b border-white/5
+                  hover:border-white/20 flex items-center justify-center gap-2"
+              >
+                <Package className="h-4 w-4" />
+                My Orders
+              </Link>
+              <form action={signOutAction} className="w-full h-2">
+                <button 
+                  type="submit"
+                  className="w-full text-center py-2 text-red-400 font-roboto text-sm
+                    hover:text-red-300 transition-colors duration-200
+                    hover:border-white/20 flex items-center justify-center gap-2"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Log out
+                </button>
+              </form>
+            </>
           ) : (
             <>
               <Link 

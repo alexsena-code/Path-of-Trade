@@ -80,11 +80,11 @@ export default function RootLayout({
                   </div>
                   <div className="flex-[1.2] flex justify-end items-center gap-3">
                     <CartDropdown />
-                    <div className="md:flex hidden items-center gap-3">
-                      {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
+                    <div className="hidden md:flex items-center gap-3">
+                       <HeaderAuth />
                     </div>
-                    <div className="md:hidden">
-                      <MobileMenu isAuthenticated={!!hasEnvVars} />
+                    <div className="md:hidden flex items-center">
+                       <HeaderAuth />
                     </div>
                   </div>
                 </div>

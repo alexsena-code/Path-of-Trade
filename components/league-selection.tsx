@@ -182,7 +182,7 @@ export function LeagueSelectionPage({ gameVersion }: LeagueSelectionProps) {
         <p className="text-sm text-center text-muted-foreground/80 mb-12 max-w-2xl tracking-wide">
           Select your Path of Exile league below to view available currency prices and offers.
         </p>
-        <div className="flex flex-wrap justify-center gap-10">
+        <div className="flex flex-wrap justify-center gap-20 mb-20 md:gap-10 md:mb-10">
           {leagues.map((league) => (
             <LeagueCard
               key={league.id}
