@@ -12,10 +12,10 @@ export const generateMetadata = async ({ params }: { params: { name: string } })
   
   return {
     title: `Buy POE ${productName} | Fast & Safe Currency | PathofTrade.net`,
-    description: `Buy cheap ${productName} for Path of Exile. Get your PoE currency instantly & securely from PathofTrade.net. Best prices and reliable service for all your ${productName} needs.`,
+    description: `Buy cheap ${productName} for Path of Exile. Get your PoE currency instantly & securely from PathofTrade.net.`,
     openGraph: {
       title: `Buy POE ${productName} | Fast & Safe Currency | PathofTrade.net`,
-      description: `Buy cheap ${productName} for Path of Exile. Get your PoE currency instantly & securely from PathofTrade.net. Best prices and reliable service for all your ${productName} needs.`,
+      description: `Buy cheap ${productName} for Path of Exile. Get your PoE currency instantly & securely from PathofTrade.net.`,
       type: "website",
     },
   };

@@ -21,7 +21,7 @@ export async function generateMetadata({
   
   return {
     title: `Buy ${category} PoE ${league} | Fast & Safe Currency | PathofTrade.net`,
-    description: `Buy cheap ${category} for Path of Exile ${league} (PoE ${gameVersion}). Get your PoE currency instantly & securely from PathofTrade.net. Best prices and reliable service for all your ${league} needs.`,
+    description: `Buy cheap ${category} for Path of Exile ${league} (PoE ${gameVersion}). Get your PoE currency from PathofTrade.net. Best prices ${league} orbs.`,
     openGraph: {
       title: `Best Price: ${category} - PoE ${league} Currency | PathofTrade.net`,
       description: `Find the best deals on Path of Exile ${category} for ${league} at PathofTrade.net. We offer cheap PoE currency, instant delivery, and 100% secure transactions for your ${gameVersion} gameplay.`,
