@@ -4,15 +4,21 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Filters from "./filters";
+import { parseProductSlug } from "@/utils/url-helper";
 
-export const metadata: Metadata = {
-  title: "Product Details | Path of Trade",
-  description: "View Path of Exile product details.",
-  openGraph: {
-    title: "Product Details | Path of Trade",
-    description: "View Path of Exile product details.",
-    type: "website",
-  },
+export const generateMetadata = async ({ params }: { params: { name: string } }): Promise<Metadata> => {
+  // Get a readable product name from the URL slug
+  const productName = await parseProductSlug(params.name);
+  
+  return {
+    title: `${productName} | Path of Trade`,
+    description: `View details and pricing for ${productName} in Path of Exile.`,
+    openGraph: {
+      title: `${productName} | Path of Trade`,
+      description: `View details and pricing for ${productName} in Path of Exile.`,
+      type: "website",
+    },
+  };
 };
 
 export default async function ProductDetailPage({
@@ -23,14 +29,19 @@ export default async function ProductDetailPage({
   searchParams: {
     league?: string;
     difficulty?: string;
+    gameVersion?: 'path-of-exile-1' | 'path-of-exile-2';
   };
 }) {
   try {
-    // Use the name param to find the specific product
+    // Get the decoded product name for searching
+    const decodedName = await parseProductSlug(params.name);
+    
+    // Use the decoded name to find the specific product
     const products = await getProductsWithParams({
-      search: params.name,
+      search: decodedName,
       league: searchParams.league,
       difficulty: searchParams.difficulty,
+      gameVersion: searchParams.gameVersion,
     });
 
     // If no product is found, show an error
@@ -40,7 +51,7 @@ export default async function ProductDetailPage({
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-4">Product Not Found</h1>
             <p className="mb-8 text-muted-foreground">
-              The product '{params.name}' could not be found. It may have been removed or doesn't exist.
+              The product '{decodedName}' could not be found. It may have been removed or doesn't exist.
             </p>
             <Link href="/products">
               <Button className="bg-indigo-600 hover:bg-indigo-700">
@@ -56,11 +67,18 @@ export default async function ProductDetailPage({
     const product = products[0];
 
     // Fetch leagues from database based on product's game version
-    const leaguesData = await getLeagues(product.gameVersion);
+    const currentGameVersion = searchParams.gameVersion || product.gameVersion;
+    const leaguesData = await getLeagues(currentGameVersion as 'path-of-exile-1' | 'path-of-exile-2');
     const leagueOptions = leaguesData.map(league => league.name);
     
     // Difficulty options
     const difficultyOptions = ["softcore", "hardcore"];
+    
+    // Game version options
+    const gameVersionOptions = [
+      { value: 'path-of-exile-1', label: 'Path of Exile 1' },
+      { value: 'path-of-exile-2', label: 'Path of Exile 2' }
+    ];
 
     // Current selected values
     const currentLeague = searchParams.league || product.league;
@@ -68,6 +86,11 @@ export default async function ProductDetailPage({
 
     return (
       <div className="container mx-auto py-12 px-4">
+                <div className="bg-indigo-700 inline-block min-w-[320px] md:min-w-[320px] rounded-tl-md rounded-tr-sm px-4 py-2 shadow-lg">
+          <h2 className="text-lg md:text-3xl text-center text-white font-bold antialiased capitalize tracking-wide">
+            {currentLeague} - {currentDifficulty}
+          </h2>
+        </div>
         <div className="max-w-6xl mx-auto bg-card rounded-lg shadow-lg overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Product Image */}
@@ -90,15 +113,17 @@ export default async function ProductDetailPage({
               
               <div className="flex items-center gap-2 mb-3">
                 <span className="px-2 py-1 bg-indigo-600/20 text-indigo-400 rounded text-xs font-medium">
-                  {product.gameVersion === 'path-of-exile-1' ? 'POE 1' : 'POE 2'}
+                  {currentGameVersion === 'path-of-exile-1' ? 'POE 1' : 'POE 2'}
                 </span>
               </div>
 
-              {/* League and Difficulty Filters */}
+              {/* Game Version, League and Difficulty Filters */}
               <Filters 
-                productName={params.name}
+                productName={decodedName}
+                gameVersionOptions={gameVersionOptions}
                 leagueOptions={leagueOptions}
                 difficultyOptions={difficultyOptions}
+                currentGameVersion={currentGameVersion}
                 currentLeague={currentLeague}
                 currentDifficulty={currentDifficulty}
               />

@@ -82,6 +82,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
 
   return (
     <div className="border rounded-lg py-4 md:min-h-[678px] bg-black/5">
+      
       <div className="flex flex-col md:flex-row items-center justify-between px-3 gap-4 mb-4">
         <nav className="flex flex-wrap gap-2" aria-label="Filters">
           {buttons.map((label) => (

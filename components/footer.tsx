@@ -16,7 +16,7 @@ export default function Footer() {
           {/* Logo and Social Links */}
           <div className="flex flex-col items-center md:items-start space-y-4">
             <Image
-              src="/images/logo.png"
+              src="/images/logo.webp"
               height="60"
               width="96"
               alt="Path of Trade"

@@ -11,7 +11,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import Footer from "@/components/footer";
-import MainNavigation from "@/components/main-navigation";
+
 
 
 export const metadata = {
@@ -109,7 +109,6 @@ export default function RootLayout({
                 </div>
               </nav>
               
-              <MainNavigation />
               
               {children}
               
