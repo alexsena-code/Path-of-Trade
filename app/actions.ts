@@ -233,4 +233,48 @@ export const getLeagues = async (gameVersion: 'path-of-exile-1' | 'path-of-exile
   return data;
 };
 
+export const getProductsWithParams = async (
+  params: {
+    gameVersion?: string;
+    league?: string;
+    difficulty?: string;
+    category?: string;
+    search?: string;
+  }
+): Promise<Product[]> => {
+  const { gameVersion, league, difficulty, category, search } = params;
+  const supabase = await createClient();
+  
+  let query = supabase.from('products').select('*');
+  
+  if (gameVersion) {
+    query = query.eq('gameVersion', gameVersion);
+  }
+  
+  if (league) {
+    query = query.eq('league', league);
+  }
+  
+  if (difficulty) {
+    query = query.eq('difficulty', difficulty);
+  }
+  
+  if (category) {
+    query = query.eq('category', category);
+  }
+  
+  if (search) {
+    query = query.ilike('name', `%${search}%`);
+  }
+  
+  const { data, error } = await query;
+  
+  if (error) {
+    console.error('Error fetching products with params:', error.message);
+    throw new Error('Could not fetch products');
+  }
+  
+  return data as Product[];
+};
+
 

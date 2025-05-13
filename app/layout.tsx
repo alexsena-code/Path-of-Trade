@@ -1,6 +1,5 @@
-import { EnvVarWarning } from "@/components/env-var-warning";
 import HeaderAuth from "@/components/header-auth";
-import { GoogleTagManager } from '@next/third-parties/google'
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 import { Roboto, Source_Sans_3 } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
@@ -8,24 +7,38 @@ import Image from "next/image";
 import { CurrencyProvider } from "@/lib/contexts/currency-context";
 import { CartProvider } from "@/lib/contexts/cart-context";
 import CartDropdown from "@/components/cart-dropdown";
-import { MobileMenu } from "@/components/mobile-menu";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-
 import "./globals.css";
 import Footer from "@/components/footer";
+import MainNavigation from "@/components/main-navigation";
 
-const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL
-  ? `https://${process.env.NEXT_PUBLIC_SITE_URL}`
-  : "http://localhost:3000";
 
 export const metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "Buy POE 1 & 2 Currency | POE Trade Currency, Cheap POE Orbs - Path of Trade",
-  description:  ","
+  metadataBase: new URL("https://www.pathoftrade.net"), 
+  title: "Buy POE 1 & 2 Currency | Cheap Divine Orbs, Exalts, Chaos - Path of Trade",
+  description: "Buy Path of Exile Currency Safely ✔️ Lowest Prices for Divine Orbs, Exalted Orbs & Chaos. Instant Delivery, 24/7 Live Support. POE Trade Currency Securely at PathOfTrade.net!",
+  keywords: [
+    "Buy POE Currency",
+    "POE Divine Orbs",
+    "Cheap Exalted Orbs",
+    "POE Chaos Orb Trade",
+    "Path of Exile Currency",
+    "POE 2 Currency",
+    "Buy POE Orbs",
+    "POE Currency Shop",
+    "Safe POE Trading",
+    "Divine Orb Trade", 
+    "POE Currency Delivery", 
+    "Buy POE Chaos Orbs" 
+  ],
+  openGraph: {
+    title: "Buy POE Currency - Divine Orbs & Exalts | Path of Trade",
+    description: "Cheap POE Currency Trading ⚡ Instant Delivery, 24/7 Support. Buy Divine Orbs, Exalts & Chaos Safely!",
+    images: [{ url: '/og-image.jpg' }],
+  }, 
 };
 
-// Preload fonts with display:swap for better performance
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["400", "700"],
@@ -50,7 +63,10 @@ export default function RootLayout({
   return (
     
     <html lang="en" className={`${roboto.variable} ${sourceSans.variable}`} suppressHydrationWarning>
+      <head>
         <GoogleTagManager gtmId="GTM-W89HJG73-XYZ" />
+      </head>
+        
     
       <body className="bg-background text-foreground" suppressHydrationWarning>
         <ThemeProvider
@@ -70,7 +86,7 @@ export default function RootLayout({
                     <Link href="/" className="py-3 flex items-center">
                       <Image 
                         src="/images/logo.webp" 
-                        alt="Path of Trade Logo" 
+                        alt="Path of Trade - Buy POE 1 & 2 Currency" 
                         width={110} 
                         height={55}
                         className="h-auto w-auto"
@@ -93,10 +109,12 @@ export default function RootLayout({
                 </div>
               </nav>
               
+              <MainNavigation />
+              
               {children}
               
               <Footer/>
-              
+              <GoogleAnalytics gaId="G-G1790M45LN"/>
               <Analytics/>
               <SpeedInsights/>
             </CartProvider>

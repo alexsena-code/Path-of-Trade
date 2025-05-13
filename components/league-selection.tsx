@@ -1,7 +1,8 @@
 'use client'
 import Image from "next/image";
+import Link from "next/link";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { getLeagues } from "@/app/actions";
 import { LeagueSkeleton } from "@/components/ui/skeleton";
@@ -25,11 +26,28 @@ interface LeagueCardProps {
 const LeagueCard = ({ league, gameVersion, isExpanded, onExpand }: LeagueCardProps) => {
   const router = useRouter();
 
-  const handleLeagueSelection = (difficulty: 'hardcore' | 'softcore') => {
-    router.push(
-      `/games/${gameVersion}/leagues/${encodeURIComponent(league.name)}/${difficulty}`
-    );
-  };
+
+  
+  // Also build product URLs with search params for direct prefetching
+  const softcoreProductsUrl = `/products?gameVersion=${gameVersion}&league=${encodeURIComponent(league.name)}&difficulty=softcore`;
+  const hardcoreProductsUrl = `/products?gameVersion=${gameVersion}&league=${encodeURIComponent(league.name)}&difficulty=hardcore`;
+
+  // Prefetch the products pages when card is expanded
+  useEffect(() => {
+    if (isExpanded) {
+      // Prefetch both difficulty product pages
+      const prefetchSoftcore = async () => {
+        await router.prefetch(softcoreProductsUrl);
+      };
+      
+      const prefetchHardcore = async () => {
+        await router.prefetch(hardcoreProductsUrl);
+      };
+      
+      prefetchSoftcore();
+      prefetchHardcore();
+    }
+  }, [isExpanded, router, softcoreProductsUrl, hardcoreProductsUrl]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -88,26 +106,28 @@ const LeagueCard = ({ league, gameVersion, isExpanded, onExpand }: LeagueCardPro
 
         {isExpanded && (
           <CardFooter className="flex justify-center gap-2 py-2 mb-4 bg-gradient-to-t from-card via-card/90 to-transparent">
-            <button
+            <Link
+              href={softcoreProductsUrl}
+              prefetch={true}
               onClick={(e) => {
                 e.stopPropagation();
-                handleLeagueSelection('softcore');
               }}
-              className="w-32 bg-gradient-to-b from-emerald-600 to-emerald-700 text-white/90 font-bold px-4 py-2.5 rounded-lg hover:from-emerald-500 hover:to-emerald-600 transition-all duration-200 text-md tracking-wide shadow-sm hover:shadow-md"
               aria-label={`Select ${league.name} softcore league`}
+              className="w-32 bg-gradient-to-b from-emerald-600 to-emerald-700 text-white/90 font-bold px-4 py-2.5 rounded-lg hover:from-emerald-500 hover:to-emerald-600 transition-all duration-200 text-md tracking-wide shadow-sm hover:shadow-md flex items-center justify-center"
             >
               Softcore
-            </button>
-            <button
+            </Link>
+            <Link
+              href={hardcoreProductsUrl}
+              prefetch={true}
               onClick={(e) => {
                 e.stopPropagation();
-                handleLeagueSelection('hardcore');
               }}
-              className="w-32 bg-gradient-to-b from-rose-600 to-rose-700 text-white/90 font-bold px-4 py-2.5 rounded-lg hover:from-rose-500 hover:to-rose-600 transition-all duration-200 text-md tracking-wide shadow-sm hover:shadow-md"
               aria-label={`Select ${league.name} hardcore league`}
+              className="w-32 bg-gradient-to-b from-rose-600 to-rose-700 text-white/90 font-bold px-4 py-2.5 rounded-lg hover:from-rose-500 hover:to-rose-600 transition-all duration-200 text-md tracking-wide shadow-sm hover:shadow-md flex items-center justify-center"
             >
               Hardcore
-            </button>
+            </Link>
           </CardFooter>
         )}
       </Card>

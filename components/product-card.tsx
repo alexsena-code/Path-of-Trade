@@ -3,13 +3,14 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { useState } from "react";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, Info } from "lucide-react";
 import { Input } from "./ui/input";
 import type { Product } from "@/lib/interface";
 import { useCurrency } from "@/lib/contexts/currency-context";
 import { useCart } from "@/lib/contexts/cart-context";
 import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
@@ -83,26 +84,36 @@ export default function ProductCard({ product }: ProductCardProps) {
   const displayPrice = convertPrice(product.price);
   const totalPrice = displayPrice * count;
 
+  // Create URL with parameters
+  const productDetailUrl = `/products/${encodeURIComponent(product.name)}?league=${encodeURIComponent(product.league)}&difficulty=${encodeURIComponent(product.difficulty)}`;
+
   return (
     <Card className="inline-block max-w-70 bg-black/10 min-w-40 overflow-hidden shadow-md hover:shadow-lg transition-shadow m-3 outline-none ">
       <CardContent className="flex flex-col mt-4">
         <div className="relative h-24 w-24 sm:h-28 sm:w-28 md:h-20 md:w-20 mb-4 rounded-lg overflow-hidden mx-auto">
-          <Image
-            src={product.imgUrl}
-            alt={product.alt || product.name}
-            fill
-            className="object-cover hover:scale-105 transition-transform duration-300"
-            quality={100}
-            priority
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = '/placeholder.png'; // Fallback image
-            }}
-          />
+          <Link href={productDetailUrl}>
+            <Image
+              src={product.imgUrl}
+              alt={product.alt || product.name}
+              fill
+              className="object-cover hover:scale-105 transition-transform duration-300"
+              quality={100}
+              priority
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/placeholder.png'; // Fallback image
+              }}
+            />
+          </Link>
         </div>
 
         <CardFooter className="flex flex-col items-center">
-          <h2 className="text-lg md:text-xl text-center">{product.name}</h2>
+          <Link 
+            href={productDetailUrl}
+            className="hover:text-indigo-600 transition-colors duration-200"
+          >
+            <h2 className="text-lg md:text-xl text-center">{product.name}</h2>
+          </Link>
 
           {/* Quantity controls */}
           <div className="flex my-1">
@@ -146,7 +157,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
           
-          <div className="flex flex-nowrap">
+          <div className="flex flex-nowrap mb-2">
             <Button
               className="bg-green-500 min-w-14 text-black hover:bg-green-600 hover:scale-105 transition-transform duration-300 hover:text-white text-md font-bold rounded-sm mx-2"
               disabled={count === 0 || isProcessing}
@@ -163,6 +174,10 @@ export default function ProductCard({ product }: ProductCardProps) {
               Add to Cart
             </Button>
           </div>
+          
+          <Link href={productDetailUrl} className="text-indigo-600 hover:text-indigo-800 flex items-center text-sm mt-2">
+            <Info className="h-4 w-4 mr-1" /> View Details
+          </Link>
         </CardFooter>
       </CardContent>
     </Card>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu, Package, LogOut, User } from "lucide-react";
+import { Menu, Package, LogOut, User, Search } from "lucide-react";
 import { 
   Sheet, 
   SheetContent, 
@@ -31,11 +31,42 @@ export function MobileMenu({ isAuthenticated = false }) {
           <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[250px] bg-black/95 p-0">
+      <SheetContent side="right" className="bg-background border-white/10 p-0">
         <SheetHeader className="pt-6 pb-2 border-b border-white/10">
           <SheetTitle className="text-white text-lg font-bold">Menu</SheetTitle>
         </SheetHeader>
         <div className="flex flex-col mt-4">
+          <Link 
+            href="/"
+            onClick={() => setOpen(false)}
+            className="w-full text-center py-2.5 text-white/80 font-roboto text-sm
+              hover:text-white transition-colors duration-200 border-b border-white/5
+              hover:border-white/20"
+          >
+            Home
+          </Link>
+          
+          <Link 
+            href="/products"
+            onClick={() => setOpen(false)}
+            className="w-full text-center py-2.5 text-white/80 font-roboto text-sm
+              hover:text-white transition-colors duration-200 border-b border-white/5
+              hover:border-white/20"
+          >
+            Products
+          </Link>
+          
+          <Link 
+            href="/search"
+            onClick={() => setOpen(false)}
+            className="w-full text-center py-2.5 text-white/80 font-roboto text-sm
+              hover:text-white transition-colors duration-200 border-b border-white/5
+              hover:border-white/20 flex items-center justify-center gap-2"
+          >
+            <Search className="h-4 w-4" />
+            Search
+          </Link>
+          
           {isAuthenticated ? (
             <>
               <Link 
