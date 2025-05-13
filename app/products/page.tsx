@@ -49,14 +49,7 @@ export default async function ProductsPage(
             {league} - {difficulty}
           </h2>
         </div>
-        <div className="mt-2 mb-6">
-          <p className="text-gray-700 text-sm md:text-base">
-            Browsing <span className="font-semibold">{category}</span> for <span className="font-semibold">{league}</span>. 
-            {products.length > 0 
-              ? ` Found ${products.length} products available for trading.` 
-              : " No products found. Try adjusting your filters."}
-          </p>
-        </div>
+      
         <ProductsClient products={products} />
       </div>
     );

@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl, lastModified: new Date() },
     { url: `${baseUrl}/products`, lastModified: new Date() },
     { url: `${baseUrl}/games/path-of-exile-1/leagues`, lastModified: new Date() },
-    { url: `${baseUrl}/games/path-of-exile-2/leagues`, lastModified: new Date() },
+    { url: `${baseUrl}/games/path-of-exile-2/`, lastModified: new Date() },
     { url: `${baseUrl}/cart`, lastModified: new Date() },
   ];
 

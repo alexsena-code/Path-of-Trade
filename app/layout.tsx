@@ -17,7 +17,7 @@ import Footer from "@/components/footer";
 export const metadata = {
   metadataBase: new URL("https://www.pathoftrade.net"), 
   title: "Buy POE 1 & 2 Currency | Cheap Divine Orbs, Exalts, Chaos - Path of Trade",
-  description: "Buy Path of Exile Currency Safely ✔️ Lowest Prices for Divine Orbs, Exalted Orbs & Chaos. Instant Delivery, 24/7 Live Support. POE Trade Currency Securely at PathOfTrade.net!",
+  description: "Buy Path of Exile Currency ✔️ Lowest Prices for Divine Orbs, Exalted Orbs. Instant Delivery, 24/7 Live Support. POE Trade Currency Securely at PathOfTrade.net!",
   keywords: [
     "Buy POE Currency",
     "POE Divine Orbs",
@@ -57,7 +57,7 @@ const sourceSans = Source_Sans_3({
 
 const jsonLd = {
   '@context': 'https://www.pathoftrade.net',
-  '@type': 'Product',
+  '@type': 'Website',
   name: 'Path of Exile Currency',
   image: '/images/logo.webp',
   description: 'Buy Path of Exile Currency Safely ✔️ Lowest Prices for Divine Orbs, Exalts & Chaos. Instant Delivery, 24/7 Live Support. POE Trade Currency Securely at PathOfTrade.net!',
@@ -73,15 +73,13 @@ export default function RootLayout({
     <html lang="en" className={`${roboto.variable} ${sourceSans.variable}`} suppressHydrationWarning>
       <head>
         <GoogleTagManager gtmId="GTM-W89HJG73-XYZ" />
-      </head>
-
-      <script>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+        <script type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}>
       </script>
         
+      </head>
+
+
     
       <body className="bg-background text-foreground" suppressHydrationWarning>
         <ThemeProvider
