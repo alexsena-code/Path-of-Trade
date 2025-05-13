@@ -2,45 +2,72 @@ import { getProductsWithParams } from "@/app/actions";
 import ProductsClient from "@/components/products-client";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "All Products | Path of Trade",
-  description:
-    "Browse all Path of Exile products, currency, items and services. Filter by game version, league, and more.",
-  openGraph: {
-    title: "Path of Trade Products",
-    description:
-      "Browse all Path of Exile products, currency, items and services. Filter by game version, league, and more.",
-    type: "website",
-  },
+type SearchParams = {
+  gameVersion?: string;
+  league?: string;
+  difficulty?: string;
+  category?: string;
+  search?: string;
 };
 
-export default async function ProductsPage({
+export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: {
-    gameVersion?: string;
-    league?: string;
-    difficulty?: string;
-    category?: string;
-    search?: string;
+  searchParams: SearchParams;
+}): Promise<Metadata> {
+  const league = searchParams.league || "All Leagues";
+  const category = searchParams.category || "All Items";
+  const gameVersion = searchParams.gameVersion || "Current";
+  
+  return {
+    title: `${category} in ${league} | Path of Trade`,
+    description:
+      `Buy premium Path of Exile ${category.toLowerCase()} for ${league} ${gameVersion}. Safe, fast, and reliable trading service.`,
+    openGraph: {
+      title: `${category} | ${league} | Path of Trade`,
+      description:
+        `Find the best deals on Path of Exile ${category.toLowerCase()} for ${league}. Secure transactions with trusted sellers.`,
+      type: "website",
+    },
   };
-}) {
+}
+
+export default async function ProductsPage(
+  props: {
+    searchParams: Promise<SearchParams>;
+  }
+) {
+  const searchParams = await props.searchParams;
   try {
     const products = await getProductsWithParams(searchParams);
+    const league = searchParams.league || "All Leagues";
+    const difficulty = searchParams.difficulty || "All Difficulties";
+    const category = searchParams.category || "All Items";
+    
     return (
       <div className="container mx-auto py-8">
-        <div className="bg-indigo-700 inline-block min-w-[320px] md:min-w-[380px] rounded-tl-md rounded-tr-sm  py-2 shadow-lg">
+        <div className="bg-indigo-700 inline-block min-w-[320px] md:min-w-[380px] rounded-tl-md rounded-tr-sm py-2 shadow-lg">
           <h2 className="text-lg md:text-3xl text-center text-white font-bold antialiased capitalize tracking-wider">
-            {searchParams.league} - {searchParams.difficulty}
+            {league} - {difficulty}
           </h2>
+        </div>
+        <div className="mt-2 mb-6">
+          <p className="text-gray-700 text-sm md:text-base">
+            Browsing <span className="font-semibold">{category}</span> for <span className="font-semibold">{league}</span>. 
+            {products.length > 0 
+              ? ` Found ${products.length} products available for trading.` 
+              : " No products found. Try adjusting your filters."}
+          </p>
         </div>
         <ProductsClient products={products} />
       </div>
     );
   } catch (error) {
     return (
-      <div className="text-red-500 p-4">
-        Error loading products: {(error as Error).message}
+      <div className="text-red-500 p-4 border border-red-300 rounded bg-red-50">
+        <h3 className="font-bold mb-2">Error Loading Products</h3>
+        <p>{(error as Error).message}</p>
+        <p className="mt-4 text-sm">Please try refreshing the page or adjusting your search parameters.</p>
       </div>
     );
   }

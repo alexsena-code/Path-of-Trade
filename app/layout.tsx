@@ -35,7 +35,7 @@ export const metadata = {
   openGraph: {
     title: "Buy POE Currency - Divine Orbs & Exalts | Path of Trade",
     description: "Cheap POE Currency Trading ⚡ Instant Delivery, 24/7 Support. Buy Divine Orbs, Exalts & Chaos Safely!",
-    images: [{ url: '/og-image.jpg' }],
+    images: [{ url: '/images/logo.webp' }],
   }, 
 };
 
@@ -55,6 +55,14 @@ const sourceSans = Source_Sans_3({
   preload: true,
 });
 
+const jsonLd = {
+  '@context': 'https://www.pathoftrade.net',
+  '@type': 'Product',
+  name: 'Path of Exile Currency',
+  image: '/images/logo.webp',
+  description: 'Buy Path of Exile Currency Safely ✔️ Lowest Prices for Divine Orbs, Exalts & Chaos. Instant Delivery, 24/7 Live Support. POE Trade Currency Securely at PathOfTrade.net!',
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -66,6 +74,13 @@ export default function RootLayout({
       <head>
         <GoogleTagManager gtmId="GTM-W89HJG73-XYZ" />
       </head>
+
+      <script>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      </script>
         
     
       <body className="bg-background text-foreground" suppressHydrationWarning>

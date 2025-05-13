@@ -112,7 +112,7 @@ export default function ManageProducts() {
 
   if (loading) {
     return (
-      <main className="container h-min-screen pt-20">
+      <main className="container h-min-screen ">
         <div className="max-w-4xl mx-auto p-6">
           <div className="flex justify-center items-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
@@ -123,7 +123,7 @@ export default function ManageProducts() {
   }
 
   return (
-    <main className="container h-min-screen pt-20">
+    <main className="container h-min-screen mb-10">
       <div className="max-w-4xl mx-auto p-6 rounded-lg shadow-md bg-black border border-gray-400/20">
         <h1 className="text-2xl font-bold text-gray-slate-100 mb-6">Manage Products</h1>
         

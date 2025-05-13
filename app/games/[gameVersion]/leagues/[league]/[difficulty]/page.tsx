@@ -2,17 +2,18 @@ import { PageProps } from "@/lib/interface";
 import Products from "@/components/products";
 import { Metadata } from "next";
 
-export async function generateMetadata({ 
-  params 
-}: { 
-  params: { 
-    gameVersion: 'path-of-exile-1' | 'path-of-exile-2';
-    league: string;
-    difficulty: string;
-  } 
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: { 
+    params: Promise<{ 
+      gameVersion: 'path-of-exile-1' | 'path-of-exile-2';
+      league: string;
+      difficulty: string;
+    }> 
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const decodedLeague = decodeURIComponent(params.league);
-  
+
   return {
     title: `${decodedLeague} - ${params.difficulty} | Path of Trade`,
     description: `Browse ${decodedLeague} ${params.difficulty} products for Path of Exile ${params.gameVersion === 'path-of-exile-1' ? '1' : '2'}.`,
@@ -24,15 +25,16 @@ export async function generateMetadata({
   };
 }
 
-export default async function Page({ 
-  params 
-}: { 
-  params: { 
-    gameVersion: 'path-of-exile-1' | 'path-of-exile-2';
-    league: string;
-    difficulty: string;
-  } 
-}) {
+export default async function Page(
+  props: { 
+    params: Promise<{ 
+      gameVersion: 'path-of-exile-1' | 'path-of-exile-2';
+      league: string;
+      difficulty: string;
+    }> 
+  }
+) {
+  const params = await props.params;
   try {
     const { gameVersion, league, difficulty } = params;
     const decodedLeague = decodeURIComponent(league);

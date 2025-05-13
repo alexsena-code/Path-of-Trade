@@ -32,6 +32,7 @@ export default function Admin() {
       gameVersion: "path-of-exile-1",
       imgUrl: "",
       difficulty: "",
+      description: "",
       alt: "",
     });
   };
@@ -180,6 +181,17 @@ export default function Admin() {
             </div>
 
             {/* Description Textarea - Full Width */}
+
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="description" className="text-gray-300">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full bg-black border border-gray-700 text-white focus:border-gray-500 min-h-[100px] resize-y rounded-md p-2"
+                placeholder="Enter product Description"
+              />
+            </div>
             
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="alt" className="text-gray-300">Alt Image</Label>

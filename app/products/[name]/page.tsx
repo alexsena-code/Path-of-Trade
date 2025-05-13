@@ -6,10 +6,11 @@ import Link from "next/link";
 import Filters from "./filters";
 import { parseProductSlug } from "@/utils/url-helper";
 
-export const generateMetadata = async ({ params }: { params: { name: string } }): Promise<Metadata> => {
+export const generateMetadata = async (props: { params: Promise<{ name: string }> }): Promise<Metadata> => {
+  const params = await props.params;
   // Get a readable product name from the URL slug
   const productName = await parseProductSlug(params.name);
-  
+
   return {
     title: `${productName} | Path of Trade`,
     description: `View details and pricing for ${productName} in Path of Exile.`,
@@ -21,17 +22,18 @@ export const generateMetadata = async ({ params }: { params: { name: string } })
   };
 };
 
-export default async function ProductDetailPage({
-  params,
-  searchParams,
-}: {
-  params: { name: string };
-  searchParams: {
-    league?: string;
-    difficulty?: string;
-    gameVersion?: 'path-of-exile-1' | 'path-of-exile-2';
-  };
-}) {
+export default async function ProductDetailPage(
+  props: {
+    params: Promise<{ name: string }>;
+    searchParams: Promise<{
+      league?: string;
+      difficulty?: string;
+      gameVersion?: 'path-of-exile-1' | 'path-of-exile-2';
+    }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   try {
     // Get the decoded product name for searching
     const decodedName = await parseProductSlug(params.name);

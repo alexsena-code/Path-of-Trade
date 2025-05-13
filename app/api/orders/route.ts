@@ -7,7 +7,7 @@ export async function POST(req: Request) {
     const { characterName, items, totalAmount, currency, sessionId } = await req.json();
 
     // Get authenticated user
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const supabase = await createClient();
     const { data: { user }, error: userError } = await supabase.auth.getUser();
 
