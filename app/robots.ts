@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/admin/", "/api/", "/auth/", "/checkout/"],
     },
-    sitemap: "https://path-of-trade.vercel.app/sitemap.xml",
+    sitemap: "https://www.pathoftrade.net/sitemap.xml",
   };
 } 
