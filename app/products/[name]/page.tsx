@@ -6,34 +6,32 @@ import Link from "next/link";
 import Filters from "./filters";
 import { parseProductSlug } from "@/utils/url-helper";
 
-export const generateMetadata = async (props: { params: Promise<{ name: string }> }): Promise<Metadata> => {
-  const params = await props.params;
+export const generateMetadata = async ({ params }: { params: { name: string } }): Promise<Metadata> => {
   // Get a readable product name from the URL slug
   const productName = await parseProductSlug(params.name);
-
+  
   return {
-    title: `${productName} | Path of Trade`,
-    description: `View details and pricing for ${productName} in Path of Exile.`,
+    title: `Buy POE ${productName} | Fast & Safe Currency | PathofTrade.net`,
+    description: `Buy cheap ${productName} for Path of Exile. Get your PoE currency instantly & securely from PathofTrade.net. Best prices and reliable service for all your ${productName} needs.`,
     openGraph: {
-      title: `${productName} | Path of Trade`,
-      description: `View details and pricing for ${productName} in Path of Exile.`,
+      title: `Buy POE ${productName} | Fast & Safe Currency | PathofTrade.net`,
+      description: `Buy cheap ${productName} for Path of Exile. Get your PoE currency instantly & securely from PathofTrade.net. Best prices and reliable service for all your ${productName} needs.`,
       type: "website",
     },
   };
 };
 
-export default async function ProductDetailPage(
-  props: {
-    params: Promise<{ name: string }>;
-    searchParams: Promise<{
-      league?: string;
-      difficulty?: string;
-      gameVersion?: 'path-of-exile-1' | 'path-of-exile-2';
-    }>;
-  }
-) {
-  const searchParams = await props.searchParams;
-  const params = await props.params;
+export default async function ProductDetailPage({
+  params,
+  searchParams,
+}: {
+  params: { name: string };
+  searchParams: {
+    league?: string;
+    difficulty?: string;
+    gameVersion?: 'path-of-exile-1' | 'path-of-exile-2';
+  };
+}) {
   try {
     // Get the decoded product name for searching
     const decodedName = await parseProductSlug(params.name);
@@ -88,11 +86,7 @@ export default async function ProductDetailPage(
 
     return (
       <div className="container mx-auto py-12 px-4">
-                <div className="bg-indigo-700 inline-block min-w-[320px] md:min-w-[320px] rounded-tl-md rounded-tr-sm px-4 py-2 shadow-lg">
-          <h2 className="text-lg md:text-3xl text-center text-white font-bold antialiased capitalize tracking-wide">
-            {currentLeague} - {currentDifficulty}
-          </h2>
-        </div>
+
         <div className="max-w-6xl mx-auto bg-card rounded-lg shadow-lg overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Product Image */}

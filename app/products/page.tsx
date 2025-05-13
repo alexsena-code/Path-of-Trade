@@ -20,13 +20,11 @@ export async function generateMetadata({
   const gameVersion = searchParams.gameVersion || "Current";
   
   return {
-    title: `${category} in ${league} | Path of Trade`,
-    description:
-      `Buy premium Path of Exile ${category.toLowerCase()} for ${league} ${gameVersion}. Safe, fast, and reliable trading service.`,
+    title: `Buy ${category} PoE ${league} | Fast & Safe Currency | PathofTrade.net`,
+    description: `Buy cheap ${category} for Path of Exile ${league} (PoE ${gameVersion}). Get your PoE currency instantly & securely from PathofTrade.net. Best prices and reliable service for all your ${league} needs.`,
     openGraph: {
-      title: `${category} | ${league} | Path of Trade`,
-      description:
-        `Find the best deals on Path of Exile ${category.toLowerCase()} for ${league}. Secure transactions with trusted sellers.`,
+      title: `Best Price: ${category} - PoE ${league} Currency | PathofTrade.net`,
+      description: `Find the best deals on Path of Exile ${category} for ${league} at PathofTrade.net. We offer cheap PoE currency, instant delivery, and 100% secure transactions for your ${gameVersion} gameplay.`,
       type: "website",
     },
   };
