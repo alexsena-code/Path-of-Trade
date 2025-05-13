@@ -18,14 +18,25 @@ export default function ProductSearchForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  // Initialize state from URL parameters
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("name") || "");
-  const [league, setLeague] = useState(searchParams.get("league") || "");
-  const [difficulty, setDifficulty] = useState(searchParams.get("difficulty") || "");
+  // Initialize with empty values first
+  const [searchTerm, setSearchTerm] = useState("");
+  const [league, setLeague] = useState("");
+  const [difficulty, setDifficulty] = useState("");
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Available options for dropdowns
   const leagueOptions = ["Standard", "Settlers of Kalguur"];
   const difficultyOptions = ["softcore", "hardcore"];
+
+  // Set initial values from URL parameters after component mounts
+  useEffect(() => {
+    if (searchParams) {
+      setSearchTerm(searchParams.get("name") || "");
+      setLeague(searchParams.get("league") || "");
+      setDifficulty(searchParams.get("difficulty") || "");
+      setIsInitialized(true);
+    }
+  }, [searchParams]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
