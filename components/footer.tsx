@@ -1,8 +1,3 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/usXPLuIE2xp
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
 import Image from "next/image";
 import Link from "next/link";
 import { JSX, SVGProps } from "react";
@@ -71,7 +66,7 @@ export default function Footer() {
             <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
               About us
             </Link>
-            <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
+            <Link href="/products" className="text-gray-300 hover:text-white text-sm transition-colors">
               Products
             </Link>
             <div className="pt-2">

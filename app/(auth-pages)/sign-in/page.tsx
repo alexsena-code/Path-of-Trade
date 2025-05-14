@@ -1,4 +1,4 @@
-import { signInAction} from "@/app/actions";
+import { signInAction } from "@/app/actions";
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 
@@ -31,11 +31,13 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
         <form className="flex flex-col gap-6">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">Email</Label>
-              <Input 
-                name="email" 
-                placeholder="you@example.com" 
-                required 
+              <Label htmlFor="email" className="text-sm font-medium">
+                Email
+              </Label>
+              <Input
+                name="email"
+                placeholder="you@example.com"
+                required
                 className="bg-white/5 border-white/10 focus:border-indigo-500"
                 autoFocus
               />
@@ -43,7 +45,9 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                <Label htmlFor="password" className="text-sm font-medium">
+                  Password
+                </Label>
                 <Link
                   className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
                   href="/forgot-password"
@@ -61,8 +65,8 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
               />
             </div>
 
-            <SubmitButton 
-              pendingText="Signing In..." 
+            <SubmitButton
+              pendingText="Signing In..."
               formAction={signInAction}
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5"
             >
@@ -88,9 +92,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
             <div className="w-full border-t border-white/10"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 text-muted-foreground">
-              Or continue with
-            </span>
+            <span className="px-2 text-muted-foreground">Or continue with</span>
           </div>
         </div>
 

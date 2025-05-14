@@ -31,7 +31,7 @@ export default function Admin() {
       price: 0,
       gameVersion: "path-of-exile-1",
       imgUrl: "",
-      difficulty: "",
+      difficulty: "", 
       description: "",
       alt: "",
     });
