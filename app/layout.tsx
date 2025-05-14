@@ -1,6 +1,5 @@
 import HeaderAuth from "@/components/header-auth";
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
-import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import { Roboto, Source_Sans_3 } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
@@ -19,11 +18,6 @@ export const metadata = {
     "Buy POE 1 & 2 Currency | Cheap Divine Orbs, Exalts, Chaos - Path of Trade",
   description:
     "Buy Path of Exile Currency ✔️ Lowest Prices for Divine Orbs, Exalted Orbs. Instant Delivery, 24/7 Live Support. POE Trade Currency Securely at PathOfTrade.net!",
-  metadataBase: new URL("https://www.pathoftrade.net"),
-  title:
-    "Buy POE 1 & 2 Currency | Cheap Divine Orbs, Exalts, Chaos - Path of Trade",
-  description:
-    "Buy Path of Exile Currency ✔️ Lowest Prices for Divine Orbs, Exalted Orbs. Instant Delivery, 24/7 Live Support. POE Trade Currency Securely at PathOfTrade.net!",
   keywords: [
     "Buy POE Currency",
     "POE Divine Orbs",
@@ -37,9 +31,6 @@ export const metadata = {
     "Divine Orb Trade",
     "POE Currency Delivery",
     "Buy POE Chaos Orbs",
-    "Divine Orb Trade",
-    "POE Currency Delivery",
-    "Buy POE Chaos Orbs",
   ],
   openGraph: {
     title: "Buy POE Currency - Divine Orbs & Exalts | Path of Trade",
@@ -47,11 +38,8 @@ export const metadata = {
       "Cheap POE Currency Trading ⚡ Instant Delivery, 24/7 Support. Buy Divine Orbs, Exalts & Chaos Safely!",
     images: [{ url: "/images/logo.webp" }],
   },
-    description:
-      "Cheap POE Currency Trading ⚡ Instant Delivery, 24/7 Support. Buy Divine Orbs, Exalts & Chaos Safely!",
-    images: [{ url: "/images/logo.webp" }],
-  },
 };
+
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -70,20 +58,12 @@ const sourceSans = Source_Sans_3({
 });
 
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${roboto.variable} ${sourceSans.variable}`}
-      suppressHydrationWarning
-    >
-      <GoogleTagManager gtmId="GTM-W89HJG73-XYZ" />
-
     <html
       lang="en"
       className={`${roboto.variable} ${sourceSans.variable}`}
@@ -103,13 +83,8 @@ export default function RootLayout({
               <nav className="w-full flex justify-center border-b border-b-foreground/10 h-18 mb-8">
                 <div className="w-full max-w-6xl flex items-center  text-sm">
                   <div className="flex-1">{/* Left empty space */}</div>
-                  <div className="flex-1">{/* Left empty space */}</div>
                   <div className="flex-1 flex justify-center">
                     <Link href="/" className="py-3 flex items-center">
-                      <Image
-                        src="/images/logo.webp"
-                        alt="Path of Trade - Buy POE 1 & 2 Currency"
-                        width={110}
                       <Image
                         src="/images/logo.webp"
                         alt="Path of Trade - Buy POE 1 & 2 Currency"
@@ -127,23 +102,15 @@ export default function RootLayout({
                     <CartDropdown />
                     <div className="hidden md:flex items-center gap-3">
                       <HeaderAuth />
-                      <HeaderAuth />
                     </div>
                     <div className="md:hidden flex items-center">
-                      <HeaderAuth />
                       <HeaderAuth />
                     </div>
                   </div>
                 </div>
               </nav>
 
-
               {children}
-
-              <Footer />
-              <GoogleAnalytics gaId="G-G1790M45LN" />
-              <Analytics />
-              <SpeedInsights />
 
               <Footer />
               <GoogleAnalytics gaId="G-G1790M45LN" />
