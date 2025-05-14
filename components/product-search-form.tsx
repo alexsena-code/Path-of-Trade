@@ -20,8 +20,8 @@ export default function ProductSearchForm() {
   
   // Initialize with empty values first
   const [searchTerm, setSearchTerm] = useState("");
-  const [league, setLeague] = useState("");
-  const [difficulty, setDifficulty] = useState("");
+  const [league, setLeague] = useState("any");
+  const [difficulty, setDifficulty] = useState("any");
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Available options for dropdowns
@@ -32,8 +32,8 @@ export default function ProductSearchForm() {
   useEffect(() => {
     if (searchParams) {
       setSearchTerm(searchParams.get("name") || "");
-      setLeague(searchParams.get("league") || "");
-      setDifficulty(searchParams.get("difficulty") || "");
+      setLeague(searchParams.get("league") || "any");
+      setDifficulty(searchParams.get("difficulty") || "any");
       setIsInitialized(true);
     }
   }, [searchParams]);
@@ -46,8 +46,8 @@ export default function ProductSearchForm() {
     
     // Add query parameters if they exist
     const params = new URLSearchParams();
-    if (league) params.set("league", league);
-    if (difficulty) params.set("difficulty", difficulty);
+    if (league && league !== "any") params.set("league", league);
+    if (difficulty && difficulty !== "any") params.set("difficulty", difficulty);
     
     // Add query string if there are params
     const queryString = params.toString();
@@ -88,7 +88,7 @@ export default function ProductSearchForm() {
               <SelectValue placeholder="Select league" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Any League</SelectItem>
+              <SelectItem value="any">Any League</SelectItem>
               {leagueOptions.map((option) => (
                 <SelectItem key={option} value={option}>
                   {option}
@@ -107,7 +107,7 @@ export default function ProductSearchForm() {
               <SelectValue placeholder="Select difficulty" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Any Difficulty</SelectItem>
+              <SelectItem value="any">Any Difficulty</SelectItem>
               {difficultyOptions.map((option) => (
                 <SelectItem key={option} value={option}>
                   {option}

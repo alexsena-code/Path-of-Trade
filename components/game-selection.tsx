@@ -3,7 +3,7 @@ import { GameCard } from "@/components/game-card";
 
 export default function GameSelection() {
   return (
-    <section className="container mx-auto px-4 py-16">
+    <section className="container mx-auto px-4">
       <h1 className="text-4xl md:text-6xl tracking-tighter font-bold font-source-sans bg-gradient-to-r from-[#DEDCFF] to-[#6f58ff] bg-clip-text text-transparent mb-8 md:mb-12 text-center">
         CHOOSE YOUR GAME
       </h1>

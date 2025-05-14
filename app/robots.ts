@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/admin/", "/api/", "/auth/", "/checkout/"],
+      disallow: ["/admin/", "/api/", "/auth/", "/checkout/", "/sign-in", "/sign-up"],
     },
     sitemap: "https://www.pathoftrade.net/sitemap.xml",
   };
