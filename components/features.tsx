@@ -1,12 +1,17 @@
 import { Card, CardContent, CardDescription, CardTitle } from "./ui/card";
 import { useTranslations } from "next-intl";
+
 interface FeatureCardProps {
   title: string;
   description: string;
   icon: React.ReactNode;
 }
 
-const FeatureCard = ({ title, description, icon }: FeatureCardProps) => (
+const FeatureCard: React.FC<FeatureCardProps> = ({
+  title,
+  description,
+  icon,
+}) => (
   <Card className="flex flex-col items-center p-6 shadow-xl shadow-black/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-400 h-full">
     <CardContent className="p-0 mb-4">
       <div className="w-full h-full flex items-center  justify-center">
@@ -16,21 +21,20 @@ const FeatureCard = ({ title, description, icon }: FeatureCardProps) => (
     <CardTitle className="text-2xl md:text-2xl font-bold text-primary mb-4 text-center">
       {title}
     </CardTitle>
-    <CardDescription className=" text-md md:text-lg text-center ">
-      {description}
+    <CardDescription className="text-center">
+      <span className="text-sm leading-relaxed text-balance">
+        {description}
+      </span>
     </CardDescription>
   </Card>
 );
 
-
-
 export function Features() {
-  const t = useTranslations('Features');
+  const t = useTranslations("Features");
   const features = [
     {
-      title: t('fast-delivery'),
-      description:
-          t('fast-delivery-description'),
+      title: t("fast-delivery"),
+      description: t("fast-delivery-description"),
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -44,9 +48,9 @@ export function Features() {
       ),
     },
     {
-      title: t('secure-payment'),
-      description:
-        t('secure-payment-description'),
+      title: t("24-7-support"),
+      description: t("24-7-support-description"),
+
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -59,10 +63,11 @@ export function Features() {
         </svg>
       ),
     },
+
     {
-      title: t('refund-guarantee'),
-      description:
-        t('refund-guarantee-description'),
+      title: t("security-guarantee"),
+      description: t("security-guarantee-description"),
+
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -71,14 +76,14 @@ export function Features() {
           fill="currentColor"
           viewBox="0 0 256 256"
         >
-          <path d="M230.33,141.06a24.43,24.43,0,0,0-21.24-4.23l-41.84,9.62A28,28,0,0,0,140,112H89.94a31.82,31.82,0,0,0-22.63,9.37L44.69,144H16A16,16,0,0,0,0,160v40a16,16,0,0,0,16,16H120a7.93,7.93,0,0,0,1.94-.24l64-16a6.94,6.94,0,0,0,1.19-.4L226,182.82l.44-.2a24.6,24.6,0,0,0,3.93-41.56ZM16,160H40v40H16Zm203.43,8.21-38,16.18L119,200H56V155.31l22.63-22.62A15.86,15.86,0,0,1,89.94,128H140a12,12,0,0,1,0,24H112a8,8,0,0,0,0,16h32a8.32,8.32,0,0,0,1.79-.2l67-15.41.31-.08a8.6,8.6,0,0,1,6.3,15.9ZM164,96a36,36,0,0,0,5.9-.48,36,36,0,1,0,28.22-47A36,36,0,1,0,164,96Zm60-12a20,20,0,1,1-20-20A20,20,0,0,1,224,84ZM164,40a20,20,0,0,1,19.25,14.61,36,36,0,0,0-15,24.93A20.42,20.42,0,0,1,164,80a20,20,0,0,1,0-40Z" />
+          <path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H208V208Zm-68-56a12,12,0,1,1-12-12A12,12,0,0,1,140,152Z"></path>
         </svg>
       ),
     },
     {
-      title: t('security-guarantee'),
-      description:
-        t('security-guarantee-description'),
+      title: t("cheap-prices"),
+      description: t("cheap-prices-description"),
+
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -87,7 +92,7 @@ export function Features() {
           fill="currentColor"
           viewBox="0 0 256 256"
         >
-          <path d="M230.33,141.06a24.43,24.43,0,0,0-21.24-4.23l-41.84,9.62A28,28,0,0,0,140,112H89.94a31.82,31.82,0,0,0-22.63,9.37L44.69,144H16A16,16,0,0,0,0,160v40a16,16,0,0,0,16,16H120a7.93,7.93,0,0,0,1.94-.24l64-16a6.94,6.94,0,0,0,1.19-.4L226,182.82l.44-.2a24.6,24.6,0,0,0,3.93-41.56ZM16,160H40v40H16Zm203.43,8.21-38,16.18L119,200H56V155.31l22.63-22.62A15.86,15.86,0,0,1,89.94,128H140a12,12,0,0,1,0,24H112a8,8,0,0,0,0,16h32a8.32,8.32,0,0,0,1.79-.2l67-15.41.31-.08a8.6,8.6,0,0,1,6.3,15.9ZM164,96a36,36,0,0,0,5.9-.48,36,36,0,1,0,28.22-47A36,36,0,1,0,164,96Zm60-12a20,20,0,1,1-20-20A20,20,0,0,1,224,84ZM164,40a20,20,0,0,1,19.25,14.61,36,36,0,0,0-15,24.93A20.42,20.42,0,0,1,164,80a20,20,0,0,1,0-40Z"></path>
+          <path d="M128,88a40,40,0,1,0,40,40A40,40,0,0,0,128,88Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,152ZM240,56H16a8,8,0,0,0-8,8V192a8,8,0,0,0,8,8H240a8,8,0,0,0,8-8V64A8,8,0,0,0,240,56ZM193.65,184H62.35A56.78,56.78,0,0,0,24,145.65v-35.3A56.78,56.78,0,0,0,62.35,72h131.3A56.78,56.78,0,0,0,232,110.35v35.3A56.78,56.78,0,0,0,193.65,184ZM232,93.37A40.81,40.81,0,0,1,210.63,72H232ZM45.37,72A40.81,40.81,0,0,1,24,93.37V72ZM24,162.63A40.81,40.81,0,0,1,45.37,184H24ZM210.63,184A40.81,40.81,0,0,1,232,162.63V184Z"></path>
         </svg>
       ),
     },
@@ -96,7 +101,7 @@ export function Features() {
   return (
     <section className="py-16 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
           {features.map((feature, index) => (
             <FeatureCard
               key={index}

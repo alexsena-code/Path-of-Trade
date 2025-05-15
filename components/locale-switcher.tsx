@@ -1,26 +1,41 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { useRouter, usePathname } from '@/i18n/navigation';
+import { Button } from './ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+import { Globe } from 'lucide-react';
 
 export default function LocaleSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
   const currentLocale = pathname.split('/')[1] || 'en';
 
-  const handleChange = (value: string) => {
-    router.push(`/${value}`);
+  const handleChange = (locale: string) => {
+    router.replace({ pathname }, { locale });
+    router.refresh();
   };
+  
 
   return (
-    <Select onValueChange={handleChange} defaultValue={currentLocale}>
-      <SelectTrigger>
-        <SelectValue placeholder={currentLocale === 'en' ? 'English' : 'Português'} />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="en">English</SelectItem>
-        <SelectItem value="pt-br">Português</SelectItem>
-      </SelectContent>
-    </Select>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Globe className="h-5 w-5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => handleChange('en')}>
+          English
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleChange('pt-br')}>
+          Português
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

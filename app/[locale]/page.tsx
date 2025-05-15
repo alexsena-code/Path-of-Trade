@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <main className="container mx-auto px-4 py-4 min-h-screen">
       <GameSelection />
-      <h1 className="text-4xl md:text-6xl tracking-tighter font-bold font-source-sans text-white text-center">
+      <h1 className="text-4xl md:text-6xl tracking-tighter font-bold font-source-sans text-white text-center tracking-wide">
         {t('why-path-of-trade')}
       </h1>
       <Features />

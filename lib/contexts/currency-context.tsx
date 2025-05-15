@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 
 type CurrencyType = 'USD' | 'EUR' | 'GBP' | 'BRL'
 
@@ -36,23 +37,21 @@ const OPEN_EXCHANGE_RATES_APP_ID = process.env.NEXT_PUBLIC_OPEN_EXCHANGE_RATES_A
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined)
 
-export function CurrencyProvider({ children, params }: { children: React.ReactNode, params: Promise<{locale: string}> }) {
-  // Initialize with default values for SSR
+export function CurrencyProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
   const [currency, setCurrency] = useState<CurrencyType>('USD')
   const [exchangeRates, setExchangeRates] = useState(fallbackRates)
   const [isLoading, setIsLoading] = useState(false)
   const [apiSource, setApiSource] = useState<'openexchangerates' | 'frankfurter' | 'fallback'>('fallback')
   const [isMounted, setIsMounted] = useState(false)
-  const [locale, setLocale] = useState('en-US')
   
-  // Handle client-side initialization
+  // Handle client-side initialization and locale-based currency
   useEffect(() => {
     setIsMounted(true)
-    const savedCurrency = localStorage.getItem('selectedCurrency') as CurrencyType | null
-    if (savedCurrency && Object.keys(fallbackRates).includes(savedCurrency)) {
-      setCurrency(savedCurrency)
-    }
-  }, [])
+    const locale = pathname.split('/')[1]
+    const defaultCurrency = locale === 'pt-br' ? 'BRL' : 'USD'
+    setCurrency(defaultCurrency)
+  }, [pathname])
 
   // Fetch exchange rates from API
   const fetchExchangeRates = async () => {

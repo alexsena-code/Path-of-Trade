@@ -1,4 +1,4 @@
-import { LeagueSelectionPage } from "@/components/league-selection";
+import { LeagueSelectionPage } from "../../../../components/league-selection";
 
 
 
