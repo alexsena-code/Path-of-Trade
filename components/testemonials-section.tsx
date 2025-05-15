@@ -8,6 +8,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Testimonial {
   name: string;
@@ -66,11 +67,12 @@ export default function TestimonialCarousel() {
     ));
   };
 
+  const t = useTranslations('Testemonials');
   return (
     <section className="w-full py-16 bg-background mb-16">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-source font-black text-left mb-8 text-white">
-          What Our Clients Say
+            {t('title')}
         </h2>
 
         <Carousel

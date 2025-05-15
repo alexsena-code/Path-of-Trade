@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { Order } from "@/types";
+import { useTranslations } from "next-intl";
+
 
 const formatPrice = (price: number, currency: string = 'USD') => {
   // Handle Path of Exile currency formatting
@@ -120,6 +122,8 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const supabase = createClient();
+  const t = useTranslations("Orders");
+
 
   useEffect(() => {
     async function fetchOrders() {
@@ -157,7 +161,7 @@ export default function OrdersPage() {
       <div className="flex items-center justify-center min-h-[70vh]">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-12 w-12 animate-spin text-primary" />
-          <h2 className="text-xl font-medium">Loading your orders...</h2>
+          <h2 className="text-xl font-medium">{t("loading")}</h2>
         </div>
       </div>
     );
@@ -166,19 +170,19 @@ export default function OrdersPage() {
   if (orders.length === 0) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold mb-8 text-center md:text-left">My PoE Orders</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center md:text-left">{t("title")}</h1>
         <Card className="p-12 max-w-2xl mx-auto text-center border border-dashed">
           <div className="rounded-full bg-primary/10 p-6 mx-auto w-24 h-24 flex items-center justify-center mb-6">
             <Package className="h-12 w-12 text-primary" />
           </div>
-          <h2 className="text-2xl font-semibold mb-3">No Orders Yet</h2>
+          <h2 className="text-2xl font-semibold mb-3">{t("noOrdersYet")}</h2>
           <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-            Once you place an order for Path of Exile items, you'll be able to track delivery status here.
+            {t("onceYouPlaceAnOrder")}
           </p>
           <Button asChild size="lg" className="px-8 gap-2">
             <Link href="/">
               <ShoppingBag className="h-5 w-5" />
-              Browse PoE Items
+              {t("browsePoEItems")}
             </Link>
           </Button>
         </Card>
@@ -188,9 +192,9 @@ export default function OrdersPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 animate-in fade-in duration-500">
-      <h1 className="text-3xl font-bold mb-2 text-center md:text-left">My PoE Orders</h1>
+      <h1 className="text-3xl font-bold mb-2 text-center md:text-left">{t("title")}</h1>
       <p className="text-muted-foreground mb-8 text-center md:text-left">
-        Track delivery status of your Path of Exile items
+        {t("trackDeliveryStatus")}
       </p>
       
       <div className="grid grid-cols-1 gap-8 max-w-5xl mx-auto">
@@ -223,7 +227,7 @@ export default function OrdersPage() {
                 <div className="col-span-1 space-y-4">
                   {order.character_name && (
                     <div className="flex flex-col">
-                      <span className="text-sm text-muted-foreground mb-1">Character Name</span>
+                      <span className="text-sm text-muted-foreground mb-1">{t("characterName")}</span>
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-primary" />
                         <span className="font-medium">{order.character_name}</span>
@@ -234,7 +238,7 @@ export default function OrdersPage() {
                   {/* Extract league from first item if available */}
                   {order.items && order.items.length > 0 && order.items[0].product?.league && (
                     <div className="flex flex-col">
-                      <span className="text-sm text-muted-foreground mb-1">League</span>
+                      <span className="text-sm text-muted-foreground mb-1">{t("league")}</span>
                       <div className="flex items-center gap-2">
                         <Map className="h-4 w-4 text-orange-500" />
                         <span className="font-medium">{order.items[0].product.league}</span>
@@ -245,7 +249,7 @@ export default function OrdersPage() {
                   {/* Difficulty */}
                   {order.items && order.items.length > 0 && (order.items[0].product as any)?.difficulty && (
                     <div className="flex flex-col">
-                      <span className="text-sm text-muted-foreground mb-1">Difficulty</span>
+                      <span className="text-sm text-muted-foreground mb-1">{t("difficulty")}</span>
                       <div className="flex items-center gap-2">
                         <Shield className="h-4 w-4 text-primary" />
                         <Badge variant="outline" className={
@@ -260,14 +264,14 @@ export default function OrdersPage() {
                   )}
                   
                   <div className="flex flex-col">
-                    <span className="text-sm text-muted-foreground mb-1">Total Amount</span>
+                    <span className="text-sm text-muted-foreground mb-1">{t("totalAmount")}</span>
                     <span className="text-lg font-semibold">{formatPrice(order.total_amount, order.currency)}</span>
                   </div>
                   
                   {/* Payment Status */}
                   {order.payment_intent?.status && (
                     <div className="flex flex-col">
-                      <span className="text-sm text-muted-foreground mb-1">Payment Status</span>
+                      <span className="text-sm text-muted-foreground mb-1">{t("paymentStatus")}</span>
                       <div className="flex items-center gap-1.5">
                         {getPaymentStatusIcon(order.payment_intent.status)}
                         <span>{formatStatus(order.payment_intent.status)}</span>
@@ -329,7 +333,7 @@ export default function OrdersPage() {
                   className="gap-2"
                   onClick={() => router.push(`/orders/${order.id}`)}
                 >
-                  View Order Details
+                  {t("viewOrderDetails")}
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>

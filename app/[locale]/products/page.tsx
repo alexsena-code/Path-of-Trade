@@ -10,15 +10,16 @@ type SearchParams = {
   search?: string;
 };
 
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    searchParams: Promise<SearchParams>;
+  }
+): Promise<Metadata> {
+  const searchParams = await props.searchParams;
   const league = searchParams.league || "All Leagues";
   const category = searchParams.category || "All Items";
   const gameVersion = searchParams.gameVersion || "Current";
-  
+
   return {
     title: `Buy ${category} PoE ${league} | Fast & Safe Currency | PathofTrade.net`,
     description: `Buy cheap ${category} for Path of Exile ${league} (PoE ${gameVersion}). Get your PoE currency from PathofTrade.net. Best prices ${league} orbs.`,
@@ -44,7 +45,7 @@ export default async function ProductsPage(
     
     return (
       <div className="container mx-auto py-8">
-        <div className="bg-indigo-700 inline-block min-w-[320px] md:min-w-[380px] rounded-tl-md rounded-tr-sm py-2 shadow-lg">
+        <div className="bg-indigo-700 inline-block min-w-[320px] md:min-w-[380px] rounded-tl-md rounded-tr-sm py-2 px-4 shadow-lg">
           <h2 className="text-lg md:text-3xl text-center text-white font-bold antialiased capitalize tracking-wider">
             {league} - {difficulty}
           </h2>

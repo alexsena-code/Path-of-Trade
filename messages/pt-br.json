@@ -2,5 +2,112 @@
   "HomePage": {
     "why-path-of-trade": "Por que Path of Trade?",
     "choose-your-game": "ESCOLHA SEU JOGO"
+  },
+
+  "Features": {
+    "fast-delivery": "Entrega Rápida",
+    "secure-payment": "Pagamento Seguro",
+    "refund-guarantee": "Garantia de Reembolso",
+    "security-guarantee": "Garantia de Segurança",
+
+    "fast-delivery-description": "Receba sua moeda rapidamente e eficientemente. A maioria das ordens é entregue em menos de 30 minutos",
+    "secure-payment-description": "Usamos um sistema de pagamento seguro para proteger suas informações pessoais e financeiras.",
+    "refund-guarantee-description": "Oferecemos uma garantia de reembolso se você não estiver satisfeito com o serviço.",
+    "security-guarantee-description": "Sistema de pagamento online seguro de 100%. Provedor de serviços de jogos profissionais garantindo a segurança do produto"
+  },
+
+  "Testemonials": {
+    "title": "O que nossos clientes dizem: "
+  },
+
+  "LeagueSelection": {
+    "title": "SELECIONE SUA LIGA",
+    "description": "Selecione sua liga Path of Exile abaixo para visualizar os preços e ofertas disponíveis."
+  },
+
+  "Products": {
+    "allCategories": "Todas as Categorias",
+    "currency": "Moedas",
+    "services": "Serviços",
+    "items": "Itens",
+    "buyNow": "Comprar Agora",
+    "addToCart": "Adicionar ao Carrinho",
+    "viewDetails": "Ver Detalhes",
+    "processing": "Processando",
+    "noProductsFound": "Nenhum produto encontrado. Tente ajustar sua busca ou filtro."
+  },
+
+  "ProductCard": {
+    "addToCartError": "Falha ao adicionar o item ao carrinho. Por favor, tente novamente.",
+    "placeholderImageAlt": "Imagem de placeholder",
+    "decrementQuantity": "Diminuir quantidade",
+    "incrementQuantity": "Aumentar quantidade",
+    "quantityInput": "Quantidade do produto",
+    "processing": "Processando...",
+    "buyNow": "Comprar Agora",
+    "addToCart": "Adicionar ao Carrinho",
+    "viewDetails": "Ver Detalhes"
+  },
+
+  "Orders": {
+    "title": "Meus Pedidos PoE",
+    "noOrdersYet": "Nenhum pedido ainda",
+    "onceYouPlaceAnOrder": "Uma vez que você coloque um pedido para itens Path of Exile, você poderá rastrear o status de entrega aqui.",
+    "trackOrder": "Rastrear Pedido",
+    "orderStatus": "Status do Pedido",
+    "orderDate": "Data do Pedido",
+    "orderTotal": "Total do Pedido",
+    "orderDetails": "Detalhes do Pedido",
+    "orderHistory": "Histórico de Pedidos",
+    "orderTracking": "Rastreamento de Pedido",
+    "orderTrackingNumber": "Número de Rastreamento do Pedido",
+    "loading": "Carregando seus pedidos...",
+    "browsePoEItems": "Navegar por Itens PoE",
+    "trackDeliveryStatus": "Rastrear status de entrega de seus itens Path of Exile",
+    "viewOrderDetails": "Ver Detalhes do Pedido",
+    "orderPlaced": "Pedido Criado",
+    "orderProcessing": "Pedido Processando",
+    "orderShipped": "Pedido Enviado",
+    "orderDelivered": "Pedido Entregue",
+    "orderCancelled": "Pedido Cancelado",
+    "orderFailed": "Pedido Falhou",
+    "orderRefunded": "Pedido Reembolsado",
+    "orderCompleted": "Pedido Completo",
+    "orderPending": "Pedido Pendente",
+    "league": "Liga",
+    "difficulty": "Dificuldade",
+    "category": "Categoria",
+    "characterName": "Nome do Personagem",
+    "totalAmount": "Total",
+    "paymentStatus": "Status do Pagamento",
+    "backToOrders": "Voltar para Pedidos",
+    "orderNotFound": "Pedido Não Encontrado",
+    "orderNotFoundDescription": "Não conseguimos encontrar o pedido que você está procurando. Ele pode ter sido removido ou você não tem permissão para visualizá-lo.",
+    "viewAllOrders": "Ver Todos os Pedidos",
+    "orderItems": "Itens do Pedido",
+    "subtotal": "Subtotal",
+    "discount": "Desconto",
+    "total": "Total",
+    "deliveryInformation": "Informações de Entrega",
+    "order": "Pedido",
+    "orderId": "ID do Pedido",
+    "contactSupport": "Contatar Suporte",
+    "cancelOrder": "Cancelar Pedido",
+    "buyAgain": "Comprar Novamente",
+    "trackDelivery": "Rastrear Entrega"
+  },
+
+  "Header": {
+    "signIn": "Entrar",
+    "signUp": "Cadastrar",
+    "signOut": "Sair",
+    "myOrders": "Meus Pedidos",
+    "myAccount": "Minha Conta"
+  },
+
+  "LocaleSwitcher": {
+    "label": "Idioma",
+    "locale": "Português (BR)"
   }
+
 }

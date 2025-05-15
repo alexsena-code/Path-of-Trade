@@ -8,17 +8,18 @@ import { Input } from "./ui/input";
 import type { Product } from "@/lib/interface";
 import { useCurrency } from "@/lib/contexts/currency-context";
 import { useCart } from "@/lib/contexts/cart-context";
-import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
+
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const t = useTranslations("ProductCard");
   const [count, setCount] = useState(1);
   const { formatPrice, currency, convertPrice } = useCurrency();
   const { addToCart } = useCart();
@@ -68,7 +69,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       router.push('/cart');
     } catch (error) {
       console.error('Error:', error);
-      setError('Failed to add item to cart. Please try again.');
+      setError(t('addToCartError'));
     } finally {
       setIsProcessing(false);
     }
@@ -102,6 +103,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.src = '/placeholder.png'; // Fallback image
+                target.alt = t('placeholderImageAlt');
               }}
             />
           </Link>
@@ -116,13 +118,14 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Link>
 
           {/* Quantity controls */}
-          <div className="flex my-1">
+          <div className="flex my-1 ">
             <Button
               variant="outline"
               size="icon"
               className="flex-none h-8"
               onClick={decrement}
               disabled={isQuantityLoading || count === 0}
+              aria-label={t('decrementQuantity')}
             >
               <Minus />
             </Button>
@@ -134,6 +137,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               onChange={handleInputChange}
               disabled={isQuantityLoading}
               min="0"
+              aria-label={t('quantityInput')}
             />
             <Button
               variant="outline"
@@ -141,6 +145,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               className="flex-none h-8"
               onClick={increment}
               disabled={isQuantityLoading}
+              aria-label={t('incrementQuantity')}
             >
               <Plus />
             </Button>
@@ -157,26 +162,26 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
           
-          <div className="flex flex-nowrap mb-2">
+          <div className="flex flex-wrap min-w-64 justify-center gap-2 mb-2">
             <Button
-              className="bg-green-500 min-w-14 text-black hover:bg-green-600 hover:scale-105 transition-transform duration-300 hover:text-white text-md font-bold rounded-sm mx-2"
+              className="bg-green-500 min-w-28  text-black hover:bg-green-600 hover:scale-105 transition-transform duration-300 hover:text-white text-md font-bold rounded-sm  "
               disabled={count === 0 || isProcessing}
               onClick={handleBuyNow}
             >
-              {isProcessing ? "Processing..." : "Buy Now"}
+              {isProcessing ? t('processing') : t('buyNow')}
             </Button>
             <Button
               variant="outline"
-              className="rounded-sm min-w-28 hover:scale-105 transition-transform duration-300 font-bold"
+              className="rounded-sm min-w-28  hover:scale-105 transition-transform duration-300 font-bold "
               disabled={count === 0}
               onClick={handleAddToCart}
             >
-              Add to Cart
+              {t('addToCart')}
             </Button>
           </div>
           
           <Link href={productDetailUrl} className="text-indigo-600 hover:text-indigo-800 flex items-center text-sm mt-2">
-            <Info className="h-4 w-4 mr-1" /> View Details
+            <Info className="h-4 w-4 mr-1" /> {t('viewDetails')}
           </Link>
         </CardFooter>
       </CardContent>

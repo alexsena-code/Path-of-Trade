@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { Order } from "@/types";
 import { Separator } from "@/components/ui/separator";
+import { useTranslations } from "next-intl";
 
 const formatPrice = (price: number, currency: string = 'USD') => {
   if (currency.toLowerCase() === 'chaos' || currency.toLowerCase() === 'exalted') {
@@ -123,6 +124,7 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClient();
+  const t = useTranslations('Orders');
 
   useEffect(() => {
     async function fetchOrderDetails() {
@@ -164,7 +166,7 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
       <div className="flex items-center justify-center min-h-[70vh]">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-12 w-12 animate-spin text-primary" />
-          <h2 className="text-xl font-medium">Loading order details...</h2>
+          <h2 className="text-xl font-medium">{t("loading")}</h2>
         </div>
       </div>
     );
@@ -175,21 +177,21 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
       <div className="container mx-auto px-4 py-12">
         <Button variant="ghost" className="mb-8 gap-2" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4" />
-          Back to Orders
+          {t("backToOrders")}
         </Button>
         
         <Card className="p-12 max-w-2xl mx-auto text-center border border-dashed">
           <div className="rounded-full bg-red-100 dark:bg-red-950/50 p-6 mx-auto w-24 h-24 flex items-center justify-center mb-6">
             <XCircle className="h-12 w-12 text-red-500" />
           </div>
-          <h2 className="text-2xl font-semibold mb-3">Order Not Found</h2>
+          <h2 className="text-2xl font-semibold mb-3">{t("orderNotFound")}</h2>
           <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-            {error || "We couldn't find the order you're looking for. It may have been removed or you don't have permission to view it."}
+            {error || t("orderNotFoundDescription")}
           </p>
           <Button asChild size="lg" className="px-8 gap-2">
             <Link href="/orders">
               <Package className="h-5 w-5" />
-              View All Orders
+              {t("viewAllOrders")}
             </Link>
           </Button>
         </Card>
@@ -201,7 +203,7 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
     <div className="container mx-auto px-4 py-12 animate-in fade-in duration-500">
       <Button variant="ghost" className="mb-8 gap-2" onClick={() => router.back()}>
         <ArrowLeft className="h-4 w-4" />
-        Back to Orders
+        {t("backToOrders")}
       </Button>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
@@ -210,7 +212,7 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
           <Card className="p-6 md:p-8 mb-8">
             <div className="flex flex-col md:flex-row justify-between items-start gap-4 md:gap-0 mb-6">
               <div>
-                <h1 className="text-2xl font-bold mb-1">Order #{order.id}</h1>
+                <h1 className="text-2xl font-bold mb-1">{t("order")} #{order.id}</h1>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Calendar className="h-4 w-4" />
                   {formatDate(order.created_at)}
@@ -228,7 +230,7 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
               <div>
                 <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
                   <Shield className="h-5 w-5 text-primary" />
-                  Order Items
+                  {t("orderItems")}
                 </h2>
                 
                 <div className="space-y-4">
@@ -272,7 +274,7 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
               <Separator />
               
               <div className="flex justify-between items-center py-2">
-                <span className="font-medium">Subtotal</span>
+                <span className="font-medium">{t("subtotal")}</span>
                 <span>{formatPrice(order.total_amount, order.currency)}</span>
               </div>
               
@@ -285,7 +287,7 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
               
               {(order as any).discount_amount > 0 && (
                 <div className="flex justify-between items-center py-2 text-green-600">
-                  <span className="font-medium">Discount</span>
+                  <span className="font-medium">{t("discount")}</span>
                   <span>-{formatPrice((order as any).discount_amount, order.currency)}</span>
                 </div>
               )}
@@ -293,7 +295,7 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
               <Separator />
               
               <div className="flex justify-between items-center py-2">
-                <span className="font-bold text-lg">Total</span>
+                <span className="font-bold text-lg">{t("total")}</span>
                 <span className="font-bold text-lg">
                   {formatPrice(order.total_amount, order.currency)}
                 </span>
@@ -363,13 +365,13 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
           <Card className="p-6 md:p-8 mb-8">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <User className="h-5 w-5 text-primary" />
-              Delivery Information
+              {t("deliveryInformation")}
             </h2>
             
             <div className="space-y-4">
               {order.character_name && (
                 <div className="flex flex-col">
-                  <span className="text-sm text-muted-foreground mb-1">Character Name</span>
+                  <span className="text-sm text-muted-foreground mb-1">{t("characterName")}</span>
                   <span className="font-medium">{order.character_name}</span>
                 </div>
               )}
@@ -377,7 +379,7 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
               {/* Extract league from first item if available */}
               {order.items && order.items.length > 0 && order.items[0].product?.league && (
                 <div className="flex flex-col">
-                  <span className="text-sm text-muted-foreground mb-1">League</span>
+                  <span className="text-sm text-muted-foreground mb-1">{t("league")}</span>
                   <div className="flex items-center gap-2">
                     <Map className="h-4 w-4 text-orange-500" />
                     <span className="font-medium">{order.items[0].product.league}</span>
@@ -402,15 +404,9 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
             <div className="space-y-4">
               <Button className="w-full gap-2">
                 <MessageSquare className="h-4 w-4" />
-                Contact Support
+                {t("contactSupport")}
               </Button>
-              
-              {order.status?.toLowerCase() !== 'delivered' && order.status?.toLowerCase() !== 'completed' && (
-                <Button variant="outline" className="w-full gap-2">
-                  <ExternalLink className="h-4 w-4" />
-                  Track Delivery
-                </Button>
-              )}
+
               
               {(order.status?.toLowerCase() === 'delivered' || order.status?.toLowerCase() === 'completed') ? (
                 <Button variant="outline" className="w-full gap-2">
@@ -421,7 +417,7 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
                 order.status?.toLowerCase() !== 'cancelled' && order.status?.toLowerCase() !== 'canceled' && order.status?.toLowerCase() !== 'failed' && (
                   <Button variant="outline" className="w-full gap-2 border-red-200 text-red-700 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/50">
                     <XCircle className="h-4 w-4" />
-                    Cancel Order
+                    {t("cancelOrder")}
                   </Button>
                 )
               )}

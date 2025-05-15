@@ -23,6 +23,7 @@ import {
 } from "./ui/dropdown-menu";
 import { MobileMenu } from "./mobile-menu";
 import { Settings, Package, User, LogOut } from "lucide-react";
+import LocaleSwitcher from "./locale-switcher";
 
 export default async function AuthButton() {
   const supabase = await createClient();
@@ -66,7 +67,9 @@ export default async function AuthButton() {
       <div className="sm:hidden">
         <CurrencyIndicator variant="icon" />
       </div>
+      <LocaleSwitcher />
       <div className="hidden md:block">
+   
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="h-8 w-8 sm:h-9 sm:w-9 cursor-pointer hover:opacity-80 transition-opacity">
@@ -96,7 +99,9 @@ export default async function AuthButton() {
             </form>
           </DropdownMenuContent>
         </DropdownMenu>
+        
       </div>
+   
       <div className="block md:hidden">
         <MobileMenu isAuthenticated={true} />
       </div>

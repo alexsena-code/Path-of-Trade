@@ -36,13 +36,14 @@ const OPEN_EXCHANGE_RATES_APP_ID = process.env.NEXT_PUBLIC_OPEN_EXCHANGE_RATES_A
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined)
 
-export function CurrencyProvider({ children }: { children: React.ReactNode }) {
+export function CurrencyProvider({ children, params }: { children: React.ReactNode, params: Promise<{locale: string}> }) {
   // Initialize with default values for SSR
   const [currency, setCurrency] = useState<CurrencyType>('USD')
   const [exchangeRates, setExchangeRates] = useState(fallbackRates)
   const [isLoading, setIsLoading] = useState(false)
   const [apiSource, setApiSource] = useState<'openexchangerates' | 'frankfurter' | 'fallback'>('fallback')
   const [isMounted, setIsMounted] = useState(false)
+  const [locale, setLocale] = useState('en-US')
   
   // Handle client-side initialization
   useEffect(() => {

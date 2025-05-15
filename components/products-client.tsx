@@ -7,9 +7,20 @@ import { ProductSkeleton } from "./ui/skeleton";
 import { Input } from "./ui/input";
 import { Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+
 
 export default function ProductsClient({ products }: { products: Product[] }) {
-  const buttons = ["All Categories", "Currency", "Services", "Items"];
+
+  const t = useTranslations('Products');
+
+
+  const buttons = [
+    { label: t("allCategories"), value: "All Categories" },
+    { label: t("currency"), value: "Currency" },
+    { label: t("services"), value: "Services" },
+    { label: t("items"), value: "Items" },
+  ];
   const [selectedFilter, setSelectedFilter] = useState<string>("All Categories");
   const [isLoaded, setIsLoaded] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,7 +30,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
   // Initialize filter from URL search params if available
   useEffect(() => {
     const category = searchParams.get("category");
-    if (category && buttons.includes(category)) {
+    if (category && buttons.some(b => b.value === category)) {
       setSelectedFilter(category);
     }
     
@@ -69,8 +80,11 @@ export default function ProductsClient({ products }: { products: Product[] }) {
       params.delete("search");
     }
     
-    if (selectedFilter !== "All Categories") {
-      params.set("category", selectedFilter);
+    // Find the button object corresponding to selectedFilter
+    const selectedButton = buttons.find(button => button.value === selectedFilter || button.label === selectedFilter);
+
+    if (selectedButton && selectedButton.value !== "All Categories") {
+      params.set("category", selectedButton.value);
     } else {
       params.delete("category");
     }
@@ -85,17 +99,17 @@ export default function ProductsClient({ products }: { products: Product[] }) {
       
       <div className="flex flex-col md:flex-row items-center justify-between px-3 gap-4 mb-4">
         <nav className="flex flex-wrap gap-2" aria-label="Filters">
-          {buttons.map((label) => (
+          {buttons.map((button) => (
             <Button
-              key={label}
+              key={button.value}
               variant="secondary"
               className={`min-w-12 text-sm md:min-w-30 md:text-lg font-bold hover:bg-indigo-600 ${
-                selectedFilter === label ? "bg-indigo-600 text-white" : ""
+                selectedFilter === button.value ? "bg-indigo-600 text-white" : ""
               }`}
-              onClick={() => setSelectedFilter(label)}
-              aria-label={`Filter by ${label}`}
+              onClick={() => setSelectedFilter(button.value)}
+              aria-label={`Filter by ${button.label}`}
             >
-              {label}
+              {button.label}
             </Button>
           ))}
         </nav>
@@ -121,7 +135,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
         </form>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
         {!isLoaded ? (
           // Show skeletons while loading
           Array(4).fill(0).map((_, index) => (
@@ -138,7 +152,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
           // Show empty state
           <div className="w-full text-center py-12 col-span-full">
             <p className="text-lg text-muted-foreground">
-              No products found. Try adjusting your search or filter.
+              {t("noProductsFound")}
             </p>
           </div>
         )}

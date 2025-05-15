@@ -70,6 +70,7 @@ export default async function RootLayout({
 
   setRequestLocale(locale);
 
+
   return (
     <html
       lang={locale}
@@ -86,7 +87,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider locale={locale}>
-          <CurrencyProvider>
+          <CurrencyProvider params={params}>
             <CartProvider>
               <nav className="w-full flex justify-center border-b border-b-foreground/10 h-18 mb-8">
                 <div className="w-full max-w-6xl flex items-center  text-sm">

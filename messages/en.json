@@ -2,5 +2,112 @@
   "HomePage": {
     "why-path-of-trade": "Why Path of Trade?",
     "choose-your-game": "CHOOSE YOUR GAME"
+  },
+
+  "Features": {
+    "fast-delivery": "Fast Delivery",
+    "secure-payment": "Secure Payment",
+    "refund-guarantee": "Refund Guarantee",
+    "security-guarantee": "Security Guarantee",
+    
+    "fast-delivery-description": "Receive your currency quickly and efficiently. Most orders are delivered within 30 minutes",
+    "secure-payment-description": "We use a secure payment system to protect your personal and financial information.",
+    "reliable-service-description": "We are a reliable service that has been in business for a long time.",
+    "refund-guarantee-description": "We offer a refund guarantee if you are not satisfied with the service.",
+    "security-guarantee-description": "100% secure online payment system. Professional game service provider ensuring product security"
+  },
+
+  "Testemonials": {
+    "title": "What our Customers say"
+  },
+
+  "LeagueSelection": {
+    "title": "SELECT YOUR LEAGUE",
+    "description": "Select your Path of Exile league below to view available currency prices and offers."
+  },
+
+  "Products": {
+    "allCategories": "All Categories",
+    "currency": "Currency",
+    "services": "Services",
+    "items": "Items",
+    "buyNow": "Buy Now",
+    "addToCart": "Add to Cart",
+    "viewDetails": "View Details",
+    "processing": "Processing",
+    "noProductsFound": "No products found. Try adjusting your search or filter."
+  },
+
+  "ProductCard": {
+    "addToCartError": "Failed to add item to cart. Please try again.",
+    "placeholderImageAlt": "Placeholder image",
+    "decrementQuantity": "Decrement quantity",
+    "incrementQuantity": "Increment quantity",
+    "quantityInput": "Product quantity",
+    "processing": "Processing...",
+    "buyNow": "Buy Now",
+    "addToCart": "Add to Cart",
+    "viewDetails": "View Details"
+  },
+
+  "Orders": {
+    "title": "My PoE Orders",
+    "noOrdersYet": "No Orders Yet",
+    "onceYouPlaceAnOrder": "Once you place an order for Path of Exile items, you'll be able to track delivery status here.",
+    "trackOrder": "Track Order",
+    "orderStatus": "Order Status",
+    "orderDate": "Order Date",
+    "orderTotal": "Order Total",
+    "orderDetails": "Order Details",
+    "orderHistory": "Order History",
+    "orderTracking": "Order Tracking",
+    "orderTrackingNumber": "Order Tracking Number",
+    "loading": "Loading your orders...",
+    "browsePoEItems": "Browse PoE Items",
+    "trackDeliveryStatus": "Track delivery status of your Path of Exile items",
+    "viewOrderDetails": "View Order Details",
+    "orderPlaced": "Order Placed",
+    "orderProcessing": "Order Processing",
+    "orderDelivered": "Order Delivered",
+    "orderCancelled": "Order Cancelled",
+    "orderFailed": "Order Failed",
+    "orderRefunded": "Order Refunded",
+    "orderCompleted": "Order Completed",
+    "orderPending": "Order Pending",
+    "league": "League",
+    "difficulty": "Difficulty",
+    "category": "Category",
+    "characterName": "Character Name",
+    "totalAmount": "Total Amount",
+    "paymentStatus": "Payment Status",
+    "backToOrders": "Back to Orders",
+    "orderNotFound": "Order Not Found",
+    "orderNotFoundDescription": "We couldn't find the order you're looking for. It may have been removed or you don't have permission to view it.",
+    "viewAllOrders": "View All Orders",
+    "orderItems": "Order Items",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "total": "Total",
+    "deliveryInformation": "Delivery Information",
+    "order": "Order",
+    "orderId": "Order ID",
+    "contactSupport": "Contact Support",
+    "cancelOrder": "Cancel Order",
+    "buyAgain": "Buy Again"
+  },
+
+  "Header": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "myOrders": "My Orders",
+    "myAccount": "My Account"
+
+  },
+
+  "LocaleSwitcher": {
+    "label": "Language",
+    "locale": "English"
   }
+  
 }

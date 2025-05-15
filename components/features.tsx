@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardTitle } from "./ui/card";
-
+import { useTranslations } from "next-intl";
 interface FeatureCardProps {
   title: string;
   description: string;
@@ -22,12 +22,15 @@ const FeatureCard = ({ title, description, icon }: FeatureCardProps) => (
   </Card>
 );
 
+
+
 export function Features() {
+  const t = useTranslations('Features');
   const features = [
     {
-      title: "Fast Delivery",
+      title: t('fast-delivery'),
       description:
-        "Receive your currency quickly and efficiently. Most orders are delivered within 30 minutes",
+          t('fast-delivery-description'),
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -41,9 +44,9 @@ export function Features() {
       ),
     },
     {
-      title: "24/7 Support",
+      title: t('secure-payment'),
       description:
-        "Our dedicated support team is available around the clock to answer your questions and assist with any issues",
+        t('secure-payment-description'),
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -57,9 +60,9 @@ export function Features() {
       ),
     },
     {
-      title: "Refund Guarantee", // Fixed typo here
+      title: t('refund-guarantee'),
       description:
-        "Your satisfaction is our priority. We offer a money-back guarantee if you're not completely satisfied",
+        t('refund-guarantee-description'),
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -73,9 +76,9 @@ export function Features() {
       ),
     },
     {
-      title: "Security Guarantee",
+      title: t('security-guarantee'),
       description:
-        "100% secure online payment system. Professional game service provider ensuring product security",
+        t('security-guarantee-description'),
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
