@@ -11,7 +11,8 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import Footer from "@/components/footer";
-
+import { setRequestLocale } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
 export const metadata = {
   metadataBase: new URL("https://www.pathoftrade.net"),
   title:
@@ -58,14 +59,20 @@ const sourceSans = Source_Sans_3({
 });
 
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{locale: string}>;
 }>) {
+  const {locale} = await params;
+
+  setRequestLocale(locale);
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${roboto.variable} ${sourceSans.variable}`}
       suppressHydrationWarning
     >
@@ -78,6 +85,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <NextIntlClientProvider locale={locale}>
           <CurrencyProvider>
             <CartProvider>
               <nav className="w-full flex justify-center border-b border-b-foreground/10 h-18 mb-8">
@@ -111,13 +119,13 @@ export default function RootLayout({
               </nav>
 
               {children}
-
               <Footer />
               <GoogleAnalytics gaId="G-G1790M45LN" />
               <Analytics />
               <SpeedInsights />
             </CartProvider>
           </CurrencyProvider>
+          </NextIntlClientProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import type { Product } from "@/lib/interface";
 import { toast } from "sonner";
 import { getProducts } from "@/app/actions";
+import { createBrowserClient } from "@supabase/ssr";
 
 export default function ManageProducts() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -17,7 +17,10 @@ export default function ManageProducts() {
   const [selectedLeague, setSelectedLeague] = useState<string>("All Leagues");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All Difficulties");
 
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   useEffect(() => {
     fetchProducts();

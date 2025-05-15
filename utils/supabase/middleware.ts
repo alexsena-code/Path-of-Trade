@@ -7,12 +7,12 @@ const ADMIN_USER_IDS = [
   '8db9eeb1-51bf-4daf-80b0-e204023232a9',
 ];
 
-export const updateSession = async (request: NextRequest) => {
+export const updateSession = async (request: NextRequest, response: NextResponse) => {
   // This `try/catch` block is only here for the interactive tutorial.
   // Feel free to remove once you have Supabase connected.
   try {
-    // Create an unmodified response
-    let response = NextResponse.next({
+    // Use the provided response instead of creating a new one
+    let updatedResponse = response || NextResponse.next({
       request: {
         headers: request.headers,
       },
@@ -30,11 +30,10 @@ export const updateSession = async (request: NextRequest) => {
             cookiesToSet.forEach(({ name, value }) =>
               request.cookies.set(name, value),
             );
-            response = NextResponse.next({
-              request,
-            });
+            
+            // Preserve the existing response instead of creating a new one
             cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options),
+              updatedResponse.cookies.set(name, value, options),
             );
           },
         },
@@ -66,13 +65,13 @@ export const updateSession = async (request: NextRequest) => {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
-    return response;
+    return updatedResponse;
   } catch (e) {
     // If you are here, a Supabase client could not be created!
     // This is likely because you have not set up environment variables.
     // Check out http://localhost:3000 for Next Steps.
     console.error('Middleware error:', e);
-    return NextResponse.next({
+    return response || NextResponse.next({
       request: {
         headers: request.headers,
       },

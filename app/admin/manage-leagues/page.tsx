@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createBrowserClient } from "@supabase/ssr";
 import { toast } from "sonner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -11,7 +11,7 @@ interface League {
   id: string;
   name: string;
   imageUrl: string;
-  gameVersion: 'path-of-exile-1' | 'path-of-exile-2';
+  gameVersion: "path-of-exile-1" | "path-of-exile-2";
   description?: string;
 }
 
@@ -20,7 +20,10 @@ export default function ManageLeagues() {
   const [loading, setLoading] = useState(true);
   const [selectedGameVersion, setSelectedGameVersion] = useState<string>("All Versions");
 
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   useEffect(() => {
     fetchLeagues();
