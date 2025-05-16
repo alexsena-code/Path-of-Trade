@@ -86,7 +86,8 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NextIntlClientProvider locale={locale}>
+                        <NextIntlClientProvider locale={locale}>
+
           <CurrencyProvider>
             <CartProvider>
               <nav className="w-full flex justify-center border-b border-b-foreground/10 h-18 mb-8">
@@ -120,6 +121,7 @@ export default async function RootLayout({
               </nav>
 
               {children}
+
               <Footer />
               <GoogleAnalytics gaId="G-G1790M45LN" />
               <Analytics />

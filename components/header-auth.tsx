@@ -114,7 +114,9 @@ export default async function AuthButton() {
       <div className="hidden sm:block">
         <CurrencyIndicator variant="full" />
       </div>
+      <LocaleSwitcher />
       <div className="hidden md:flex gap-2 sm:gap-3">
+        
         <Button
           asChild
           size="sm"
