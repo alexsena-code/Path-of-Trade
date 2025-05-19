@@ -50,7 +50,7 @@ export default function CartPage() {
           description: <span className="text-white">You need to be signed in to complete your purchase</span>,
           action: {
             label: "Sign In",
-            onClick: () => router.push('/sign-in')
+            onClick: () => router.push('auth/login')
           },
           duration: 5000
         });
@@ -102,13 +102,13 @@ export default function CartPage() {
             description: "Your session has expired. Please sign in again to continue.",
             action: {
               label: "Sign In",
-              onClick: () => router.push('/sign-in')
+              onClick: () => router.push('auth/login')
             },
             duration: 5000
           });
           // Add a small delay before redirecting
           setTimeout(() => {
-            router.push('/sign-in');
+            router.push('auth/login');
           }, 10000);
           return;
         }

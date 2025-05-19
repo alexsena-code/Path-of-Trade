@@ -163,7 +163,7 @@ async function handleCheckoutSession(event: Stripe.Event, baseUrl: string) {
     statusOverride = 'waiting_delivery';
   }
   
-  return await updateOrder(
+  const result = await updateOrder(
     baseUrl, 
     orderId, 
     {
@@ -173,6 +173,26 @@ async function handleCheckoutSession(event: Stripe.Event, baseUrl: string) {
       stripe_session_id: session.id
     }
   );
+
+  if (statusOverride === 'waiting_delivery') {
+    try {
+      const emailResponse = await fetch(`${baseUrl}/api/send-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderId })
+      });
+    } 
+    if (!emailResponse.ok) {
+      console.error('Failed to send confirmation email:', await emailResponse.text());
+    } else {
+      console.log('Confirmation email sent successfully');
+    } catch (error) {
+      console.error('Error sending confirmation email:', error);
+  }
+
+  return result;
 }
 
 export async function POST(req: Request) {

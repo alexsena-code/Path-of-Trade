@@ -1,39 +1,71 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { EmailTemplate } from '@/components/email-template';
+import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
-    const { to, subject, template, data } = await req.json();
+    const { orderId } = await req.json();
 
-    const emailContent = {
-      orderConfirmation: `
-        <h1>Order Confirmation</h1>
-        <p>Thank you for your order!</p>
-        <p>Order ID: ${data.orderId}</p>
-        <p>Amount: $${data.amount / 100}</p>
-      `,
-      orderStatusUpdate: `
-        <h1>Order Status Update</h1>
-        <p>Your order status has been updated.</p>
-        <p>Order ID: ${data.orderId}</p>
-        <p>New Status: ${data.status}</p>
-      `,
-    };
+    if (!orderId) {
+      return NextResponse.json(
+        { error: 'Order ID is required' },
+        { status: 400 }
+      );
+    }
 
-    await resend.emails.send({
-      from: 'orders@yourdomain.com',
-      to,
-      subject,
-      html: emailContent[template as keyof typeof emailContent],
-    });
+    // Get order details from Supabase
+    const cookieStore = cookies();
+    const supabase = await createClient();
+    
+    const { data: order, error: orderError } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', orderId)
+      .single();
 
-    return NextResponse.json({ success: true });
+    if (orderError || !order) {
+      console.error('Error fetching order:', orderError);
+      return NextResponse.json(
+        { error: 'Order not found' },
+        { status: 404 }
+      );
+    }
+
+    // Only send email for completed orders
+    if (order.status !== 'waiting_delivery') {
+      return NextResponse.json(
+        { error: 'Order is not ready for delivery' },
+        { status: 400 }
+      );
+    }
+    // Send confirmation email
+    try {
+      await resend.emails.send({
+        from: 'admin@pathoftrade.net',
+        to: order.email,
+        subject: `Order Confirmation - #${order.id}`,
+        react: EmailTemplate({ order }) as React.ReactElement,
+      });
+
+      return NextResponse.json({ 
+        success: true,
+        message: 'Order confirmation email sent'
+      });
+    } catch (emailError) {
+      console.error('Error sending email:', emailError);
+      return NextResponse.json(
+        { error: 'Failed to send email' },
+        { status: 500 }
+      );
+    }
   } catch (error) {
     console.error('Email sending error:', error);
     return NextResponse.json(
-      { error: 'Failed to send email' },
+      { error: 'Failed to process request' },
       { status: 500 }
     );
   }

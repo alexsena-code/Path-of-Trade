@@ -14,7 +14,7 @@ export const signUpAction = async (formData: FormData) => {
   if (!email || !password) {
     return encodedRedirect(
       "error",
-      "/sign-up",
+      "/auth/sign-up",
       "Email and password are required",
     );
   }
@@ -29,7 +29,7 @@ export const signUpAction = async (formData: FormData) => {
 
   if (error) {
     console.error(error.code + " " + error.message);
-    return encodedRedirect("error", "/sign-up", error.message);
+    return encodedRedirect("error", "/auth/sign-up", error.message);
   } else {
     return redirect(`/verify-email?email=${encodeURIComponent(email)}`);
   }
@@ -46,7 +46,7 @@ export const signInAction = async (formData: FormData) => {
   });
 
   if (error) {
-    return encodedRedirect("error", "/sign-in", error.message);
+    return encodedRedirect("error", "/auth/login", error.message);
   }
 
   // Force redirect to home page
@@ -101,13 +101,13 @@ export const resetPasswordAction = async (formData: FormData) => {
     return redirect("/reset-password?error=Password update failed");
   }
 
-  return redirect("/sign-in?message=Password updated successfully. Please sign in with your new password.");
+  return redirect("auth/login?message=Password updated successfully. Please sign in with your new password.");
 };
 
 export const signOutAction = async () => {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  return redirect("/sign-in");
+  return redirect("auth/login");
 };
 
 export const signWithGoogle = async () => {

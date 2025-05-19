@@ -133,7 +133,7 @@ export default function OrdersPage() {
         
         if (sessionError) throw sessionError;
         if (!session?.user) {
-          router.push('/sign-in');
+          router.push('auth/login');
           return;
         }
 

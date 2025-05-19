@@ -134,7 +134,7 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
         
         if (sessionError) throw sessionError;
         if (!session?.user) {
-          router.push('/sign-in');
+          router.push('/auth/login');
           return;
         }
 

@@ -48,7 +48,7 @@ export const updateSession = async (request: NextRequest, response: NextResponse
     if (request.nextUrl.pathname.startsWith("/admin")) {
       if (userError || !user) {
         // Not logged in
-        return NextResponse.redirect(new URL("/sign-in", request.url));
+        return NextResponse.redirect(new URL("/auth/login", request.url));
       }
       
       // Check if user is in admin list
@@ -59,8 +59,8 @@ export const updateSession = async (request: NextRequest, response: NextResponse
     }
 
     // Redirect authenticated users away from auth pages
-    if ((request.nextUrl.pathname === "/sign-in" || 
-         request.nextUrl.pathname === "/sign-up") && 
+    if ((request.nextUrl.pathname === "/auth/login" || 
+         request.nextUrl.pathname === "/auth/sign-up") && 
         !userError) {
       return NextResponse.redirect(new URL("/", request.url));
     }
