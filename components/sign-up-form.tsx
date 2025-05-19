@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { OAuthProviders } from '@/components/oauth-providers'
+import { Turnstile } from "next-turnstile"
 
 export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const [email, setEmail] = useState('')
@@ -17,9 +18,19 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const [turnstileStatus, setTurnstileStatus] = useState<
+    "success" | "error" | "expired" | "required"
+  >("required")
+  const turnstileRef = useRef<string>("")
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (turnstileStatus !== "success") {
+      setError("Please complete the security check")
+      return
+    }
+
     const supabase = createClient()
     setIsLoading(true)
     setError(null)
@@ -35,7 +46,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/protected`,
+          emailRedirectTo: `${window.location.origin}/auth/sign-up-success`,
         },
       })
       if (error) throw error
@@ -144,6 +155,27 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
         </div>
 
         <OAuthProviders />
+        <Turnstile 
+          className="flex justify-center"
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+          onError={() => {
+            setTurnstileStatus("error");
+            setError("Security check failed. Please try again.");
+          }}
+          onExpire={() => {
+            setTurnstileStatus("expired");
+            setError("Security check expired. Please verify again.");
+          }}
+          onLoad={() => {
+            setTurnstileStatus("required");
+            setError(null);
+          }}
+          onVerify={(token) => {
+            turnstileRef.current = token;
+            setTurnstileStatus("success");
+            setError(null);
+          }}
+        />
       </div>
     </div>
   )
