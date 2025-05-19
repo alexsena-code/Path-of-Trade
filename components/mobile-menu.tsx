@@ -94,7 +94,7 @@ export function MobileMenu({ isAuthenticated = false }) {
           ) : (
             <>
               <Link 
-                href="/sign-in"
+                href="/auth/login"
                 onClick={() => setOpen(false)}
                 className="w-full text-center py-2.5 text-white/80 font-roboto text-sm
                   hover:text-white transition-colors duration-200 border-b border-white/5
@@ -103,7 +103,7 @@ export function MobileMenu({ isAuthenticated = false }) {
                 Sign in
               </Link>
               <Link 
-                href="/sign-up"
+                href="auth/sign-up"
                 onClick={() => setOpen(false)}
                 className="w-full text-center py-2.5 text-white/80 font-roboto text-sm
                   hover:text-white transition-colors duration-200 border-b border-white/5

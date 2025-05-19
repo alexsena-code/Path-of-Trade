@@ -124,7 +124,7 @@ export default async function AuthButton() {
             hover:bg-slate-100 hover:text-black transition-all duration-300 
             hover:scale-102 rounded-md border hover:border-black"
         >
-          <Link href="/sign-in">Sign in</Link>
+          <Link href="/auth/login">Sign in</Link>
         </Button>
         <Button
           asChild
@@ -133,7 +133,7 @@ export default async function AuthButton() {
             hover:bg-slate-100 hover:text-black transition-all duration-300 
             hover:scale-102 rounded-md border hover:border-black"
         >
-          <Link href="/sign-up">Sign up</Link>
+          <Link href="/auth/sign-up">Sign up</Link>
         </Button>
       </div>
       <div className="block md:hidden">
