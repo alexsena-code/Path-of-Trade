@@ -28,7 +28,7 @@ export function OAuthProviders() {
   }, []);
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-3 mb-4">
       <Button 
         variant="outline" 
         className="w-full bg-white/5 border-white/10 hover:bg-white/10" 

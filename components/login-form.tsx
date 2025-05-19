@@ -1,52 +1,65 @@
-'use client'
+"use client";
 
-import { cn } from '@/lib/utils'
-import { createClient } from '@/utils/supabase/client'
-import { Button } from '@/components/ui/button'
+import { cn } from "@/lib/utils";
+import { createClient } from "@/utils/supabase/client";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { OAuthProviders } from '@/components/oauth-providers'
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+import { OAuthProviders } from "@/components/oauth-providers";
+import { Turnstile } from "next-turnstile";
 
-export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+export function LoginForm({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const [turnstileStatus, setTurnstileStatus] = useState<
+    "success" | "error" | "expired" | "required"
+  >("required");
+  const turnstileRef = useRef<string>("");
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const supabase = createClient()
-    setIsLoading(true)
-    setError(null)
+    e.preventDefault();
+    
+    if (turnstileStatus !== "success") {
+      setError("Please complete the security check");
+      return;
+    }
+
+    const supabase = createClient();
+    setIsLoading(true);
+    setError(null);
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
-      })
-      if (error) throw error
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push('/protected')
+      });
+      if (error) throw error;
+      router.push("/protected");
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : 'An error occurred')
+      setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-8 shadow-lg">
         <div className="text-center mb-4">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-[#DEDCFF] to-[#6f58ff] bg-clip-text text-transparent">
@@ -109,12 +122,12 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5"
                 disabled={isLoading}
               >
-                {isLoading ? 'Signing In...' : 'Sign in'}
+                {isLoading ? "Signing In..." : "Sign in"}
               </Button>
             </div>
 
             <p className="text-sm text-center text-muted-foreground">
-              Don't have an account?{' '}
+              Don't have an account?{" "}
               <Link
                 href="/auth/sign-up"
                 className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
@@ -135,7 +148,28 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         </div>
 
         <OAuthProviders />
+        <Turnstile 
+          className="flex justify-center"
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+          onError={() => {
+            setTurnstileStatus("error");
+            setError("Security check failed. Please try again.");
+          }}
+          onExpire={() => {
+            setTurnstileStatus("expired");
+            setError("Security check expired. Please verify again.");
+          }}
+          onLoad={() => {
+            setTurnstileStatus("required");
+            setError(null);
+          }}
+          onVerify={(token) => {
+            turnstileRef.current = token;
+            setTurnstileStatus("success");
+            setError(null);
+          }}
+        />
       </div>
     </div>
-  )
+  );
 }
