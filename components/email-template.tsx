@@ -63,36 +63,10 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
     </div>
 
     <div style={{ backgroundColor: '#F3F4F6', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
-      <h2 style={{ color: '#1F2937', marginBottom: '15px' }}>Important Delivery Instructions</h2>
-      <ol style={{ paddingLeft: '20px', margin: '0' }}>
-        <li style={{ marginBottom: '15px' }}>
-          <strong>Wait for In-Game Message</strong>
-          <p style={{ margin: '5px 0 0 0', color: '#4B5563' }}>
-            Our trader will contact you in-game with the message: "Trade for Order #{order.id}"
-          </p>
-        </li>
-        <li style={{ marginBottom: '15px' }}>
-          <strong>Prepare for Trade</strong>
-          <p style={{ margin: '5px 0 0 0', color: '#4B5563' }}>
-            When you receive the trade request, please put a random rare item in the trade window. This is a safety measure to prevent automated detection.
-          </p>
-        </li>
-        <li style={{ marginBottom: '15px' }}>
-          <strong>Complete the Trade</strong>
-          <p style={{ margin: '5px 0 0 0', color: '#4B5563' }}>
-            After confirming the items, complete the trade. You will receive your purchased items immediately.
-          </p>
-        </li>
-      </ol>
-    </div>
-
-    <div style={{ backgroundColor: '#FEF2F2', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
-      <h3 style={{ color: '#991B1B', marginBottom: '10px' }}>⚠️ Important Safety Notes</h3>
-      <ul style={{ margin: '0', paddingLeft: '20px', color: '#7F1D1D' }}>
-        <li style={{ marginBottom: '5px' }}>Never share your account credentials with anyone</li>
-        <li style={{ marginBottom: '5px' }}>Always verify the trader's message matches your order ID</li>
-        <li style={{ marginBottom: '5px' }}>Double-check all items before completing the trade</li>
-      </ul>
+      <h2 style={{ color: '#1F2937', marginBottom: '15px' }}>Delivery Instructions</h2>
+      <p style={{ margin: '0', color: '#4B5563' }}>
+        Our trader will contact you in-game with the message: "Trade for Order #{order.id}". When you receive the trade request, please put a random rare item in the trade window. After confirming the items, complete the trade to receive your purchased items.
+      </p>
     </div>
 
     <div style={{ marginTop: '20px', padding: '20px', backgroundColor: '#EEF2FF', borderRadius: '8px' }}>
