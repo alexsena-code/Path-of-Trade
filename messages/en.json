@@ -45,7 +45,8 @@
     "difficulty": "Difficulty",
     "allLeagues": "All Leagues",
     "allDifficulties": "All Difficulties",
-    "filters": "Filters"
+    "filters": "Filters",
+    "selectDifficulty": "Select Difficulty"
   },
 
   "ProductCard": {

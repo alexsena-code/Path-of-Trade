@@ -13,6 +13,7 @@ import "./globals.css";
 import Footer from "@/components/footer";
 import { setRequestLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
+import TawkTo from "@/components/tawTo";
 export const metadata = {
   metadataBase: new URL("https://www.pathoftrade.net"),
   title:
@@ -121,7 +122,7 @@ export default async function RootLayout({
               </nav>
 
               {children}
-
+              <TawkTo />
               <Footer />
               <GoogleAnalytics gaId="G-G1790M45LN" />
               <Analytics />

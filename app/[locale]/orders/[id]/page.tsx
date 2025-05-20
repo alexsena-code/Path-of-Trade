@@ -15,7 +15,7 @@ import Link from "next/link";
 import type { Order } from "@/types";
 import { Separator } from "@/components/ui/separator";
 import { useTranslations } from "next-intl";
-
+import TawkTo from "@/components/tawTo";
 const formatPrice = (price: number, currency: string = 'USD') => {
   if (currency.toLowerCase() === 'chaos' || currency.toLowerCase() === 'exalted') {
     return `${price} ${currency}`;
@@ -125,6 +125,47 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
   const router = useRouter();
   const supabase = createClient();
   const t = useTranslations('Orders');
+
+  const handleContactSupport = () => {
+    if (typeof window !== 'undefined' && window.Tawk_API && order) {
+      // Set visitor information
+      window.Tawk_API.setAttributes({
+        'name': order.character_name,
+        'email': order.email,
+        'orderId': order.id,
+        'orderStatus': order.status,
+        'orderAmount': `${order.total_amount} ${order.currency}`
+      }, function(error: any) {
+        if (error) {
+          console.error('Error setting Tawk.to attributes:', error);
+        }
+      });
+
+      // Handle chat window state
+      window.Tawk_API.onChatMinimized = function() {
+        // When chat is minimized, we can perform any cleanup if needed
+        console.log('Chat minimized');
+      };
+
+      window.Tawk_API.onChatHidden = function() {
+        // When chat is hidden, we can perform any cleanup if needed
+        console.log('Chat hidden');
+      };
+
+      window.Tawk_API.onChatEnded = function() {
+        // When chat is ended, we can perform any cleanup if needed
+        console.log('Chat ended');
+      };
+
+      // If chat is already open, close it first
+      if (window.Tawk_API.isVisitorEngaged()) {
+        window.Tawk_API.endChat();
+      }
+
+      // Start a new chat session
+      window.Tawk_API.maximize();
+    }
+  };
 
   useEffect(() => {
     async function fetchOrderDetails() {
@@ -402,7 +443,7 @@ export default function OrderDetailsPage(props: { params: Promise<{ id: string }
             <Separator className="my-6" />
             
             <div className="space-y-4">
-              <Button className="w-full gap-2">
+              <Button className="w-full gap-2" onClick={handleContactSupport}>
                 <MessageSquare className="h-4 w-4" />
                 {t("contactSupport")}
               </Button>

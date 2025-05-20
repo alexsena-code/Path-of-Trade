@@ -21,7 +21,6 @@ export default function LocaleSwitcher() {
     router.replace({ pathname }, { locale });
     router.refresh();
   };
-  
 
   return (
     <DropdownMenu>
