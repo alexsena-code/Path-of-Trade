@@ -65,7 +65,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
     <div style={{ backgroundColor: '#F3F4F6', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
       <h2 style={{ color: '#1F2937', marginBottom: '15px' }}>Delivery Instructions</h2>
       <p style={{ margin: '0', color: '#4B5563' }}>
-        Our trader will contact you in-game with the message: "Trade for Order #{order.id}". When you receive the trade request, please put a random rare item in the trade window. After confirming the items, complete the trade to receive your purchased items.
+        Our trader will contact you in-game with the message: "TFT item or something else". When you receive the trade request, <strong>IMPORTANT: PUT A RANDOM RARE ITEM IN THE TRADE WINDOW</strong>. This is a required security step. After confirming the items, complete the trade to receive your purchased items.
       </p>
     </div>
 

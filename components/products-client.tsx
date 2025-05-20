@@ -8,12 +8,22 @@ import { Input } from "./ui/input";
 import { Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import FiltersToggle from "./filters-toggle";
 
+interface ProductsClientProps {
+  products: Product[];
+  initialFilters: {
+    gameVersion: string;
+    league: string;
+    difficulty: string;
+  };
+}
 
-export default function ProductsClient({ products }: { products: Product[] }) {
-
+export default function ProductsClient({ products, initialFilters }: ProductsClientProps) {
   const t = useTranslations('Products');
-
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   const buttons = [
     { label: t("allCategories"), value: "All Categories" },
@@ -24,8 +34,6 @@ export default function ProductsClient({ products }: { products: Product[] }) {
   const [selectedFilter, setSelectedFilter] = useState<string>("All Categories");
   const [isLoaded, setIsLoaded] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
   // Initialize filter from URL search params if available
   useEffect(() => {
@@ -95,51 +103,70 @@ export default function ProductsClient({ products }: { products: Product[] }) {
   const filteredList = filterTags(products);
 
   return (
-    <div className="border rounded-lg py-4 md:min-h-[678px] bg-black/5">
-      
-      <div className="flex flex-col md:flex-row items-center justify-between px-3 gap-4 mb-4">
-        <nav className="flex flex-wrap gap-2" aria-label="Filters">
-          {buttons.map((button) => (
-            <Button
-              key={button.value}
-              variant="secondary"
-              className={`min-w-12 text-sm md:min-w-30 md:text-lg font-bold hover:bg-indigo-600 ${
-                selectedFilter === button.value ? "bg-indigo-600 text-white" : ""
-              }`}
-              onClick={() => setSelectedFilter(button.value)}
-              aria-label={`Filter by ${button.label}`}
-            >
-              {button.label}
-            </Button>
-          ))}
-        </nav>
-        
-        <form onSubmit={handleSearch} className="flex w-full md:w-auto">
-          <div className="relative flex-1 md:w-64">
-            <Input
-              type="text"
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pr-10"
-            />
-            <Button 
-              type="submit" 
-              size="icon" 
-              variant="ghost" 
-              className="absolute right-0 top-0 h-full"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
+    <div className="border rounded-b-lg py-4 md:min-h-[678px] bg-black/5">
+      <div className="flex flex-col gap-4 px-3 mb-4">
+        {/* Search and Filters Section */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          {/* Category Buttons */}
+          <nav className="flex flex-wrap gap-2 flex-1" aria-label="Filters">
+            {buttons.map((button) => (
+              <Button
+                key={button.value}
+                variant="secondary"
+                className={`flex-1 sm:flex-none min-w-[100px] text-sm md:text-base font-bold hover:bg-indigo-600 ${
+                  selectedFilter === button.value ? "bg-indigo-600 text-white" : ""
+                }`}
+                onClick={() => setSelectedFilter(button.value)}
+                aria-label={`Filter by ${button.label}`}
+              >
+                {button.label}
+              </Button>
+            ))}
+          </nav>
+
+          {/* Search and Advanced Filters */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            {/* Search Input */}
+            <form onSubmit={handleSearch} className="flex-1 sm:w-64">
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pr-10"
+                />
+                <Button 
+                  type="submit" 
+                  size="icon" 
+                  variant="ghost" 
+                  className="absolute right-0 top-0 h-full"
+                >
+                  <Search className="h-4 w-4" />
+                </Button>
+              </div>
+            </form>
+
+            {/* Advanced Filters */}
+            <div className="w-full sm:w-auto">
+              <FiltersToggle
+                currentGameVersion={initialFilters.gameVersion}
+                currentLeague={initialFilters.league}
+                currentDifficulty={initialFilters.difficulty}
+                open={isFiltersOpen}
+                onOpenChange={setIsFiltersOpen}
+              />
+            </div>
           </div>
-        </form>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
+      {/* Products Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-3">
         {!isLoaded ? (
           // Show skeletons while loading
           Array(4).fill(0).map((_, index) => (
-            <div key={index} className="m-3">
+            <div key={index}>
               <ProductSkeleton />
             </div>
           ))
@@ -150,7 +177,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
           ))
         ) : (
           // Show empty state
-          <div className="w-full text-center py-12 col-span-full">
+          <div className="col-span-full text-center py-12">
             <p className="text-lg text-muted-foreground">
               {t("noProductsFound")}
             </p>

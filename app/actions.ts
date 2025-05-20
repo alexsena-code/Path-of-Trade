@@ -257,4 +257,19 @@ export const getProductsWithParams = async (
   return data as Product[];
 };
 
+export const getDifficulties = async (gameVersion: 'path-of-exile-1' | 'path-of-exile-2') => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('difficulties')
+    .select('*')
+    .eq('gameVersion', gameVersion);
+
+  if (error) {
+    console.error('Error fetching difficulties:', error.message);
+    throw new Error('Could not fetch difficulties');
+  }
+
+  return data;
+};
+
 

@@ -24,8 +24,9 @@ export default function LocaleSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Globe className="h-5 w-5" />
+        <Button variant="ghost" size="sm" className="flex items-center gap-1 px-2">
+          <Globe className="h-3.5 w-3.5" />
+          <span className="text-xs">{currentLocale === 'pt-br' ? 'BR' : 'EN'}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

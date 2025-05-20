@@ -37,7 +37,16 @@
     "addToCart": "Adicionar ao Carrinho",
     "viewDetails": "Ver Detalhes",
     "processing": "Processando",
-    "noProductsFound": "Nenhum produto encontrado. Tente ajustar sua busca ou filtro."
+    "noProductsFound": "Nenhum produto encontrado. Tente ajustar sua busca ou filtro.",
+    "gameVersion": "Versão do Jogo",
+    "selectGameVersion": "Selecione a Versão do Jogo",
+    "league": "Liga",
+    "selectLeague": "Selecione a Liga",
+    "difficulty": "Dificuldade",
+    "allLeagues": "Todas as Ligas",
+    "allDifficulties": "Todas as Dificuldades",
+    "selectDifficulty": "Selecione a Dificuldade",
+    "filters": "Filtros"
   },
 
   "ProductCard": {

@@ -34,7 +34,7 @@ export function LoginForm({
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (turnstileStatus !== "success") {
       setError("Please complete the security check");
       return;
@@ -117,6 +117,30 @@ export function LoginForm({
                 </p>
               )}
 
+              <Turnstile
+                className="flex justify-center"
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+                onError={() => {
+                  setTurnstileStatus("error");
+                  setError("Security check failed. Please try again.");
+                }}
+                onExpire={() => {
+                  setTurnstileStatus("expired");
+                  setError("Security check expired. Please verify again.");
+                }}
+                onLoad={() => {
+                  setTurnstileStatus("required");
+                  setError(null);
+                  setIsLoading(true);
+                }}
+                onVerify={(token) => {
+                  turnstileRef.current = token;
+                  setTurnstileStatus("success");
+                  setError(null);
+                  setIsLoading(false);
+                }}
+              />
+
               <Button
                 type="submit"
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5"
@@ -148,27 +172,6 @@ export function LoginForm({
         </div>
 
         <OAuthProviders />
-        <Turnstile 
-          className="flex justify-center"
-          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-          onError={() => {
-            setTurnstileStatus("error");
-            setError("Security check failed. Please try again.");
-          }}
-          onExpire={() => {
-            setTurnstileStatus("expired");
-            setError("Security check expired. Please verify again.");
-          }}
-          onLoad={() => {
-            setTurnstileStatus("required");
-            setError(null);
-          }}
-          onVerify={(token) => {
-            turnstileRef.current = token;
-            setTurnstileStatus("success");
-            setError(null);
-          }}
-        />
       </div>
     </div>
   );

@@ -169,7 +169,7 @@ export default function OrdersPage() {
 
   if (orders.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="container min-h-[80vh] mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold mb-8 text-center md:text-left">{t("title")}</h1>
         <Card className="p-12 max-w-2xl mx-auto text-center border border-dashed">
           <div className="rounded-full bg-primary/10 p-6 mx-auto w-24 h-24 flex items-center justify-center mb-6">

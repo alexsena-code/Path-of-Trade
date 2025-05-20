@@ -1,6 +1,7 @@
 import { getProductsWithParams } from "@/app/actions";
 import ProductsClient from "@/components/products-client";
 import { Metadata } from "next";
+import FiltersToggle from "@/components/filters-toggle";
 
 type SearchParams = {
   gameVersion?: string;
@@ -42,6 +43,7 @@ export default async function ProductsPage(
     const league = searchParams.league || "All Leagues";
     const difficulty = searchParams.difficulty || "All Difficulties";
     const category = searchParams.category || "All Items";
+    const gameVersion = searchParams.gameVersion || "Current";
     
     return (
       <div className="container mx-auto py-8">
@@ -50,13 +52,20 @@ export default async function ProductsPage(
             {league} - {difficulty}
           </h2>
         </div>
-      
-        <ProductsClient products={products} />
+
+        <ProductsClient 
+          products={products} 
+          initialFilters={{
+            gameVersion,
+            league,
+            difficulty
+          }}
+        />
       </div>
     );
   } catch (error) {
     return (
-      <div className="text-red-500 p-4 border border-red-300 rounded bg-red-50">
+      <div className="text-red-500 p-4 border border-red-300  bg-red-50">
         <h3 className="font-bold mb-2">Error Loading Products</h3>
         <p>{(error as Error).message}</p>
         <p className="mt-4 text-sm">Please try refreshing the page or adjusting your search parameters.</p>

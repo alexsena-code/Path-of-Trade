@@ -2,7 +2,7 @@
 import { useCart } from "@/lib/contexts/cart-context";
 import { Button } from "./ui/button";
 import { useCurrency } from "@/lib/contexts/currency-context";
-import { Minus, Plus, Trash2, ShoppingCart } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingCart, Store } from "lucide-react";
 import Image from "next/image";
 import {
   DropdownMenu,
@@ -54,7 +54,13 @@ export default function CartDropdown() {
       <DropdownMenuContent align="end" className="w-80 p-4">
         {items.length === 0 ? (
           <div className="text-center py-4">
-            <p className="text-sm text-muted-foreground">Your cart is empty</p>
+            <p className="text-sm text-muted-foreground mb-4">No items in your cart</p>
+            <Link href="/products" className="inline-block">
+              <Button variant="outline" className="w-full border-2 border-zinc-700 hover:bg-zinc-900 hover:text-white transition-colors">
+                <Store className="mr-2 h-4 w-4" />
+                Go to Products
+              </Button>
+            </Link>
           </div>
         ) : (
           <>
@@ -119,12 +125,17 @@ export default function CartDropdown() {
                 <span className="font-medium">Total:</span>
                 <span className="font-bold">{formatPrice(totalPrice)}</span>
               </div>
-              <div className="flex gap-2">
-                <Link href="/cart" className="flex-1">
+              <div className="space-y-2">
+                <Link href="/cart" className="block">
                   <Button className="w-full bg-black border text-white hover:bg-white hover:text-black font-bold transition-colors duration-200">
                     Checkout
                   </Button>
                 </Link>
+                <span className="block text-xs text-muted-foreground text-center">
+                  <Link href="/products" className="inline-block text-zinc-600 hover:text-white font-medium transition-colors">
+                    Go to Products
+                  </Link>
+                </span>
               </div>
             </div>
           </>
