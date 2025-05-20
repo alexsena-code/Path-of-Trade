@@ -2,6 +2,8 @@ import { getProductsWithParams } from "@/app/actions";
 import ProductsClient from "@/components/products-client";
 import { Metadata } from "next";
 import FiltersToggle from "@/components/filters-toggle";
+import { SearchParamsStorage } from "@/components/search-params-storage";
+
 
 type SearchParams = {
   gameVersion?: string;
@@ -47,6 +49,7 @@ export default async function ProductsPage(
     
     return (
       <div className="container mx-auto py-8">
+        <SearchParamsStorage searchParams={searchParams} />
         <div className="bg-indigo-700 inline-block min-w-[320px] md:min-w-[380px] rounded-tl-md rounded-tr-sm py-2 px-4 shadow-lg">
           <h2 className="text-lg md:text-3xl text-center text-white font-bold antialiased capitalize tracking-wider">
             {league} - {difficulty}

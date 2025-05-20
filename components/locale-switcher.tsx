@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter, usePathname } from '@/i18n/navigation';
+import { useParams } from 'next/navigation';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -13,7 +14,8 @@ import { Globe } from 'lucide-react';
 export default function LocaleSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
-  const currentLocale = pathname.split('/')[1] || 'en';
+  const params = useParams();
+  const currentLocale = (params?.locale as string) || 'en';
 
   const handleChange = (locale: string) => {
     router.replace({ pathname }, { locale });
