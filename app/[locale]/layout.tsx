@@ -9,7 +9,7 @@ import { CartProvider } from "@/lib/contexts/cart-context";
 import CartDropdown from "@/components/cart-dropdown";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import "./globals.css";
+import "../globals.css";
 import Footer from "@/components/footer";
 import { setRequestLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";

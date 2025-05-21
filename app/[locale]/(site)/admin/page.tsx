@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-import { newProduct } from "../actions";
+import { newProduct } from "@/app/actions";
 import type { Product } from "@/lib/interface";
 import { toast, Toaster } from "sonner";
 
