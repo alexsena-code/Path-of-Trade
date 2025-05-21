@@ -25,7 +25,10 @@ export async function sanityFetch<QueryResponse>({
     qParams,
     {
       cache: "force-cache",
-      next: { tags },
+      next: { 
+        tags,
+        revalidate: 3600 // Revalidate every 60 seconds
+      },
     })
   );
 }
