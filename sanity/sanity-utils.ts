@@ -48,3 +48,22 @@ export const getPostBySlug = async (slug: string) => {
 
   return data;
 };
+
+export async function getRelatedPosts(currentPostSlug: string, limit: number = 3): Promise<Blog[]> {
+  const query = `*[_type == "post" && slug.current != $currentPostSlug] | order(publishedAt desc)[0...$limit] {
+    _id,
+    title,
+    slug,
+    publishedAt,
+    metadata,
+    author->{
+      name
+    }
+  }`;
+
+  return sanityFetch<Blog[]>({
+    query,
+    qParams: { currentPostSlug, limit },
+    tags: ["post"],
+  });
+}

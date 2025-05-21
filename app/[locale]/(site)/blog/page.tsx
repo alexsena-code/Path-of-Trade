@@ -3,7 +3,7 @@ import BlogItem from "@/components/Blog";
 
 export default async function Home() {
   const posts = await getPosts();
-
+  console.log(posts);
   return (
     <div className="py-5">
       {posts?.length > 0 ? (

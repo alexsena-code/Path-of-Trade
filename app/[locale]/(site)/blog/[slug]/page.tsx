@@ -1,27 +1,46 @@
 import React from "react";
-import { getPostBySlug } from "@/sanity/sanity-utils";
+import { getPostBySlug, getRelatedPosts } from "@/sanity/sanity-utils";
 import RenderBodyContent from "@/components/Blog/RenderBodyContent";
+import RelatedPosts from "@/components/Blog/RelatedPosts";
+import { Blog } from "@/types/blog";
 
 const SingleBlogPage = async ({ params }: { params: any }) => {
   const post = await getPostBySlug(params.slug);
+  const relatedPosts: Blog[] = await getRelatedPosts(params.slug);
+
+  console.log('Related Posts:', relatedPosts); // Debug log
 
   return (
-    <article className="my-10">
-      <div className="mb-5">
-        <h1 className="text-3xl py-2">{post.title}</h1>
-        <p className="pb-1">
-          <span className="font-medium">Published:</span>
-          {new Date(post.publishedAt).toDateString()}
-          <span className="font-medium pl-2">by </span>
-          {post.author.name}
-        </p>
+    <article className="max-w-5xl mx-auto px-4 py-12">
+      <div className="mb-10">
+        <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+          {post.title}
+        </h1>
+        
+        <div className="flex items-center gap-4 text-gray-600 dark:text-gray-400 mb-8">
+          <time className="text-sm">
+            {new Date(post.publishedAt).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </time>
+          <span className="text-sm">•</span>
+          <span className="text-sm">By {post.author.name}</span>
+        </div>
 
-        <p>{post.metadata}</p>
+        <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+          {post.metadata}
+        </p>
       </div>
 
-      <article className="prose lg:prose-xl">
+      <div className="prose prose-lg dark:prose-invert max-w-none">
         <RenderBodyContent post={post} />
-      </article>
+      </div>
+
+      {relatedPosts.length > 0 && (
+        <RelatedPosts posts={relatedPosts} />
+      )}
     </article>
   );
 };
