@@ -3,6 +3,14 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
 
+  images: {
+    remotePatterns: [
+      {
+        hostname: "cdn.sanity.io",
+      },
+    ],
+  },
+
   experimental: {
     useCache: true,
   },

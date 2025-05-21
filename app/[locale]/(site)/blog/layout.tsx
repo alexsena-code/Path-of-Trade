@@ -9,7 +9,7 @@ export default function BlogLayout({ children }: BlogLayoutProps) {
   return (
     <div className="blog-container">
       <div className="py-8">
-        <h1 className="blog-title">Blog</h1>
+        
         <div className="blog-content">
           {children}
         </div>

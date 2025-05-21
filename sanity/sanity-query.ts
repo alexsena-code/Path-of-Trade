@@ -11,7 +11,12 @@ const postData = `{
     image,
     bio
   },
-  mainImage,
+  mainImage{
+    asset->{
+      _id,
+      url
+    }
+  },
   publishedAt,
   body
 }`;

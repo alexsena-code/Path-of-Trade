@@ -3,9 +3,10 @@ import { createClient, type QueryParams } from "next-sanity";
 import clientConfig from "./config/client-config";
 import { postQuery, postQueryBySlug } from "./sanity-query";
 import { Blog } from "@/types/blog";
+import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
 export const client = createClient(clientConfig);
-export function imageBuilder(source: string) {
+export function imageBuilder(source: SanityImageSource) {
   return ImageUrlBuilder(clientConfig).image(source);
 }
 
