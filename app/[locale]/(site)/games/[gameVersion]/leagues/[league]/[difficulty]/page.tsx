@@ -2,6 +2,7 @@ import { PageProps } from "@/lib/interface";
 import Products from "@/components/products";
 import { Metadata } from "next";
 
+
 export async function generateMetadata(
   props: { 
     params: Promise<{ 
@@ -48,6 +49,8 @@ export default async function Page(
         </div>
 
         <Products params={{ gameVersion, league: decodedLeague, difficulty }} />
+        
+
       </main>
     );
   } catch (error) {

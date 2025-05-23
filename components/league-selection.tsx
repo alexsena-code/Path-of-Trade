@@ -194,7 +194,7 @@ export function LeagueSelectionPage({ gameVersion }: LeagueSelectionProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start bg-background pt-12 px-4">
+    <div className="flex flex-col items-center justify-start bg-background pt-12 px-4 ">
       <div className="max-w-7xl w-full flex flex-col items-center">
         <h1 className="text-5xl md:text-6xl text-center font-black font-source-sans bg-gradient-to-r from-[#DEDCFF] to-[#6f58ff] bg-clip-text text-transparent tracking-wider">
           SELECT YOUR LEAGUE
