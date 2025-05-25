@@ -72,7 +72,7 @@ export default async function ProductsPage(
           const productName = product.name || "Unknown Product";
           const productDescription = product.description || `Buy ${productName}`;
           const productImageUrl = product.imgUrl || "https://pathoftrade.net/images/default.png";
-          const productUrl =  `/products/${encodeURIComponent(product.name)}?league=${encodeURIComponent(product.league)}&difficulty=${encodeURIComponent(product.difficulty)}`;
+          const productUrl =  `/products/${encodeURIComponent(product.name)}?gameVersion=${encodeURIComponent(product.gameVersion)}&league=${encodeURIComponent(product.league)}&difficulty=${encodeURIComponent(product.difficulty)}`;
           const productPrice = product.price || "0.00";
           // --- !!! END ADAPTATION !!! ---
   
