@@ -21,7 +21,7 @@ module.exports = {
 
     products.forEach((product) => {
       if (product && product.name && product.gameVersion && product.league) {
-        const productPath = `/products/${encodeURIComponent(product.name)}?gameVersion=${encodeURIComponent(product.gameVersion)}?league=${encodeURIComponent(product.league)}&difficulty=${encodeURIComponent(product.difficulty)}`;
+        const productPath = `/products/${encodeURIComponent(product.name)}?gameVersion=${encodeURIComponent(product.gameVersion)}&league=${encodeURIComponent(product.league)}&difficulty=${encodeURIComponent(product.difficulty)}`;
         paths.push({
           loc: productPath,
           lastmod: product.lastmod || defaultLastMod,
