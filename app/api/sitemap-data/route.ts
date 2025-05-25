@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { Product } from "@/lib/interface";
 import { Blog } from "@/types/blog";
 
 import { getLeagues, getProducts } from "@/app/actions";
 import { getPosts } from "@/sanity/sanity-utils";
+import type { Product } from "@/lib/interface";
 
 export async function GET() {
   try {
@@ -21,6 +21,15 @@ export async function GET() {
           slug: post.slug,
           updatedAt: post.publishedAt?.toString() ?? "",
         })) ?? [], // Add ?? [] in case posts itself is null/undefined
+
+        products: products?.map((product: Product) => ({
+          name: product.name,
+          gameVersion: product.gameVersion,
+          league: product.league,
+          difficulty: product.difficulty,
+          updatedAt: product.updatedAt?.toString() ?? "",
+        })) ?? [],
+      
 
       // For leagues (IMPORTANT CHANGE)
       leaguePoe1:
