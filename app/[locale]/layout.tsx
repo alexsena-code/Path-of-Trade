@@ -14,26 +14,13 @@ import Footer from "@/components/footer";
 import { setRequestLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import TawkTo from "@/components/tawTo";
+
 export const metadata = {
   metadataBase: new URL("https://www.pathoftrade.net"),
   title:
     "Buy POE 1 & 2 Currency | Cheap Divine Orbs, Exalts, Chaos - Path of Trade",
   description:
     "Buy Path of Exile Currency ✔️ Lowest Prices for Divine Orbs, Exalted Orbs. Instant Delivery, 24/7 Live Support. POE Trade Currency Securely at PathOfTrade.net!",
-  keywords: [
-    "Buy POE Currency",
-    "POE Divine Orbs",
-    "Cheap Exalted Orbs",
-    "POE Chaos Orb Trade",
-    "Path of Exile Currency",
-    "POE 2 Currency",
-    "Buy POE Orbs",
-    "POE Currency Shop",
-    "Safe POE Trading",
-    "Divine Orb Trade",
-    "POE Currency Delivery",
-    "Buy POE Chaos Orbs",
-  ],
   openGraph: {
     title: "Buy POE Currency - Divine Orbs & Exalts | Path of Trade",
     description:

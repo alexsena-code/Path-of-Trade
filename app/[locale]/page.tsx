@@ -5,7 +5,9 @@ import CarouselSpacing from "@/components/testemonials-section";
 import { useTranslations } from "next-intl";
 
 export default function Home() {
-  const t = useTranslations('HomePage');
+
+  const t = useTranslations("HomePage");
+  
   return (
     <main className="container mx-auto px-4 py-4 min-h-screen">
       <GameSelection />
