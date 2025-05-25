@@ -45,7 +45,7 @@ module.exports = {
 
     leaguePoe1.forEach((league) => {
       if (league && league.name && league.gameVersion && league.difficulty) {
-        const leaguePath = `/leagues/${encodeURIComponent(league.gameVersion)}/${encodeURIComponent(league.difficulty)}/${encodeURIComponent(league.name)}`;
+        const leaguePath = `/products/${encodeURIComponent(league.gameVersion)}?league=${encodeURIComponent(league.name)}&difficulty=${encodeURIComponent(league.difficulty)}`;
         paths.push({
           loc: leaguePath,
           lastmod: league.lastmod || defaultLastMod,
@@ -57,7 +57,7 @@ module.exports = {
 
     leaguePoe2.forEach((league) => {
       if (league && league.name && league.gameVersion && league.difficulty) {
-        const leaguePath = `/leagues/${encodeURIComponent(league.gameVersion)}/${encodeURIComponent(league.difficulty)}/${encodeURIComponent(league.name)}`;
+        const leaguePath = `/products/${encodeURIComponent(league.gameVersion)}?league=${encodeURIComponent(league.name)}&difficulty=${encodeURIComponent(league.difficulty)}`;
         paths.push({
           loc: leaguePath,
           lastmod: league.lastmod || defaultLastMod,
