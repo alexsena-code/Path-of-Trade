@@ -42,7 +42,8 @@ module.exports = {
    // This example assumes you can fetch all slugs efficiently.
    additionalPaths: async (config) => {
       const data = await fetchSitemapData();
-  
+      console.log(data)
+
       // Check if data fetching was successful
       if (!data) {
           console.error("Failed to fetch sitemap data, returning empty paths.");
