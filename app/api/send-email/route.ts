@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     }
 
     // Get order details from Supabase
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const supabase = await createClient();
     
     const { data: order, error: orderError } = await supabase

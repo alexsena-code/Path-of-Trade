@@ -4,11 +4,12 @@ import { PatchInfo } from "@/components/PatchInfo";
 import { Metadata } from "next";
 
 // Generate metadata based on game version
-export async function generateMetadata({
-  params,
-}: {
-  params: { gameVersion: "path-of-exile-1" | "path-of-exile-2" };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ gameVersion: "path-of-exile-1" | "path-of-exile-2" }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const isPoe2 = params.gameVersion === "path-of-exile-2";
   const gameTitle = isPoe2 ? "Path of Exile 2" : "Path of Exile";
   const shortGameName = isPoe2 ? "PoE 2" : "PoE"; // Shorter version for concise text
@@ -69,59 +70,11 @@ export default async function Page({
   const shortGameName = isPoe2 ? "PoE 2" : "PoE";
 
   // Structured data for rich results
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "Store",
-    name: "Path of Trade Net",
-    alternateName: `${gameTitle} Currency Trading`,
-    description:
-      gameVersion === "path-of-exile-2"
-        ? "Path of Trade Net - Your trusted source for Path of Exile 2 currency trading. Buy and sell POE 2 currency safely and instantly. Get the best prices, fast delivery, and 24/7 support."
-        : "Path of Trade Net - Your trusted source for Path of Exile currency trading. Buy and sell POE currency with instant delivery. Get the best prices, secure trading, and 24/7 customer support.",
-    url: "https://pathoftrade.net",
-    logo: "https://pathoftrade.net/logo.png",
-    offers: {
-      "@type": "AggregateOffer",
-      priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
-      seller: {
-        "@type": "Organization",
-        name: "Path of Trade",
-        description: "Professional Path of Exile currency trading service",
-        url: "https://pathoftrade.net",
-        logo: "https://pathoftrade.net/logo.png",
-      },
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.9",
-      reviewCount: "1000+",
-    },
-    serviceType: "Currency Trading",
-    areaServed: "Worldwide",
-    hasOfferCatalog: {
-      "@type": "OfferCatalog",
-      name: "POE Currency Trading Services",
-      itemListElement: [
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "POE Currency Trading",
-            description:
-              "Safe and instant POE currency trading service by Path of Trade Net",
-          },
-        },
-      ],
-    },
-  };
+
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
+
       <main className="container mx-auto min-h-screen space-y-8 py-8">
         <section className="mb-12">
           <LeagueSelectionPage gameVersion={gameVersion} />

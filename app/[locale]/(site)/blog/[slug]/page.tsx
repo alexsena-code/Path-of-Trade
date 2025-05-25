@@ -5,7 +5,8 @@ import RenderBodyContent from "@/components/Blog/RenderBodyContent";
 import RelatedPosts from "@/components/Blog/RelatedPosts";
 import { Blog } from "@/types/blog";
 
-const SingleBlogPage = async ({ params }: { params: any }) => {
+const SingleBlogPage = async (props: { params: Promise<any> }) => {
+  const params = await props.params;
   const post = await getPostBySlug(params.slug);
   const relatedPosts: Blog[] = await getRelatedPosts(params.slug);
 

@@ -65,7 +65,6 @@ export default async function RootLayout({
       className={`${roboto.variable} ${sourceSans.variable}`}
       suppressHydrationWarning
     >
-      <GoogleTagManager gtmId="GTM-W89HJG73-XYZ" />
 
       <body className="bg-background text-foreground" suppressHydrationWarning>
         <ThemeProvider
@@ -112,7 +111,6 @@ export default async function RootLayout({
               <TawkTo />
               <Footer />
               <GoogleAnalytics gaId="G-G1790M45LN" />
-              <Analytics />
               <SpeedInsights />
             </CartProvider>
           </CurrencyProvider>

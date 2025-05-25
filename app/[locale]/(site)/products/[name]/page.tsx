@@ -11,6 +11,8 @@ export const generateMetadata = async (props: { params: Promise<{ name: string }
   // Get a readable product name from the URL slug
   const productName = await parseProductSlug(params.name);
 
+
+
   return {
     title: `Buy POE ${productName} | Fast & Safe Currency | PathofTrade.net`,
     description: `Buy cheap ${productName} for Path of Exile. Get your PoE currency instantly & securely from PathofTrade.net.`,
@@ -46,6 +48,7 @@ export default async function ProductDetailPage(
       gameVersion: searchParams.gameVersion,
     });
 
+  
     // If no product is found, show an error
     if (!products || products.length === 0) {
       return (
@@ -86,8 +89,40 @@ export default async function ProductDetailPage(
     const currentLeague = searchParams.league || product.league;
     const currentDifficulty = searchParams.difficulty || product.difficulty;
 
+    const productStructuredData = {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": product.name, // Use a descriptive name, e.g., "100 Divine Orbs (Path of Exile)"
+      "description": product.description,
+      "image": product.imgUrl,
+      "brand": {
+        "@type": "Brand",
+        "name": product.gameVersion // e.g., "Path of Exile" or "Path of Exile 2"
+      },
+      // You can add 'category' if applicable, e.g., "Virtual Goods > Game Currency"
+      // "category": `${product.gameVersion} ${product.category}`,
+      "offers": {
+        "@type": "Offer",
+        "url": `https://pathoftrade.net/products/${encodeURIComponent(product.name)}?league=${encodeURIComponent(product.league)}&difficulty=${encodeURIComponent(product.difficulty)}`,
+        "priceCurrency": "USD",
+        "price": product.price,
+        "availability": "https://schema.org/InStock", // e.g., "https://schema.org/InStock"
+        "priceValidUntil": new Date(new Date().setDate(new Date().getDate() + 30)).toISOString().split('T')[0], // Optional: Price valid for 30 days
+        "seller": {
+          "@type": "Organization",
+          "name": "Path of Trade Net",
+          "url": "https://pathoftrade.net" // URL to your store homepage
+        }
+      },
+      // Optional: Include AggregateRating if you have reviews for THIS specific produc
+    };
+
     return (
       <div className="container mx-auto py-12 px-4">
+        <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productStructuredData) }}
+      />
 
         <div className="max-w-6xl mx-auto bg-card rounded-lg shadow-lg overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

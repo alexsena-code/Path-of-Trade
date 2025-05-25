@@ -8,7 +8,8 @@ export interface Product {
   imgUrl: string,
   gameVersion: 'path-of-exile-1' | 'path-of-exile-2',
   league: string,
-  difficulty: string
+  difficulty: string,
+  updatedAt?: string
 }
 export type PageProps = Promise< {
   gameVersion: 'path-of-exile-1' | 'path-of-exile-2';

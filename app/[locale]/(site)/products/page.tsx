@@ -1,7 +1,6 @@
 import { getProductsWithParams } from "@/app/actions";
 import ProductsClient from "@/components/products-client";
 import { Metadata } from "next";
-import FiltersToggle from "@/components/filters-toggle";
 import { SearchParamsStorage } from "@/components/search-params-storage";
 
 
@@ -24,12 +23,15 @@ export async function generateMetadata(
   const gameVersion = searchParams.gameVersion || "Current";
 
   return {
-    title: `Buy ${category} PoE ${league} | Fast & Safe Currency | PathofTrade.net`,
-    description: `Buy cheap ${category} for Path of Exile ${league} (PoE ${gameVersion}). Get your PoE currency from PathofTrade.net. Best prices ${league} orbs.`,
+    title: `${gameVersion} ${category} - ${league} | Path of Trade Net`,
+    description: `Search  and buy ${gameVersion} ${category} for the ${league} league. Secure trading on Path of Trade Net.`,
     openGraph: {
       title: `Best Price: ${category} - PoE ${league} Currency | PathofTrade.net`,
       description: `Find the best deals on Path of Exile ${category} for ${league} at PathofTrade.net. We offer cheap PoE currency, instant delivery, and 100% secure transactions for your ${gameVersion} gameplay.`,
       type: "website",
+    }, 
+    alternates: {
+      canonical: `https://www.pathoftrade.net/products?league=${league}&gameVersion=${gameVersion}&category=${category}`,
     },
   };
 }
@@ -46,10 +48,70 @@ export default async function ProductsPage(
     const difficulty = searchParams.difficulty || "All Difficulties";
     const category = searchParams.category || "All Items";
     const gameVersion = searchParams.gameVersion || "Current";
+
+    const baseUrl = 'https://pathoftrade.net/products';
+    const pageUrlObj = new URL(baseUrl);
+    Object.keys(searchParams).forEach(key => {
+        if (searchParams[key as keyof SearchParams]) {
+            pageUrlObj.searchParams.append(key, searchParams[key as keyof SearchParams]!);
+        }
+    });
+    const pageUrl = pageUrlObj.toString();
+
+    const catalogStructuredData = {
+      "@context": "https://schema.org",
+      "@type": "OfferCatalog",
+      "name": `${gameVersion} ${category} - ${league} (${difficulty})`,
+      "description": `Browse and buy ${gameVersion} ${category} for the ${league} league (${difficulty}). Secure trading on Path of Trade Net.`,
+      "url": pageUrl,
+      "numberOfItems": products.length,
+      "itemListElement": products.map((product, index) => {
+          // --- !!! ADAPT THESE FIELDS !!! ---
+          // Replace 'product.productName', 'product.productDesc', etc.,
+          // with the actual field names from YOUR 'products' array.
+          const productName = product.name || "Unknown Product";
+          const productDescription = product.description || `Buy ${productName}`;
+          const productImageUrl = product.imgUrl || "https://pathoftrade.net/images/default.png";
+          const productUrl =  `/products/${encodeURIComponent(product.name)}?league=${encodeURIComponent(product.league)}&difficulty=${encodeURIComponent(product.difficulty)}`;
+          const productPrice = product.price || "0.00";
+          // --- !!! END ADAPTATION !!! ---
+  
+          return {
+            "@type": "ListItem",
+            "position": index + 1,
+            "item": {
+              "@type": "Product",
+              "name": `${productName} (${league})`,
+              "description": productDescription,
+              "image": productImageUrl,
+              "url": productUrl,
+              "brand": {
+                "@type": "Brand",
+                "name": gameVersion === "Current" ? "Path of Exile" : gameVersion // Adjust if needed
+              },
+              "offers": {
+                "@type": "Offer",
+                "url": productUrl,
+                "priceCurrency": "USD",
+                "price": productPrice,
+                "availability": "https://schema.org/InStock", // Or use actual product availability if you have it
+                "seller": {
+                  "@type": "Organization",
+                  "name": "Path of Trade Net"
+                }
+              }
+            }
+          };
+      })
+    };
     
     return (
       <div className="container mx-auto py-8">
         <SearchParamsStorage searchParams={searchParams} />
+        <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogStructuredData) }}
+      />
         <div className="bg-indigo-700 inline-block min-w-[320px] md:min-w-[380px] rounded-tl-md rounded-tr-sm py-2 px-4 shadow-lg">
           <h2 className="text-lg md:text-3xl text-center text-white font-bold antialiased capitalize tracking-wider">
             {league} - {difficulty}
