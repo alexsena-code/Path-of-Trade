@@ -44,27 +44,27 @@ module.exports = {
     });
 
     leaguePoe1.forEach((league) => {
-      if (league && league.name && league.gameVersion && league.difficulty) {
-        const leaguePath = `/products/${encodeURIComponent(league.gameVersion)}?league=${encodeURIComponent(league.name)}&difficulty=${encodeURIComponent(league.difficulty)}`;
+
+        const leaguePath = `/products?gameVersion=${encodeURIComponent(league.gameVersion)}&league=${encodeURIComponent(league.name)}&difficulty=${encodeURIComponent(league.difficulty)}`;
+        console.log(leaguePath);
         paths.push({
           loc: leaguePath,
           lastmod: league.lastmod || defaultLastMod,
           changefreq: 'weekly',
           priority: 0.6,
         });
-      }
     });
 
     leaguePoe2.forEach((league) => {
-      if (league && league.name && league.gameVersion && league.difficulty) {
-        const leaguePath = `/products/${encodeURIComponent(league.gameVersion)}?league=${encodeURIComponent(league.name)}&difficulty=${encodeURIComponent(league.difficulty)}`;
+
+        const leaguePath = `/products?gameVersion=${encodeURIComponent(league.gameVersion)}&league=${encodeURIComponent(league.name)}&difficulty=${encodeURIComponent(league.difficulty)}`;
+        console.log(leaguePath);
         paths.push({
           loc: leaguePath,
           lastmod: league.lastmod || defaultLastMod,
           changefreq: 'weekly',
           priority: 0.6,
         });
-      }
     });
 
     return paths;
