@@ -1,6 +1,6 @@
 import { CurrencyInfo } from "@/components/currency-info";
 import { LeagueSelectionPage } from "@/components/league-selection";
-import { PatchInfo } from "@/components/PatchInfo";
+import PatchInfo from "@/components/PatchInfo";
 import { Metadata } from "next";
 
 // Generate metadata based on game version
@@ -75,14 +75,14 @@ export default async function Page({
   return (
     <>
 
-      <main className="container mx-auto min-h-screen space-y-8 py-8">
+      <main className="container mx-auto min-h-screen space-y-16 py-8">
         <section className="mb-12">
           <LeagueSelectionPage gameVersion={gameVersion} />
         </section>
 
         <article className="space-y-8">
           <header>
-            <h2 className="text-4xl font-bold">{gameTitle}</h2>
+            <h2 className="text-4xl font-bold">{gameTitle} News</h2>
             <p className="mt-2 text-base text-muted-foreground">
               PathofTrade.net is your trusted source for {gameTitle} currency
               trading. Buysafely and instantly. Get the best prices and fast

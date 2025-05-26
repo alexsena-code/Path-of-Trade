@@ -110,7 +110,7 @@ export default async function RootLayout({
               {children}
               <TawkTo />
               <Footer />
-              <GoogleAnalytics gaId="G-G1790M45LN" />
+              <GoogleAnalytics gaId="G-RDXWLC9PM8" />
               <SpeedInsights />
             </CartProvider>
           </CurrencyProvider>

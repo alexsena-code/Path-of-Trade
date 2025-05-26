@@ -13,7 +13,8 @@ export default async function Products({
       params.league,
       params.difficulty
     );
-    return <ProductsClient products={products} />;
+    return <ProductsClient products={products} initialFilters={params} />;
+    
   } catch (error) {
     return (
       <div className="text-red-500 p-4">

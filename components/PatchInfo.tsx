@@ -85,7 +85,7 @@ const patchData: Record<string, PatchData> = {
   }
 }
 
-export function PatchInfo({ gameVersion }: PatchInfoProps) {
+export default function PatchInfo({ gameVersion }: PatchInfoProps) {
   const patches = gameVersion 
     ? [patchData[gameVersion]].filter(Boolean)
     : Object.values(patchData)

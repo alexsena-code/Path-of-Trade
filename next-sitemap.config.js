@@ -6,7 +6,7 @@ const {
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://pathoftrade.net',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.pathoftrade.net',
   generateRobotsTxt: true,
   additionalPaths: async (config) => {
     const paths = [];
