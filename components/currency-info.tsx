@@ -45,27 +45,62 @@ const currencyData: Record<string, CurrencyData[]> = {
     {
       id: "divine-orb",
       name: "Divine Orb",
-      description: "Randomises the values of the random modifiers on an item.",
+      description: "A highly sought-after Path of Exile currency item that perfects item modifiers, making it one of the most valuable trading currencies in the game's economy. Essential for both high-end trading and crafting.",
       imageUrl: "/images/divine-orb.webp",
       gameVersion: "path-of-exile-1",
       uses: [
-        "Randomises the values of the random modifiers on an item",
-        "Used for perfecting high-end items",
-        "Premium trading currency"
+        "Perfects item modifier values for maximum trading value",
+        "Primary currency for high-end item trading",
+        "Essential for trading perfect end-game equipment",
+        "Used in bulk trading for high-value items",
+        "Key currency for item flipping and market trading"
       ]
     },
     {
+      id: "chaos-orb",
+      name: "Chaos Orb",
+      description: "A fundamental Path of Exile currency item that completely rerolls all random modifiers on a rare item, essential for crafting and item modification.",
+      imageUrl: "/images/chaos-orb.webp",
+      gameVersion: "path-of-exile-1",
+      uses: [
+        "Rerolls all random modifiers on a rare item for better stats",
+        "Primary trading currency in Path of Exile economy",
+        "Used for crafting and modifying rare items",
+        "Essential for item crafting and trading",
+        "Common currency for vendor recipes"
+      ]
+    },
+
+    {
       id: "mirror-of-kalandra",
       name: "Mirror of Kalandra",
-      description: "Creates a mirrored copy of an item.",
+      description: "The most valuable and rarest currency item in Path of Exile, capable of creating an exact mirrored copy of any item, including all its modifiers and values.",
       imageUrl: "/images/mirror.webp",
       gameVersion: "3.25",
       uses: [
-        "Creates a mirrored copy of an item",
-        "Most valuable currency item",
-        "Used for duplicating perfect items"
+        "Creates an exact mirrored copy of any item",
+        "Most valuable currency item in Path of Exile",
+        "Used for duplicating perfect end-game items",
+        "Essential for high-end item replication",
+        "Ultimate currency for item duplication"
       ]
-    }
+    },
+    {
+      id: "exalted-orb",
+      name: "Exalted Orb",
+      description: "A premium Path of Exile currency that adds a powerful new random modifier to rare items, crucial for high-end crafting and item optimization.",
+      imageUrl: "/images/exalted-orb.webp",
+      gameVersion: "path-of-exile-1",
+      uses: [
+        "Adds a new random modifier to rare items",
+        "Premium trading currency for high-value items",
+        "Essential for crafting perfect end-game gear",
+        "Used in advanced crafting strategies",
+        "Key currency for item optimization"
+      ]
+    },
+    
+
   ]
 }
 
@@ -100,7 +135,7 @@ export function CurrencyInfo({ gameVersion }: CurrencyInfoProps) {
               <div className="relative w-20 h-20 flex-shrink-0">
                 <Image
                   src={currency.imageUrl}
-                  alt={currency.name}
+                  alt={`${currency.name} icon ${currency.gameVersion} PathOfTrade.net`}
                   width={100}
                   height={100}
                   className="object-contain"

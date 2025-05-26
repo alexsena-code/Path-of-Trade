@@ -103,7 +103,7 @@ export default function ProductsClient({ products, initialFilters }: ProductsCli
   const filteredList = filterTags(products);
 
   return (
-    <div className="border rounded-b-lg py-4 md:min-h-[678px] bg-black/5">
+    <div className="border rounded-b-lg py-4 md:min-h-[678px] bg-black/5 mb-12">
       <div className="flex flex-col gap-4 px-3 mb-4">
         {/* Search and Filters Section */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">

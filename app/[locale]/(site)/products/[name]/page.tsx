@@ -5,13 +5,24 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Filters from "./filters";
 import { parseProductSlug } from "@/utils/url-helper";
+import ProductDetail from "../../../../../components/product-detail";
 
-export const generateMetadata = async (props: { params: Promise<{ name: string }> }): Promise<Metadata> => {
+// Add formatPrice utility function
+const formatPrice = (price: number): string => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(price);
+};
+
+export const generateMetadata = async (props: {
+  params: Promise<{ name: string }>;
+}): Promise<Metadata> => {
   const params = await props.params;
   // Get a readable product name from the URL slug
   const productName = await parseProductSlug(params.name);
-
-
 
   return {
     title: `Buy POE ${productName} | Fast & Safe Currency | PathofTrade.net`,
@@ -24,22 +35,21 @@ export const generateMetadata = async (props: { params: Promise<{ name: string }
   };
 };
 
-export default async function ProductDetailPage(
-  props: {
-    params: Promise<{ name: string }>;
-    searchParams: Promise<{
-      league?: string;
-      difficulty?: string;
-      gameVersion?: 'path-of-exile-1' | 'path-of-exile-2';
-    }>;
-  }
-) {
+export default async function ProductDetailPage(props: {
+  params: Promise<{ name: string }>;
+  searchParams: Promise<{
+    league?: string;
+    difficulty?: string;
+    gameVersion?: "path-of-exile-1" | "path-of-exile-2";
+  }>;
+}) {
   const searchParams = await props.searchParams;
   const params = await props.params;
+
   try {
     // Get the decoded product name for searching
     const decodedName = await parseProductSlug(params.name);
-    
+
     // Use the decoded name to find the specific product
     const products = await getProductsWithParams({
       search: decodedName,
@@ -48,7 +58,6 @@ export default async function ProductDetailPage(
       gameVersion: searchParams.gameVersion,
     });
 
-  
     // If no product is found, show an error
     if (!products || products.length === 0) {
       return (
@@ -56,7 +65,8 @@ export default async function ProductDetailPage(
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-4">Product Not Found</h1>
             <p className="mb-8 text-muted-foreground">
-              The product '{decodedName}' could not be found. It may have been removed or doesn't exist.
+              The product '{decodedName}' could not be found. It may have been
+              removed or doesn't exist.
             </p>
             <Link href="/products">
               <Button className="bg-indigo-600 hover:bg-indigo-700">
@@ -73,16 +83,18 @@ export default async function ProductDetailPage(
 
     // Fetch leagues from database based on product's game version
     const currentGameVersion = searchParams.gameVersion || product.gameVersion;
-    const leaguesData = await getLeagues(currentGameVersion as 'path-of-exile-1' | 'path-of-exile-2');
-    const leagueOptions = leaguesData.map(league => league.name);
-    
+    const leaguesData = await getLeagues(
+      currentGameVersion as "path-of-exile-1" | "path-of-exile-2"
+    );
+    const leagueOptions = leaguesData.map((league) => league.name);
+
     // Difficulty options
     const difficultyOptions = ["softcore", "hardcore"];
-    
+
     // Game version options
     const gameVersionOptions = [
-      { value: 'path-of-exile-1', label: 'Path of Exile 1' },
-      { value: 'path-of-exile-2', label: 'Path of Exile 2' }
+      { value: "path-of-exile-1", label: "Path of Exile 1" },
+      { value: "path-of-exile-2", label: "Path of Exile 2" },
     ];
 
     // Current selected values
@@ -92,96 +104,82 @@ export default async function ProductDetailPage(
     const productStructuredData = {
       "@context": "https://schema.org",
       "@type": "Product",
-      "name": product.name, // Use a descriptive name, e.g., "100 Divine Orbs (Path of Exile)"
-      "description": product.description,
-      "image": product.imgUrl,
-      "brand": {
+      name: product.name, // Use a descriptive name, e.g., "100 Divine Orbs (Path of Exile)"
+      description: product.description,
+      image: product.imgUrl,
+      brand: {
         "@type": "Brand",
-        "name": product.gameVersion // e.g., "Path of Exile" or "Path of Exile 2"
+        name: product.gameVersion, // e.g., "Path of Exile" or "Path of Exile 2"
       },
       // You can add 'category' if applicable, e.g., "Virtual Goods > Game Currency"
       // "category": `${product.gameVersion} ${product.category}`,
-      "offers": {
+      offers: {
         "@type": "Offer",
-        "url": `https://pathoftrade.net/products/${encodeURIComponent(product.name)}?league=${encodeURIComponent(product.league)}&difficulty=${encodeURIComponent(product.difficulty)}`,
-        "priceCurrency": "USD",
-        "price": product.price,
-        "availability": "https://schema.org/InStock", // e.g., "https://schema.org/InStock"
-        "priceValidUntil": new Date(new Date().setDate(new Date().getDate() + 30)).toISOString().split('T')[0], // Optional: Price valid for 30 days
-        "seller": {
+        url: `https://pathoftrade.net/products/${encodeURIComponent(product.name)}?league=${encodeURIComponent(product.league)}&difficulty=${encodeURIComponent(product.difficulty)}`,
+        priceCurrency: "USD",
+        price: product.price,
+        availability: "https://schema.org/InStock", // e.g., "https://schema.org/InStock"
+        priceValidUntil: new Date(new Date().setDate(new Date().getDate() + 30))
+          .toISOString()
+          .split("T")[0], // Optional: Price valid for 30 days
+        seller: {
           "@type": "Organization",
-          "name": "Path of Trade Net",
-          "url": "https://pathoftrade.net" // URL to your store homepage
-        }
+          name: "Path of Trade Net",
+          url: "https://pathoftrade.net", // URL to your store homepage
+        },
       },
       // Optional: Include AggregateRating if you have reviews for THIS specific produc
     };
 
     return (
-      <div className="container mx-auto py-12 px-4">
+      <div className="container mx-auto py-6 md:py-12 px-4">
         <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productStructuredData) }}
-      />
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(productStructuredData),
+          }}
+        />
 
-        <div className="max-w-6xl mx-auto bg-card rounded-lg shadow-lg overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="max-w-6xl mx-auto rounded-lg overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
             {/* Product Image */}
-            <div className="p-6 flex items-center justify-center bg-black/20">
-              <div className="relative w-full aspect-square max-w-md">
+            <div className="p-4 md:p-6 flex items-center justify-center bg-black/10 rounded-lg">
+              <div className="relative w-full aspect-square max-w-[200px] md:max-w-[250px]">
                 <Image
                   src={product.imgUrl || "/images/placeholder.jpg"}
                   alt={product.name}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-contain"
+                  quality={100}
                   priority
                 />
               </div>
             </div>
-            
-            {/* Product Info */}
-            <div className="p-6 md:p-8 flex flex-col">
-              <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
-              
-              <div className="flex items-center gap-2 mb-3">
-                <span className="px-2 py-1 bg-indigo-600/20 text-indigo-400 rounded text-xs font-medium">
-                  {currentGameVersion === 'path-of-exile-1' ? 'POE 1' : 'POE 2'}
-                </span>
-              </div>
 
-              {/* Game Version, League and Difficulty Filters */}
-              <Filters 
-                productName={decodedName}
-                gameVersionOptions={gameVersionOptions}
-                leagueOptions={leagueOptions}
-                difficultyOptions={difficultyOptions}
-                currentGameVersion={currentGameVersion}
-                currentLeague={currentLeague}
-                currentDifficulty={currentDifficulty}
-              />
-              
-              {product.description && (
-                <p className="text-muted-foreground my-4">{product.description}</p>
-              )}
-              
-              <div className="mt-auto">
-                <div className="flex items-baseline mb-4">
-                  <span className="text-2xl font-bold">${product.price.toFixed(2)}</span>
-                  <span className="ml-2 text-sm text-muted-foreground">USD</span>
-                </div>
-                
-                <div className="grid grid-cols-1 gap-4 mb-6">
-                  <Link href="/products" className="w-full">
-                    <Button variant="outline" className="w-full">
-                      Back to Products
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
+            {/* Product Info */}
+            <ProductDetail
+              product={product}
+              currentGameVersion={currentGameVersion}
+              currentLeague={currentLeague}
+              currentDifficulty={currentDifficulty}
+              gameVersionOptions={gameVersionOptions}
+              leagueOptions={leagueOptions}
+              difficultyOptions={difficultyOptions}
+              productName={decodedName}
+            />
           </div>
         </div>
+
+        {/* Description Section */}
+        {product.description && (
+          <div className="p-4 md:p-6 mt-6 md:mt-12 bg-muted/10 rounded-lg">
+            <h2 className="text-lg font-semibold mb-2">Description</h2>
+            <p className="text-muted-foreground leading-relaxed">
+              {product.description}
+            </p>
+          </div>
+        )}
       </div>
     );
   } catch (error) {

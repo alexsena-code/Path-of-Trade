@@ -2,6 +2,7 @@ import { getProductsWithParams } from "@/app/actions";
 import ProductsClient from "@/components/products-client";
 import { Metadata } from "next";
 import { SearchParamsStorage } from "@/components/search-params-storage";
+import { CurrencyInfo } from "@/components/currency-info";
 
 
 type SearchParams = {
@@ -119,6 +120,7 @@ export default async function ProductsPage(
         </div>
 
         <ProductsClient 
+
           products={products} 
           initialFilters={{
             gameVersion,
@@ -126,7 +128,9 @@ export default async function ProductsPage(
             difficulty
           }}
         />
-      </div>
+        <CurrencyInfo gameVersion={gameVersion} />
+        </div>
+  
     );
   } catch (error) {
     return (

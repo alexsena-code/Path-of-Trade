@@ -191,54 +191,10 @@ export default function Filters({
       </div>
 
       <div className="pt-4 border-t border-border">
-        <label htmlFor="quantity" className="text-sm font-medium block mb-2">
-          Quantity
-        </label>
-        <div className="flex items-center max-w-[180px]">
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={decrementQuantity}
-            disabled={quantity <= 1 || isLoading}
-            className="h-10 w-10"
-          >
-            <Minus className="h-4 w-4" />
-          </Button>
-          
-          <Input
-            id="quantity"
-            type="number"
-            min="1"
-            max="99"
-            value={quantity}
-            onChange={handleQuantityChange}
-            disabled={isLoading}
-            className="h-10 text-center mx-2"
-          />
-          
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={incrementQuantity}
-            disabled={quantity >= 99 || isLoading}
-            className="h-10 w-10"
-          >
-            <Plus className="h-4 w-4" />
-          </Button>
+
         </div>
+
       </div>
 
-      <Button 
-        className="w-full bg-indigo-600 hover:bg-indigo-700 mt-6"
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <ShoppingCart className="mr-2 h-4 w-4" />
-        )}
-        Add to Cart
-      </Button>
-    </div>
   );
 } 

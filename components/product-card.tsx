@@ -97,7 +97,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               src={product.imgUrl}
               alt={product.alt || product.name}
               fill
-              className="object-cover hover:scale-105 transition-transform duration-300"
+              className="object-contain hover:scale-105 transition-transform duration-300"
               quality={100}
               priority
               onError={(e) => {
