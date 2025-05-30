@@ -71,7 +71,7 @@ export default async function ProductsPage(
           // Replace 'product.productName', 'product.productDesc', etc.,
           // with the actual field names from YOUR 'products' array.
           const productName = product.name || "Unknown Product";
-          const productDescription = product.description || `Buy ${productName}`;
+          
           const productImageUrl = product.imgUrl || "https://pathoftrade.net/images/default.png";
           const productUrl =  `/products/${encodeURIComponent(product.name)}?gameVersion=${encodeURIComponent(product.gameVersion)}&league=${encodeURIComponent(product.league)}&difficulty=${encodeURIComponent(product.difficulty)}`;
           const productPrice = product.price || "0.00";
@@ -83,7 +83,7 @@ export default async function ProductsPage(
             "item": {
               "@type": "Product",
               "name": `${productName} (${league})`,
-              "description": productDescription,
+              "description": product.alt,
               "image": productImageUrl,
               "url": productUrl,
               "brand": {

@@ -6,6 +6,8 @@ import Link from "next/link";
 import Filters from "./filters";
 import { parseProductSlug } from "@/utils/url-helper";
 import ProductDetail from "../../../../../components/product-detail";
+import { getProductBySlug } from "@/sanity/sanity-utils";
+import ProductContent from "@/components/product-detail/ProductContent";
 
 // Add formatPrice utility function
 const formatPrice = (price: number): string => {
@@ -58,6 +60,9 @@ export default async function ProductDetailPage(props: {
       gameVersion: searchParams.gameVersion,
     });
 
+    const productSanity = await getProductBySlug(products[0].slug);
+    console.log(productSanity);
+
     // If no product is found, show an error
     if (!products || products.length === 0) {
       return (
@@ -104,12 +109,12 @@ export default async function ProductDetailPage(props: {
     const productStructuredData = {
       "@context": "https://schema.org",
       "@type": "Product",
-      name: product.name, // Use a descriptive name, e.g., "100 Divine Orbs (Path of Exile)"
-      description: product.description,
+      name: product.name,
+      description: productSanity?.body?.[0]?.children?.[0]?.text || product.name,
       image: product.imgUrl,
       brand: {
         "@type": "Brand",
-        name: product.gameVersion, // e.g., "Path of Exile" or "Path of Exile 2"
+        name: product.gameVersion,
       },
       // You can add 'category' if applicable, e.g., "Virtual Goods > Game Currency"
       // "category": `${product.gameVersion} ${product.category}`,
@@ -172,12 +177,10 @@ export default async function ProductDetailPage(props: {
         </div>
 
         {/* Description Section */}
-        {product.description && (
+        {productSanity?.body && (
           <div className="p-4 md:p-6 mt-6 md:mt-12 bg-muted/10 rounded-lg">
-            <h2 className="text-lg font-semibold mb-2">Description</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              {product.description}
-            </p>
+            <h2 className="text-lg font-semibold text-gray-100/40 mb-4">Description</h2>
+            <ProductContent content={productSanity.body} />
           </div>
         )}
       </div>

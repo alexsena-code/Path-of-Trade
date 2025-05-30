@@ -186,11 +186,13 @@ export const newProduct = async (product: Product) => {
     .insert({
       name: product.name,
       category: product.category,
+      slug: product.slug,
       gameVersion: product.gameVersion,
       league: product.league,
       price: product.price,
       imgUrl: product.imgUrl,
-      difficulty: product.difficulty
+      difficulty: product.difficulty,
+      alt: product.alt,
     });
 
   if (error) {

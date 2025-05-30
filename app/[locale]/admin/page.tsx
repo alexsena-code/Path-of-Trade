@@ -15,24 +15,31 @@ export default function Admin() {
     name: "",
     league: "",                                                                   
     category: "",
+    slug: "",
     price: 0,
     gameVersion: "path-of-exile-1",
     imgUrl: "",
     difficulty: "",
-    description: "",
     alt: "",
   });
+
+  const generateSlug = (name: string, gameVersion: string, league: string, difficulty: string) => {
+    return `${name}-${gameVersion}-${league}-${difficulty}`
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+  };
 
   const clearForm = () => {
     setFormData({
       name: "",
-      league: "",                                                                   
+      league: "",
+      slug: "",
       category: "",
       price: 0,
       gameVersion: "path-of-exile-1",
       imgUrl: "",
       difficulty: "", 
-      description: "",
       alt: "",
     });
   };
@@ -79,7 +86,14 @@ export default function Admin() {
                 id="name"
                 required
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) => {
+                  const newName = e.target.value;
+                  setFormData({ 
+                    ...formData, 
+                    name: newName,
+                    slug: generateSlug(newName, formData.gameVersion, formData.league, formData.difficulty)
+                  });
+                }}
                 className="bg-black border-gray-700 text-white focus:border-gray-500"
                 placeholder="Enter product name"
               />
@@ -92,9 +106,29 @@ export default function Admin() {
                 id="league"
                 required
                 value={formData.league}
-                onChange={(e) => setFormData({ ...formData, league: e.target.value })}
+                onChange={(e) => {
+                  const newLeague = e.target.value;
+                  setFormData({ 
+                    ...formData, 
+                    league: newLeague,
+                    slug: generateSlug(formData.name, formData.gameVersion, newLeague, formData.difficulty)
+                  });
+                }}
                 className="bg-black border-gray-700 text-white focus:border-gray-500"
                 placeholder="Enter league name"
+              />
+            </div>
+            {/* Slug Input */}
+            <div className="space-y-2">
+              <Label htmlFor="slug" className="text-gray-300">Slug</Label>
+              <Input
+                id="slug"
+                required
+                value={formData.slug}
+                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                className="bg-black border-gray-700 text-white focus:border-gray-500"
+                placeholder="Auto-generated slug"
+                readOnly
               />
             </div>
 
@@ -133,7 +167,13 @@ export default function Admin() {
               <Label className="text-gray-300">Game Version</Label>
               <Select
                 value={formData.gameVersion as "path-of-exile-1" | "path-of-exile-2"}
-                onValueChange={(value: "path-of-exile-1" | "path-of-exile-2") => setFormData({ ...formData, gameVersion: value })}
+                onValueChange={(value: "path-of-exile-1" | "path-of-exile-2") => {
+                  setFormData({ 
+                    ...formData, 
+                    gameVersion: value,
+                    slug: generateSlug(formData.name, value, formData.league, formData.difficulty)
+                  });
+                }}
               >
                 <SelectTrigger className="bg-black border-gray-700 text-white focus:border-gray-500">
                   <SelectValue placeholder="Select Game Version" />
@@ -168,7 +208,13 @@ export default function Admin() {
               <Label className="text-gray-300">Difficulty</Label>
               <Select
                 value={formData.difficulty}
-                onValueChange={(value) => setFormData({ ...formData, difficulty: value })}
+                onValueChange={(value) => {
+                  setFormData({ 
+                    ...formData, 
+                    difficulty: value,
+                    slug: generateSlug(formData.name, formData.gameVersion, formData.league, value)
+                  });
+                }}
               >
                 <SelectTrigger className="bg-black border-gray-700 text-white focus:border-gray-500">
                   <SelectValue placeholder="Select difficulty" />
@@ -178,19 +224,6 @@ export default function Admin() {
                   <SelectItem value="hardcore">Hardcore</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-
-            {/* Description Textarea - Full Width */}
-
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="description" className="text-gray-300">Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full bg-black border border-gray-700 text-white focus:border-gray-500 min-h-[100px] resize-y rounded-md p-2"
-                placeholder="Enter product Description"
-              />
             </div>
             
             <div className="space-y-2 md:col-span-2">

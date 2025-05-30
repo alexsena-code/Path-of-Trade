@@ -36,7 +36,7 @@ export default function ProductFilters({
   const searchParams = useSearchParams();
   const t = useTranslations('Products');
   const [leagues, setLeagues] = useState<League[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const gameVersions = [
     { value: "Current", label: "Current Version" },
@@ -78,6 +78,7 @@ export default function ProductFilters({
     } else {
       params.set(type, value);
     }
+    setLoading(false);
 
     router.push(`/products?${params.toString()}`);
   };

@@ -1,9 +1,10 @@
 import ImageUrlBuilder from "@sanity/image-url";
 import { createClient, type QueryParams } from "next-sanity";
 import clientConfig from "./config/client-config";
-import { postQuery, postQueryBySlug } from "./sanity-query";
+import { postQuery, postQueryBySlug, productQuery } from "./sanity-query";
 import { Blog } from "@/types/blog";
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import type { Product } from "@/lib/interface";
 
 export const client = createClient(clientConfig);
 export function imageBuilder(source: SanityImageSource) {
@@ -43,6 +44,38 @@ export const getPosts = async () => {
   return data;
 };
 
+export const getProducts = async () => {
+  const data: Product[] = await sanityFetch({
+    query: productQuery,
+    qParams: {},
+    tags: ["product"],
+  });
+  return data;
+}
+
+export const getProductBySlug = async (slug: string) => {
+  const query = `*[_type == "product" && slug.current == $slug][0]{
+    _id,
+    name,
+    category,
+    body,
+    alt,
+    gameVersion,
+    league,
+    difficulty,
+    updatedAt,
+    "slug": slug.current
+  }`;
+
+  const data: Product = await sanityFetch({
+    query,
+    qParams: { slug },
+    tags: ["product"],
+  });
+
+  return data;
+}
+
 export const getPostBySlug = async (slug: string) => {
   const data: Blog = await sanityFetch({
     query: postQueryBySlug,
@@ -70,4 +103,6 @@ export async function getRelatedPosts(currentPostSlug: string, limit: number = 3
     qParams: { currentPostSlug, limit },
     tags: ["post"],
   });
+
+  
 }

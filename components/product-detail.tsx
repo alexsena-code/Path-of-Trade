@@ -106,6 +106,7 @@ export default function ProductDetail({
   const totalPrice = displayPrice * count;
 
   return (
+    
     <div className="p-6 md:p-8 flex flex-col">
       {/* Back to Products button */}
       <div className="flex justify-end mb-2">

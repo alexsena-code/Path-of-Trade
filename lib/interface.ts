@@ -2,7 +2,8 @@ export interface Product {
   id?: number,
   name: string,
   category: string,
-  description?: string,
+  slug: string,
+  body?: any, // Portable Text content from Sanity
   alt?: string,
   price: number,
   imgUrl: string,

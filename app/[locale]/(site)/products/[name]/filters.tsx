@@ -59,19 +59,24 @@ export default function Filters({
       
       const queryString = params.toString();
       const url = `/products/${encodeURIComponent(productName)}${queryString ? `?${queryString}` : ''}`;
-      
+
       router.push(url);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 300);
     }, 300); // 300ms debounce time
-    
     setDebounceTimeout(timeout);
   }, [debounceTimeout, productName, router]);
+
 
   // Clear the timeout when component unmounts
   useEffect(() => {
     return () => {
       if (debounceTimeout) {
         clearTimeout(debounceTimeout);
+        
       }
+
     };
   }, [debounceTimeout]);
 
@@ -85,12 +90,14 @@ export default function Filters({
   const handleLeagueChange = (value: string) => {
     setLeague(value);
     debouncedUpdateFilters(gameVersion, value, difficulty);
+
   };
 
   // Handle difficulty change
   const handleDifficultyChange = (value: string) => {
     setDifficulty(value);
     debouncedUpdateFilters(gameVersion, league, value);
+
   };
 
   // When the URL changes, update the loading state
