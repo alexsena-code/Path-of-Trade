@@ -4,6 +4,7 @@ const postData = `{
   metadata,
   slug,
   tags,
+  language,
   author->{
     _id,
     name,
@@ -21,15 +22,15 @@ const postData = `{
   body
 }`;
 
-export const postQuery = groq`*[_type == "post"] ${postData}`;
+export const postQuery = groq`*[_type == "post" && language == $language] ${postData}`;
 
-export const postQueryBySlug = groq`*[_type == "post" && slug.current == $slug][0] ${postData}`;
+export const postQueryBySlug = groq`*[_type == "post" && slug.current == $slug && language == $language][0] ${postData}`;
 
-export const postQueryByTag = groq`*[_type == "post" && $slug in tags[]->slug.current] ${postData}`;
+export const postQueryByTag = groq`*[_type == "post" && $slug in tags[]->slug.current && language == $language] ${postData}`;
 
-export const postQueryByAuthor = groq`*[_type == "post" && author->slug.current == $slug] ${postData}`;
+export const postQueryByAuthor = groq`*[_type == "post" && author->slug.current == $slug && language == $language] ${postData}`;
 
-export const postQueryByCategory = groq`*[_type == "post" && category->slug.current == $slug] ${postData}`;
+export const postQueryByCategory = groq`*[_type == "post" && category->slug.current == $slug && language == $language] ${postData}`;
 
 export const productQuery = `*[_type == "product"]{
   _id,

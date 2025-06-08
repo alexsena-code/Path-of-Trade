@@ -35,10 +35,10 @@ export async function sanityFetch<QueryResponse>({
   );
 }
 
-export const getPosts = async () => {
+export const getPosts = async (language: string) => {
   const data: Blog[] = await sanityFetch({
     query: postQuery,
-    qParams: {},
+    qParams: { language },
     tags: ["post", "author", "category"],
   });
   return data;
@@ -76,18 +76,18 @@ export const getProductBySlug = async (slug: string) => {
   return data;
 }
 
-export const getPostBySlug = async (slug: string) => {
+export const getPostBySlug = async (slug: string, language: string) => {
   const data: Blog = await sanityFetch({
     query: postQueryBySlug,
-    qParams: { slug },
+    qParams: { slug, language },
     tags: ["post", "author", "category"],
   });
 
   return data;
 };
 
-export async function getRelatedPosts(currentPostSlug: string, limit: number = 3): Promise<Blog[]> {
-  const query = `*[_type == "post" && slug.current != $currentPostSlug] | order(publishedAt desc)[0...$limit] {
+export async function getRelatedPosts(currentPostSlug: string, language: string, limit: number = 3): Promise<Blog[]> {
+  const query = `*[_type == "post" && slug.current != $currentPostSlug && language == $language] | order(publishedAt desc)[0...$limit] {
     _id,
     title,
     slug,
@@ -100,9 +100,7 @@ export async function getRelatedPosts(currentPostSlug: string, limit: number = 3
 
   return sanityFetch<Blog[]>({
     query,
-    qParams: { currentPostSlug, limit },
+    qParams: { currentPostSlug, language, limit },
     tags: ["post"],
   });
-
-  
 }

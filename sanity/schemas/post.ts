@@ -4,6 +4,12 @@ const post = {
   type: "document",
   fields: [
     {
+      name: "language",
+      type: "string",
+      readOnly: true,
+      hidden: true,
+    },
+    {
       name: "title",
       title: "Title",
       type: "string",

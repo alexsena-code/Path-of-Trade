@@ -86,7 +86,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const totalPrice = displayPrice * count;
 
   // Create URL with parameters
-  const productDetailUrl = `/products/${encodeURIComponent(product.name)}?league=${encodeURIComponent(product.league)}&difficulty=${encodeURIComponent(product.difficulty)}`;
+  const productDetailUrl = `/products/${encodeURIComponent(product.name)}?gameVersion=${encodeURIComponent(product.gameVersion)}&league=${encodeURIComponent(product.league)}&difficulty=${encodeURIComponent(product.difficulty)}`;
 
   return (
     <Card className="inline-block max-w-70 bg-black/10 min-w-40 overflow-hidden shadow-md hover:shadow-lg transition-shadow m-3 outline-none ">

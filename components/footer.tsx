@@ -2,8 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { JSX, SVGProps } from "react";
 import { ThemeSwitcher } from "./theme-switcher";
+import { useTranslations } from "next-intl";
 
 export default function Footer() {
+  const t = useTranslations('Footer');
   return (
     <footer className="w-full bg-black/40 text-white py-8 px-4 md:px-10">
       <div className="container mx-auto max-w-7xl">
@@ -59,15 +61,15 @@ export default function Footer() {
 
           {/* Main Links */}
           <div className="flex flex-col space-y-3">
-            <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Main</h3>
-            <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
-              Home
+            <h3 className="font-bold text-sm uppercase tracking-wider mb-1">{t('main')}</h3>
+            <Link href="/" className="text-gray-300 hover:text-white text-sm transition-colors">
+              {t('home')}
             </Link>
             <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
-              About us
+              {t('about-us')}
             </Link>
             <Link href="/products" className="text-gray-300 hover:text-white text-sm transition-colors">
-              Products
+              {t('products')}
             </Link>
             <div className="pt-2">
               <ThemeSwitcher />
@@ -76,29 +78,29 @@ export default function Footer() {
 
           {/* Support Links */}
           <div className="flex flex-col space-y-3">
-            <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Support</h3>
+            <h3 className="font-bold text-sm uppercase tracking-wider mb-1">{t('support')}</h3>
             <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
-              Contact us
+              {t('contact-us')}
             </Link>
             <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
-              FAQ
+              {t('faq')}
             </Link>
-            <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
-              Shipping Info
+            <Link href="/blog" className="text-gray-300 hover:text-white text-sm transition-colors">
+              {t('blog')}
             </Link>
           </div>
 
           {/* Legal Links */}
           <div className="flex flex-col space-y-3">
-            <h3 className="font-bold text-sm uppercase tracking-wider mb-1">Legal</h3>
+            <h3 className="font-bold text-sm uppercase tracking-wider mb-1">{t('legal')}</h3>
             <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
-              Privacy Policy
+              {t('privacy-policy')}
             </Link>
             <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
-              Terms of Service
+              {t('terms-of-service')}
             </Link>
             <Link href="#" className="text-gray-300 hover:text-white text-sm transition-colors">
-              Refund Policy
+              {t('refund-policy')}
             </Link>
           </div>
         </div>

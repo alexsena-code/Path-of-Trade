@@ -4,9 +4,10 @@ import React from "react";
 
 interface RelatedPostsProps {
   posts: Blog[];
+  locale: string;
 }
 
-const RelatedPosts = ({ posts }: RelatedPostsProps) => {
+const RelatedPosts = ({ posts, locale }: RelatedPostsProps) => {
   if (!posts.length) return null;
 
   return (
@@ -18,7 +19,7 @@ const RelatedPosts = ({ posts }: RelatedPostsProps) => {
         {posts.map((post) => (
           <Link
             key={post.title}
-            href={`/blog/${post.slug.current}`}
+            href={`/${locale}/blog/${post.slug.current}`}
             className="group block no-underline"
           >
             <article className="p-4 rounded-lg transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-900">
@@ -26,7 +27,7 @@ const RelatedPosts = ({ posts }: RelatedPostsProps) => {
                 {post.title}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                {new Date(post.publishedAt).toLocaleDateString(locale, {
                   year: "numeric",
                   month: "long",
                   day: "numeric",

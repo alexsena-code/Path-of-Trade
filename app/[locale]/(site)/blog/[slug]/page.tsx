@@ -4,18 +4,49 @@ import { getPostBySlug, getRelatedPosts } from "@/sanity/sanity-utils";
 import RenderBodyContent from "@/components/Blog/RenderBodyContent";
 import RelatedPosts from "@/components/Blog/RelatedPosts";
 import { Blog } from "@/types/blog";
+import { Metadata } from "next";
 
-const SingleBlogPage = async (props: { params: Promise<any> }) => {
-  const params = await props.params;
-  const post = await getPostBySlug(params.slug);
-  const relatedPosts: Blog[] = await getRelatedPosts(params.slug);
+interface PageProps {
+  params: {
+    slug: string;
+    locale: string;
+  };
+}
 
-  console.log('Related Posts:', relatedPosts); // Debug log
+export async function generateMetadata({ params: { slug, locale } }: PageProps): Promise<Metadata> {
+  const post = await getPostBySlug(slug, locale);
+  
+  if (!post) {
+    return {
+      title: 'Post Not Found',
+    };
+  }
+
+  return {
+    title: post.title,
+    description: post.metadata,
+    alternates: {
+      languages: {
+        'en': `/en/blog/${slug}`,
+        'es': `/es/blog/${slug}`,
+        // Add more languages as needed
+      },
+    },
+  };
+}
+
+const SingleBlogPage = async ({ params: { slug, locale } }: PageProps) => {
+  const post = await getPostBySlug(slug, locale);
+  const relatedPosts: Blog[] = await getRelatedPosts(slug, locale);
+
+  if (!post) {
+    return <div className="py-5">Post not found</div>;
+  }
 
   return (
     <article className="max-w-5xl mx-auto px-4 py-12">
       <Link 
-        href="/blog" 
+        href={`/${locale}/blog`}
         className="inline-flex items-center px-4 py-2 rounded-lg text-gray-600 dark:text-gray-200 hover:text-gray-200 dark:hover:text-white mb-8 transition-all duration-200  group"
       >
         <svg 
@@ -40,7 +71,7 @@ const SingleBlogPage = async (props: { params: Promise<any> }) => {
         
         <div className="flex items-center gap-4 text-gray-600 dark:text-gray-400 mb-8">
           <time className="text-sm">
-            {new Date(post.publishedAt).toLocaleDateString('en-US', {
+            {new Date(post.publishedAt).toLocaleDateString(locale, {
               year: 'numeric',
               month: 'long',
               day: 'numeric'
@@ -60,7 +91,7 @@ const SingleBlogPage = async (props: { params: Promise<any> }) => {
       </div>
 
       {relatedPosts.length > 0 && (
-        <RelatedPosts posts={relatedPosts} />
+        <RelatedPosts posts={relatedPosts} locale={locale} />
       )}
     </article>
   );

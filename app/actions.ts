@@ -206,6 +206,7 @@ export const getLeagues = async (gameVersion: 'path-of-exile-1' | 'path-of-exile
     .from('leagues')
     .select('*')
     .eq('gameVersion', gameVersion)
+    .eq('isActive', true)
 
   if (error) {
     console.error('Error fetching leagues:', error.message);

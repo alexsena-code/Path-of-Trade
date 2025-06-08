@@ -1,9 +1,19 @@
 import { getPosts } from "@/sanity/sanity-utils";
 import BlogItem from "@/components/Blog";
+import { Blog } from "@/types/blog";
+import { Metadata } from "next";
 
-export default async function Home() {
+interface PageProps {
+  params: {
+    locale: string;
+  };
+}
+
+
+
+export default async function Home({ params: { locale } }: PageProps) {
   try {
-    const posts = await getPosts();
+    const posts = await getPosts(locale);
     
     if (!posts) {
       return <div className="py-5">Loading...</div>;
@@ -12,7 +22,13 @@ export default async function Home() {
     return (
       <div className="py-5">
         {posts?.length > 0 ? (
-          posts.map((post: any, i) => <BlogItem key={i} blog={post} />)
+          posts.map((post: Blog) => (
+            <BlogItem 
+              key={`${post._id}-${post.slug.current}`} 
+              blog={post}
+              locale={locale}
+            />
+          ))
         ) : (
           <p>No posts found</p>
         )}

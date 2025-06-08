@@ -1,6 +1,4 @@
-import { CurrencyInfo } from "@/components/currency-info";
 import { LeagueSelectionPage } from "@/components/league-selection";
-import PatchInfo from "@/components/PatchInfo";
 import { Metadata } from "next";
 
 // Generate metadata based on game version
@@ -64,9 +62,9 @@ export default async function Page({
   params: { gameVersion: "path-of-exile-1" | "path-of-exile-2" };
 }) {
   const { gameVersion } = await params;
-  const patchVersion = gameVersion === "path-of-exile-2" ? "poe2" : "3.25";
+
   const isPoe2 = gameVersion === "path-of-exile-2";
-  const gameTitle = isPoe2 ? "Path of Exile 2" : "Path of Exile";
+ 
   const shortGameName = isPoe2 ? "PoE 2" : "PoE";
 
   // Structured data for rich results
@@ -80,46 +78,7 @@ export default async function Page({
           <LeagueSelectionPage gameVersion={gameVersion} />
         </section>
 
-        <article className="space-y-8">
-          <header>
-            <h2 className="text-4xl font-bold">{gameTitle} News</h2>
-            <p className="mt-2 text-base text-muted-foreground">
-              PathofTrade.net is your trusted source for {gameTitle} currency
-              trading. Buysafely and instantly. Get the best prices and fast
-              delivery.
-            </p>
-          </header>
-          <PatchInfo gameVersion={patchVersion} />
-
-          <section className="mt-8 border-t pt-6 dark:border-gray-700 ">
-            <h3 className="mb-3 text-xl font-semibold text-gray-800 dark:text-gray-100">
-              Why Trade with Path of Trade Net?
-            </h3>
-            <ul className="list-inside list-disc space-y-2 text-gray-700 dark:text-gray-300">
-              <li>
-                <strong>Unmatched Security:</strong> Your transactions and
-                account safety are our top priority.
-              </li>
-              <li>
-                <strong>Lightning-Fast Delivery:</strong> Get your currency and
-                items typically within minutes.
-              </li>
-              <li>
-                <strong>Competitive Pricing:</strong> We constantly monitor the
-                market to offer you the best deals.
-              </li>
-              <li>
-                <strong>24/7 Customer Support:</strong> Our dedicated team is
-                always here to assist you.
-              </li>
-              <li>
-                <strong>Wide Selection:</strong> A vast inventory of orbs,
-                currency, and items for {gameTitle}.
-              </li>
-            </ul>
-          </section>
-          <CurrencyInfo gameVersion={gameVersion} />
-        </article>
+  
       </main>
     </>
   );

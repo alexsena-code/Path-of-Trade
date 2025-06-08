@@ -4,10 +4,15 @@ import React from "react";
 import Image from "next/image";
 import { imageBuilder } from "@/sanity/sanity-utils";
 
-const BlogItem = ({ blog }: { blog: Blog }) => {
+interface BlogItemProps {
+  blog: Blog;
+  locale: string;
+}
+
+const BlogItem = ({ blog, locale }: BlogItemProps) => {
   return (
     <Link
-      href={`/blog/${blog.slug.current}`}
+      href={`/${locale}/blog/${blog.slug.current}`}
       className="block p-4 bg-black/40 backdrop-blur-sm rounded-lg border border-gray-800/50 hover:border-gray-500/50 transition-all duration-300 my-6 group no-underline" 
     >
       <article className="flex gap-4 items-start">
@@ -33,7 +38,7 @@ const BlogItem = ({ blog }: { blog: Blog }) => {
             {blog.title}
           </h3>
           <p className="mb-2 text-xs text-gray-500/70">
-            {new Date(blog.publishedAt).toLocaleDateString('en-US', {
+            {new Date(blog.publishedAt).toLocaleDateString(locale, {
               year: 'numeric',
               month: 'short',
               day: 'numeric'

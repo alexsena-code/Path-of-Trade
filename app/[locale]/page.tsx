@@ -58,11 +58,11 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <main className="container mx-auto px-4 py-4 min-h-screen">
+      <main className="container mx-auto px-4 py-8 min-h-screen">
         <GameSelection />
-        <h1 className="text-4xl md:text-6xl tracking-tighter font-bold font-source-sans text-white text-center tracking-wide">
+        <h2 className="text-xl md:text-4xl tracking-tighter font-bold font-source-sans text-white text-center tracking-wide">
           {t("why-path-of-trade")}
-        </h1>
+        </h2>
         <Features />
 
         <CarouselSpacing />

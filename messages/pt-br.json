@@ -12,11 +12,63 @@
     "24-7-support": "Suporte 24/7",
     "cheap-prices": "Preços Baratos",
 
-    "fast-delivery-description": "Compre Moedas PoE 1 & 2 – Entregues em 30 Minutos! Zero Atrasos & Transações Seguras 24/7.",
+    "fast-delivery-description": "Compre Orbs POE 1 & 2 – Entrega em 30 Min! Transações Seguras e Rápidas 24/7.",
     "secure-payment-description": "Usamos um sistema de pagamento seguro para proteger suas informações pessoais e financeiras.",
-    "security-guarantee-description": "Checkout PCI DSS-certificado & transações criptografadas – seguro, rápido e garantido.",
-    "24-7-support-description": "Nosso time de suporte dedicado está disponível 24 horas por dia para responder às suas perguntas.",
-    "cheap-prices-description": "Taxas de Moedas PoE 2 em tempo real – Compre barato e economize com melhores negócios."
+    "security-guarantee-description": "Negociação Segura em PoE! Segurança de conta garantida em todas as compras de Path of Exile.",
+    "24-7-support-description": "Suporte PoE 24/7! Ajuda especializada para suas orbs e itens de Path of Exile, a qualquer hora.",
+    "cheap-prices-description": "Orbs PoE Baratas! As melhores ofertas online em moedas e itens de Path of Exile."
+  },
+
+ 
+
+  "SelectLeaguePage": {
+    "title": "SELECIONE SUA LIGA",
+    "description": "Selecione sua liga Path of Exile abaixo para visualizar os preços e ofertas disponíveis.",
+    "news": "Notícias",
+    "why-trade-with-us": "Por que Comprar com Path of Trade Net?",
+    "unmatched-security": "Segurança Incomparável",
+    "unmatched-security-description": "Sua segurança e segurança da conta são nossa prioridade.",
+    "lightning-fast-delivery": "Entrega Rápida",
+    "lightning-fast-delivery-description": "Obtenha suas moedas e itens tipicamente em minutos.",
+    "competitive-pricing": "Preços Competitivos",
+    "competitive-pricing-description": "Monitoramos constantemente o mercado para oferecer as melhores ofertas.",
+    "24-7-customer-support": "Suporte 24/7",
+    "24-7-customer-support-description": "Nosso time dedicado está sempre aqui para ajudar você.",
+    "wide-selection": "Seleção Ampla",
+    "wide-selection-description": "Uma ampla variedade de orbes, moedas e itens para {gameTitle}.",
+    "news-description": "PathofTrade.net é sua fonte confiável para {gameTitle} currency trading. Compre com segurança e instantaneamente. Obtenha os melhores preços e entrega rápida."
+    
+
+  },
+  "Footer": {
+    "home": "Início",
+    "main": "Principal",
+    "products": "Produtos",
+    "about-us": "Sobre nós",
+    "contact-us": "Contate-nos",
+    "support": "Suporte",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "privacy-policy": "Política de Privacidade",
+    "terms-of-service": "Termos de Serviço",
+    "refund-policy": "Política de Reembolso",
+    "legal": "Legal"
+  },
+  
+
+
+  "faq": {
+    "question1": "O que é Path of Exile?",
+    "answer1": "Path of Exile é um jogo de RPG de ação gratuito desenvolvido pela Grinding Gear Games.",
+    "question2": "O que você vende em Path of Exile?",
+    "answer2": "Tudo o que você precisa para Path of Exile está aqui! Temos uma enorme variedade de moedas de PoE – de Orbes Divinos e Orbes do Caos a Orbes Exaltados e até Espelhos de Kalandra. Você também encontrará itens únicos muito procurados, conjuntos de mapas completos e serviços essenciais como power leveling. Mergulhe em nosso catálogo para ver tudo o que oferecemos!",
+    "question3": "Vocês vendem moedas e itens para qual liga de Path of Exile?",
+    "answer3": "Sim, atendemos tanto a liga Standard quanto a liga atual do desafio (temporária) em Path of Exile. Certifique-se de selecionar a liga correta ao colocar seu pedido para garantir que os itens sejam entregues ao lugar certo.",  
+    "question4": "Os itens e moedas são para POE1 ou POE2? E para quais plataformas ",
+    "answer4": " Atualmente, nosso foco principal é em Path of Exile 1 para PC. Estamos acompanhando de perto o desenvolvimento de Path of Exile 2 e planejamos expandir nossos serviços assim que o jogo e sua economia estiverem estabelecidos. No momento, não oferecemos suporte para as versões de console (PlayStation/Xbox).",
+    "question5": "Como posso entrar em contato com você se tiver dúvidas ou problemas?",
+    "answer5": "Você pode nos contatar via email em support@pathoftrade.com ou usar o formulário de contato em nosso site. Nosso objetivo é responder a todas as consultas em até 24 horas.",
+    "answers-to-some-questions": "Respostas a algumas perguntas que você pode ter."
   },
 
   "Testemonials": {

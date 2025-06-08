@@ -7,6 +7,9 @@ import { useState, useEffect } from "react";
 import { getLeagues } from "@/app/actions";
 import { LeagueSkeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
+import { CurrencyInfo } from "./currency-info";
+import PatchInfo from "./PatchInfo";
 
 interface League {
   id: string;
@@ -144,6 +147,10 @@ export function LeagueSelectionPage({ gameVersion }: LeagueSelectionProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedLeagueId, setExpandedLeagueId] = useState<string | null>(null);
+  const t = useTranslations("SelectLeaguePage");
+  const isPoe2 = gameVersion === "path-of-exile-2";
+  const gameTitle = isPoe2 ? "Path of Exile 2" : "Path of Exile";
+  const patchVersion = gameVersion === "path-of-exile-2" ? "poe2" : "3.25";
 
   const handleExpand = (leagueId: string) => {
     setExpandedLeagueId(expandedLeagueId === leagueId ? null : leagueId);
@@ -194,15 +201,15 @@ export function LeagueSelectionPage({ gameVersion }: LeagueSelectionProps) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start bg-background pt-12 px-4 ">
+    <main className="flex flex-col items-center justify-start bg-background pt-6 px-4 ">
       <div className="max-w-7xl w-full flex flex-col items-center">
         <h1 className="text-5xl md:text-6xl text-center font-black font-source-sans bg-gradient-to-r from-[#DEDCFF] to-[#6f58ff] bg-clip-text text-transparent tracking-wider">
-          SELECT YOUR LEAGUE
+          {t("title")}
         </h1>
         <p className="text-sm text-center text-muted-foreground/80 mb-12 max-w-2xl tracking-wide">
-          Select your Path of Exile league below to view available currency prices and offers.
+          {t("description")}
         </p>
-        <div className="flex flex-wrap justify-center gap-20 mb-20 md:gap-10 md:mb-10">
+        <div className="flex flex-wrap justify-center gap-20 mb-20 md:gap-10 md:mb-40">
           {leagues.map((league) => (
             <LeagueCard
               key={league.id}
@@ -214,6 +221,39 @@ export function LeagueSelectionPage({ gameVersion }: LeagueSelectionProps) {
           ))}
         </div>
       </div>
-    </div>
+      <article className="space-y-8">
+          <header>
+            <h2 className="text-4xl font-bold">{gameTitle} {t("news")}</h2>
+            <p className="mt-2 text-base text-muted-foreground">
+              {t("news-description", { gameTitle })}
+            </p>
+          </header>
+          <PatchInfo gameVersion={patchVersion} />
+
+          <section className="mt-8 border-t pt-6 dark:border-gray-700 ">
+            <h3 className="mb-3 text-xl font-semibold text-gray-800 dark:text-gray-100">
+              {t("why-trade-with-us")}
+            </h3>
+            <ul className="list-inside list-disc space-y-2 text-gray-700 dark:text-gray-300">
+              <li>
+                <strong>{t("unmatched-security")}</strong> {t("unmatched-security-description")}
+              </li>
+              <li>
+                <strong>{t("lightning-fast-delivery")}</strong> {t("lightning-fast-delivery-description")}
+              </li>
+              <li>
+                <strong>{t("competitive-pricing")}</strong> {t("competitive-pricing-description")}
+              </li>
+              <li>
+                <strong>{t("24-7-customer-support")}</strong> {t("24-7-customer-support-description")}
+              </li>
+              <li>
+                <strong>{t("wide-selection")}</strong> {t("wide-selection-description", { gameTitle })}
+              </li>
+            </ul>
+          </section>
+          <CurrencyInfo gameVersion={gameVersion} />
+        </article>
+    </main>
   );
 }

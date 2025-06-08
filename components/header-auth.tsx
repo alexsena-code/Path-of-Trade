@@ -116,6 +116,7 @@ export default async function AuthButton() {
       </div>
       <LocaleSwitcher />
       <div className="hidden md:flex gap-2 sm:gap-3">
+
         
         <Button
           asChild
@@ -126,6 +127,7 @@ export default async function AuthButton() {
         >
           <Link href="/auth/login">Sign in</Link>
         </Button>
+
         <Button
           asChild
           size="sm"
