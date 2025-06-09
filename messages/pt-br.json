@@ -40,6 +40,10 @@
     
 
   },
+  "NewsPage": {
+    "news": "Notícias",
+    "news-description": "PathofTrade.net é sua fonte confiável para {gameTitle} currency trading. Compre com segurança e instantaneamente. Obtenha os melhores preços e entrega rápida."
+  },
   "Footer": {
     "home": "Início",
     "main": "Principal",

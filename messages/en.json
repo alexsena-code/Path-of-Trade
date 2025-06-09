@@ -123,6 +123,10 @@
     "addToCart": "Add to Cart",
     "viewDetails": "View Details"
   },
+  "NewsPage": {
+    "news": "News",
+    "news-description": "PathofTrade.net is your trusted source for {gameTitle} currency trading. Buy safely and instantly. Get the best prices and fast delivery."
+  },
 
   "Orders": {
     "title": "My PoE Orders",

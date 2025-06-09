@@ -1,17 +1,22 @@
 import { getPosts } from "@/sanity/sanity-utils";
 import BlogItem from "@/components/Blog";
 import { Blog } from "@/types/blog";
-import { Metadata } from "next";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     locale: string;
-  };
+  }>;
 }
 
 
 
-export default async function Home({ params: { locale } }: PageProps) {
+export default async function Home(props: PageProps) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   try {
     const posts = await getPosts(locale);
     

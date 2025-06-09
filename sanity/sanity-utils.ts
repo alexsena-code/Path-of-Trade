@@ -1,7 +1,7 @@
 import ImageUrlBuilder from "@sanity/image-url";
 import { createClient, type QueryParams } from "next-sanity";
 import clientConfig from "./config/client-config";
-import { postQuery, postQueryBySlug, productQuery } from "./sanity-query";
+import { postQuery, postQueryBySlug, productQuery, postQueryByCategory, postQueryByCategoryAndGameVersion } from "./sanity-query";
 import { Blog } from "@/types/blog";
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import type { Product } from "@/lib/interface";
@@ -80,6 +80,16 @@ export const getPostBySlug = async (slug: string, language: string) => {
   const data: Blog = await sanityFetch({
     query: postQueryBySlug,
     qParams: { slug, language },
+    tags: ["post", "author", "category"],
+  });
+
+  return data;
+};
+
+export const getPostsByCategoryAndGameVersion = async (categorySlug: string, gameVersion: string, language: string) => {
+  const data: Blog[] = await sanityFetch({
+    query: postQueryByCategoryAndGameVersion,
+    qParams: { categorySlug, gameVersion, language },
     tags: ["post", "author", "category"],
   });
 

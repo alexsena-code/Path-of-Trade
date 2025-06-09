@@ -35,6 +35,10 @@ const ImageComponent = ({ value, isInline }: any) => {
 
 
 const Table = ({ value }: any) => {
+  if (!value || !value.rows || !Array.isArray(value.rows)) {
+    return null;
+  }
+
   return (
     <div className="my-10">
       <table>

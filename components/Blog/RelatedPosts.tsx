@@ -18,7 +18,7 @@ const RelatedPosts = ({ posts, locale }: RelatedPostsProps) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {posts.map((post) => (
           <Link
-            key={post.title}
+            key={post._id}
             href={`/${locale}/blog/${post.slug.current}`}
             className="group block no-underline"
           >

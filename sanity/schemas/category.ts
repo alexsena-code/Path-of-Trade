@@ -4,6 +4,22 @@ const category = {
 	type: "document",
 	fields: [
 		{
+			name: "language",
+			type: "string",
+			readOnly: true,
+			hidden: true,
+		},
+		{
+			name: "slug",
+			title: "Slug",
+			type: "slug",
+			options: {
+				source: "tagname",
+				maxLength: 96,
+			},
+			validation: (Rule: any) => Rule.required(),
+		},
+		{
 			name: "tagname",
 			title: "Tag Name",
 			type: "string",

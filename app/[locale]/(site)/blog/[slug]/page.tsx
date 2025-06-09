@@ -7,15 +7,22 @@ import { Blog } from "@/types/blog";
 import { Metadata } from "next";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
     locale: string;
-  };
+  }>;
 }
 
-export async function generateMetadata({ params: { slug, locale } }: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params;
+
+  const {
+    slug,
+    locale
+  } = params;
+
   const post = await getPostBySlug(slug, locale);
-  
+
   if (!post) {
     return {
       title: 'Post Not Found',
@@ -28,14 +35,21 @@ export async function generateMetadata({ params: { slug, locale } }: PageProps):
     alternates: {
       languages: {
         'en': `/en/blog/${slug}`,
-        'es': `/es/blog/${slug}`,
+        'pt-br': `/pt-br/blog/${slug}`,
         // Add more languages as needed
       },
     },
   };
 }
 
-const SingleBlogPage = async ({ params: { slug, locale } }: PageProps) => {
+const SingleBlogPage = async (props: PageProps) => {
+  const params = await props.params;
+
+  const {
+    slug,
+    locale
+  } = params;
+
   const post = await getPostBySlug(slug, locale);
   const relatedPosts: Blog[] = await getRelatedPosts(slug, locale);
 

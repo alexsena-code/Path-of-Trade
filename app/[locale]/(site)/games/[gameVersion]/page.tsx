@@ -1,12 +1,14 @@
+import { CurrencyInfo } from "@/components/currency-info";
+import GameVersionPosts from "@/components/GameVersionPosts";
 import { LeagueSelectionPage } from "@/components/league-selection";
+import PatchInfo from "@/components/PatchInfo";
 import { Metadata } from "next";
+import { useTranslations } from "next-intl";
 
 // Generate metadata based on game version
-export async function generateMetadata(
-  props: {
-    params: Promise<{ gameVersion: "path-of-exile-1" | "path-of-exile-2" }>;
-  }
-): Promise<Metadata> {
+export async function generateMetadata(props: {
+  params: Promise<{ gameVersion: "path-of-exile-1" | "path-of-exile-2" }>;
+}): Promise<Metadata> {
   const params = await props.params;
   const isPoe2 = params.gameVersion === "path-of-exile-2";
   const gameTitle = isPoe2 ? "Path of Exile 2" : "Path of Exile";
@@ -59,26 +61,40 @@ export async function generateMetadata(
 export default async function Page({
   params,
 }: {
-  params: { gameVersion: "path-of-exile-1" | "path-of-exile-2" };
+  params: {
+    gameVersion: "path-of-exile-1" | "path-of-exile-2";
+    locale: string;
+  };
 }) {
-  const { gameVersion } = await params;
+  const { gameVersion, locale } = await params;
 
   const isPoe2 = gameVersion === "path-of-exile-2";
- 
+
   const shortGameName = isPoe2 ? "PoE 2" : "PoE";
+  const gameTitle = isPoe2 ? "Path of Exile 2" : "Path of Exile";
+  const patchVersion = isPoe2 ? "poe2" : "3.25";
 
   // Structured data for rich results
 
-
   return (
     <>
-
       <main className="container mx-auto min-h-screen space-y-16 py-8">
+        <LeagueSelectionPage gameVersion={gameVersion} />
         <section className="mb-12">
-          <LeagueSelectionPage gameVersion={gameVersion} />
+          <article className="space-y-8">
+            <GameVersionPosts
+              category="news"
+              gameVersion={gameVersion}
+              locale={locale}
+            />
+            <header>
+              <h2 className="text-4xl font-bold">{gameTitle} Major Updates</h2>
+              <p className="mt-2 text-base text-muted-foreground"></p>
+            </header>
+            <PatchInfo gameVersion={patchVersion} />
+            <CurrencyInfo gameVersion={gameVersion} />
+          </article>
         </section>
-
-  
       </main>
     </>
   );

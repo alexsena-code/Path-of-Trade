@@ -22,6 +22,27 @@ const post = {
       validation: (Rule: any) => Rule.required(),
     },
     {
+      name: "gameVersion",
+      title: "Game Version",
+      type: "string",
+      options: {
+        list: [
+          { title: "Path of Exile 1", value: "path-of-exile-1" },
+          { title: "Path of Exile 2", value: "path-of-exile-2" }
+        ]
+      },
+      validation: (Rule: any) => Rule.required(),
+    },
+
+    {
+      name: "category",
+      title: "Category",
+      type: "reference",
+      to: { type: "category" },
+      validation: (Rule: any) => Rule.required(),
+    },
+
+    {
       name: "slug",
       title: "Slug",
       type: "slug",

@@ -8,8 +8,9 @@ import { getLeagues } from "@/app/actions";
 import { LeagueSkeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { CurrencyInfo } from "./currency-info";
-import PatchInfo from "./PatchInfo";
+
+
+
 
 interface League {
   id: string;
@@ -152,6 +153,7 @@ export function LeagueSelectionPage({ gameVersion }: LeagueSelectionProps) {
   const gameTitle = isPoe2 ? "Path of Exile 2" : "Path of Exile";
   const patchVersion = gameVersion === "path-of-exile-2" ? "poe2" : "3.25";
 
+  
   const handleExpand = (leagueId: string) => {
     setExpandedLeagueId(expandedLeagueId === leagueId ? null : leagueId);
   };
@@ -221,39 +223,7 @@ export function LeagueSelectionPage({ gameVersion }: LeagueSelectionProps) {
           ))}
         </div>
       </div>
-      <article className="space-y-8">
-          <header>
-            <h2 className="text-4xl font-bold">{gameTitle} {t("news")}</h2>
-            <p className="mt-2 text-base text-muted-foreground">
-              {t("news-description", { gameTitle })}
-            </p>
-          </header>
-          <PatchInfo gameVersion={patchVersion} />
-
-          <section className="mt-8 border-t pt-6 dark:border-gray-700 ">
-            <h3 className="mb-3 text-xl font-semibold text-gray-800 dark:text-gray-100">
-              {t("why-trade-with-us")}
-            </h3>
-            <ul className="list-inside list-disc space-y-2 text-gray-700 dark:text-gray-300">
-              <li>
-                <strong>{t("unmatched-security")}</strong> {t("unmatched-security-description")}
-              </li>
-              <li>
-                <strong>{t("lightning-fast-delivery")}</strong> {t("lightning-fast-delivery-description")}
-              </li>
-              <li>
-                <strong>{t("competitive-pricing")}</strong> {t("competitive-pricing-description")}
-              </li>
-              <li>
-                <strong>{t("24-7-customer-support")}</strong> {t("24-7-customer-support-description")}
-              </li>
-              <li>
-                <strong>{t("wide-selection")}</strong> {t("wide-selection-description", { gameTitle })}
-              </li>
-            </ul>
-          </section>
-          <CurrencyInfo gameVersion={gameVersion} />
-        </article>
+     
     </main>
   );
 }
