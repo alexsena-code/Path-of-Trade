@@ -38,11 +38,12 @@ export const generateMetadata = async (props: {
 };
 
 export default async function ProductDetailPage(props: {
-  params: Promise<{ name: string }>;
+  params: Promise<{ name: string, locale: string }>;
   searchParams: Promise<{
     league?: string;
     difficulty?: string;
     gameVersion?: "path-of-exile-1" | "path-of-exile-2";
+    locale?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
@@ -86,6 +87,7 @@ export default async function ProductDetailPage(props: {
     // Use the first product from the results
     const product = products[0];
 
+
     // Fetch leagues from database based on product's game version
     const currentGameVersion = searchParams.gameVersion || product.gameVersion;
     const leaguesData = await getLeagues(
@@ -105,6 +107,15 @@ export default async function ProductDetailPage(props: {
     // Current selected values
     const currentLeague = searchParams.league || product.league;
     const currentDifficulty = searchParams.difficulty || product.difficulty;
+    let currentLocale = searchParams.locale || params.locale;
+
+    if(currentLocale === "pt-br") {
+      currentLocale = "pt_br";
+    }
+
+    console.log(currentLocale);
+
+   
 
     const productStructuredData = {
       "@context": "https://schema.org",
@@ -180,7 +191,7 @@ export default async function ProductDetailPage(props: {
         {productSanity?.body && (
           <div className="p-4 md:p-6 mt-6 md:mt-12 bg-muted/10 rounded-lg">
             <h2 className="text-lg font-semibold text-gray-100/40 mb-4">Description</h2>
-            <ProductContent content={productSanity.body} />
+            <ProductContent content={productSanity.body[currentLocale]} />
           </div>
         )}
       </div>

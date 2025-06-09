@@ -86,6 +86,7 @@ export default async function Page({
               category="news"
               gameVersion={gameVersion}
               locale={locale}
+              maxPosts={4}
             />
             <header>
               <h2 className="text-4xl font-bold">{gameTitle} Major Updates</h2>

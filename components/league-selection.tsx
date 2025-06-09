@@ -211,7 +211,7 @@ export function LeagueSelectionPage({ gameVersion }: LeagueSelectionProps) {
         <p className="text-sm text-center text-muted-foreground/80 mb-12 max-w-2xl tracking-wide">
           {t("description")}
         </p>
-        <div className="flex flex-wrap justify-center gap-20 mb-20 md:gap-10 md:mb-40">
+        <div className="flex flex-wrap justify-center gap-20 mb-20 md:gap-10 md:mb-30">
           {leagues.map((league) => (
             <LeagueCard
               key={league.id}

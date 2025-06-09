@@ -37,20 +37,47 @@ export default defineType({
     defineField({
       name: "body",
       title: "Description",
-      type: "array",
-      of: [
+      type: "object",
+      fields: [
         {
-          type: "block"
+          name: "en",
+          title: "English",
+          type: "array",
+          of: [
+            {
+              type: "block"
+            },
+            {
+              type: "image",
+              options: {
+                hotspot: true
+              }
+            },
+            {
+              type: "table"
+            }
+          ]
         },
         {
-          type: "image",
-          options: {
-            hotspot: true
-          }
-        },
-        {
-          type: "table"
+          name: "pt_br",
+          title: "Portuguese",
+          type: "array",
+          of: [
+            {
+              type: "block"
+            },
+            {
+              type: "image",
+              options: {
+                hotspot: true
+              }
+            },
+            {
+              type: "table"
+            }
+          ]
         }
+
       ]
     }),
 
