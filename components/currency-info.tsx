@@ -75,7 +75,7 @@ const currencyData: Record<string, CurrencyData[]> = {
       id: "mirror-of-kalandra",
       name: "Mirror of Kalandra",
       description: "The most valuable and rarest currency item in Path of Exile, capable of creating an exact mirrored copy of any item, including all its modifiers and values.",
-      imageUrl: "/images/mirror.webp",
+      imageUrl: "/images/mirror-of-kalandra.webp",
       gameVersion: "3.25",
       uses: [
         "Creates an exact mirrored copy of any item",
@@ -136,8 +136,8 @@ export function CurrencyInfo({ gameVersion }: CurrencyInfoProps) {
                 <Image
                   src={currency.imageUrl}
                   alt={`${currency.name} icon ${currency.gameVersion} PathOfTrade.net`}
-                  width={100}
-                  height={100}
+                  fill
+                  sizes="80px"
                   className="object-contain"
                 />
               </div>

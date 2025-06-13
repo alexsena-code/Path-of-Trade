@@ -92,15 +92,16 @@ export default function ProductCard({ product }: ProductCardProps) {
     <Card className="inline-block max-w-70 bg-black/10 min-w-40 overflow-hidden shadow-md hover:shadow-lg transition-shadow m-3 outline-none ">
       <CardContent className="flex flex-col mt-4">
         <div className="relative h-24 w-24 sm:h-28 sm:w-28 md:h-20 md:w-20 mb-4 rounded-lg overflow-hidden mx-auto">
-          <Link href={productDetailUrl}>
+          <Link href={productDetailUrl} className="relative block w-full h-full">
             <Image
               src={product.imgUrl}
               alt={product.alt || product.name}
-              fill
+              fill                
+              sizes="(max-width: 640px) 96px, (max-width: 768px) 112px, 80px"
               className="object-contain hover:scale-105 transition-transform duration-300"
               quality={100}
               priority
-              onError={(e) => {
+              onError={(e) => {                                   
                 const target = e.target as HTMLImageElement;
                 target.src = '/placeholder.png'; // Fallback image
                 target.alt = t('placeholderImageAlt');

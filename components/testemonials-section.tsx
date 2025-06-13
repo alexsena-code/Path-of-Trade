@@ -19,42 +19,43 @@ interface Testimonial {
 
 export default function TestimonialCarousel() {
   const testimonials: Testimonial[] = [
-    {
-      name: "BunnyGirlSenpai",
-      title: "Explore",
-      description:
-        "My power leveler was amazing, regardless of the server being in a different timezone, they still got me to 40 in a good time! Super happy with the result!",
-      rating: 5,
-    },
-    {
-      name: "BunnyGirlSenpai",
-      title: "Explore",
-      description:
-        "My power leveler was amazing, regardless of the server being in a different timezone, they still got me to 40 in a good time! Super happy with the result!",
-      rating: 5,
-    },
-    {
-      name: "BunnyGirlSenpai",
-      title: "Explore",
-      description:
-        "My power leveler was amazing, regardless of the server being in a different timezone, they still got me to 40 in a good time! Super happy with the result!",
-      rating: 5,
-    },
-    {
-      name: "BunnyGirlSenpai",
-      title: "Explore",
-      description:
-        "My power leveler was amazing, regardless of the server being in a different timezone, they still got me to 40 in a good time! Super happy with the result!",
-      rating: 5,
-    },
-    {
-      name: "BunnyGirlSenpai",
-      title: "Explore",
-      description:
-        "My power leveler was amazing, regardless of the server being in a different timezone, they still got me to 40 in a good time! Super happy with the result!",
-      rating: 5,
-    },
-  ];
+    
+      {
+        "name": "ExileSlayer_92",
+        "title": "Fastest Orbs in Wraeclast!",
+        "description":
+          "I was skeptical at first, but pathoftrade.net delivered my Divine Orbs in less than 5 minutes after payment. The whole process was incredibly fast and smooth. I'll definitely be back for the next league start!",
+        "rating": 5
+      },
+      {
+        "name": "MappingManiac",
+        "title": "Trustworthy and Secure",
+        "description":
+          "Security is my biggest concern when buying currency, and pathoftrade.net handled it perfectly. The transaction felt safe, and the communication for the in-game trade was professional. Highly recommend for a worry-free experience.",
+        "rating": 5
+      },
+      {
+        "name": "ChaosQueen",
+        "title": "The Best Prices for Bulking",
+        "description":
+          "I've shopped around, and the prices here are consistently the best, especially when you're buying in bulk. I got a great deal on my Chaos Orbs, which helped me finish my build way sooner than I expected. Great value!",
+        "rating": 5
+      },
+      {
+        "name": "Hardcore_Hero",
+        "title": "Incredible Customer Support",
+        "description":
+          "I had a small issue with my order details, and the support team on pathoftrade.net was amazing. They responded to my ticket within minutes and sorted everything out politely and efficiently. A+ service!",
+        "rating": 5
+      },
+      {
+        "name": "JustAnotherTuna",
+        "title": "Super Simple and Easy to Use",
+        "description":
+          "The website is so easy to navigate. Found the currency I needed for my server, paid, and got instructions for the trade right away. The entire process from start to finish is streamlined for gamers. No hassle at all.",
+        "rating": 5
+      }
+    ]
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -72,7 +73,7 @@ export default function TestimonialCarousel() {
     <section className="w-full py-16 bg-background mb-16">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-source font-black text-left mb-8 text-white">
-            {t('title')}
+          {t('title')}
         </h2>
 
         <Carousel
